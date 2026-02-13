@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
+
+@plugin "daisyui" {
+    themes: custom-light, custom-dark;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+}
+
+:root,
+[data-theme="custom-light"] {
+    color-scheme: light;
+    /* Base Colors - Keeping these clean and airy */
+    --color-base-100: oklch(0.99 0.001 150);
+    --color-base-200: oklch(0.97 0.001 150);
+    --color-base-300: oklch(0.95 0.001 150);
+    --color-base-content: oklch(25% 0.01 150);
+
+    /* Primary - Lighter, vibrant Emerald */
+    --color-primary: oklch(62% 0.17 148.958);
+    --color-primary-content: oklch(100% 0 0);
+
+    /* Secondary - Bright Sunshine Gold */
+    --color-secondary: oklch(75% 0.15 85);
+    --color-secondary-content: oklch(20% 0.05 85);
+
+    --color-accent: oklch(70% 0.12 185.713);
+    --color-accent-content: oklch(100% 0 0);
+
+    --color-neutral: oklch(28% 0.04 150);
+    --color-neutral-content: oklch(98% 0.01 150);
+
+
+    --color-info: oklch(72% 0.15 231.6);
+    --color-info-content: oklch(100% 0 0);
+
+    --color-success: oklch(62% 0.17 148.958);
+    --color-success-content: oklch(100% 0 0);
+
+    --color-warning: oklch(75% 0.15 85);
+    --color-warning-content: oklch(20% 0.05 85);
+
+    --color-error: oklch(62% 0.20 25);
+    --color-error-content: oklch(100% 0 0);
+
+    --radius-selector: 0.5rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.25rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
+
+[data-theme="custom-dark"] {
+    color-scheme: dark;
+    /* Clean Dark mode */
+    --color-base-100: oklch(18% 0.01 150);
+    --color-base-200: oklch(22% 0.01 150);
+    --color-base-300: oklch(25% 0.01 150);
+    --color-base-content: oklch(90% 0.01 150);
+
+    /* Primary - Lighter, vibrant Emerald */
+    --color-primary: oklch(62% 0.17 148.958);
+    --color-primary-content: oklch(10% 0.05 150);
+
+    /* Secondary - Bright Sunshine Gold */
+    --color-secondary: oklch(75% 0.15 85);
+    --color-secondary-content: oklch(10% 0.05 85);
+
+    --color-accent: oklch(70% 0.12 185.713);
+    --color-accent-content: oklch(10% 0.03 185);
+
+    --color-neutral: oklch(35% 0.03 150);
+    --color-neutral-content: oklch(90% 0.01 150);
+
+    --color-info: oklch(72% 0.15 231.6);
+    --color-info-content: oklch(10% 0.04 231.6);
+
+    --color-success: oklch(62% 0.17 148.958);
+    --color-success-content: oklch(10% 0.04 150);
+
+    --color-warning: oklch(75% 0.15 85);
+    --color-warning-content: oklch(10% 0.05 85);
+
+    --color-error: oklch(65% 0.18 25);
+    --color-error-content: oklch(10% 0.04 22);
+
+    --radius-selector: 0.5rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.25rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
+
+select:focus,
+select:focus-visible,
+select:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+@theme {
+    --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.bg-grid-pattern {
+    background-image: linear-gradient(to right, currentColor 1px, transparent 1px),
+        linear-gradient(to bottom, currentColor 1px, transparent 1px);
+    background-size: 40px 40px;
+}

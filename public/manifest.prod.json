@@ -1,0 +1,96 @@
+{
+    "manifest_version": 3,
+    "name": "Vegan Mage AI tabs",
+    "version": "1.1",
+    "description": "Extension of Vegan Mage for enhanced workflows automating LLM providers chat exchange.",
+    "permissions": [
+        "tabs",
+        "storage",
+        "sidePanel"
+    ],
+    "action": {
+        "default_title": "Vegan Mage AI tabs"
+    },
+    "side_panel": {
+        "default_path": "sidepanel.html"
+    },
+    "host_permissions": [
+        "*://chatgpt.com/*",
+        "*://chat.openai.com/*",
+        "*://claude.ai/*",
+        "*://gemini.google.com/*",
+        "*://grok.com/*",
+        "*://chat.deepseek.com/*"
+    ],
+    "background": {
+        "service_worker": "background/service-worker.js",
+        "type": "module"
+    },
+    "externally_connectable": {
+        "ids": [
+            "pijaleolnpgboehkbacgnidlpombkekj"
+        ]
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://chatgpt.com/*",
+                "https://chat.openai.com/*"
+            ],
+            "js": [
+                "content-scripts/chatgpt.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": true
+        },
+        {
+            "matches": [
+                "https://gemini.google.com/*"
+            ],
+            "js": [
+                "content-scripts/gemini.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": true
+        },
+        {
+            "matches": [
+                "https://copilot.microsoft.com/*",
+                "https://bing.com/chat*"
+            ],
+            "js": [
+                "content-scripts/copilot.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": true
+        },
+        {
+            "matches": [
+                "https://chat.deepseek.com/*"
+            ],
+            "js": [
+                "content-scripts/deepseek.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": true
+        },
+        {
+            "matches": [
+                "https://grok.com/*"
+            ],
+            "js": [
+                "content-scripts/grok.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": true
+        }
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
+}
