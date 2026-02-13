@@ -36,22 +36,11 @@ function App() {
     const [providers, setProviders] = useState<Provider[]>([]);
     const [activeTabs, setActiveTabs] = useState<AiTab[]>([]);
     const [theme, setTheme] = useState<string>('custom-light');
-    const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
+    const [statusMessage, setStatusMessage] = useState<StatusMessage | undefined>(undefined);
     const [activeView, setActiveView] = useState<'providers' | 'messaging'>('providers');
     const [messageText, setMessageText] = useState<string>('');
-    const [selectedTab, setSelectedTab] = useState<AiTab | null>(null);
-    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-
-    // Load providers and tabs on mount
-    useEffect(() => {
-        loadProviders();
-        loadTheme();
-        loadActiveTabs();
-
-        // Refresh tabs every 5 seconds
-        const interval = setInterval(loadActiveTabs, 5000);
-        return () => clearInterval(interval);
-    }, []);
+    const [selectedTab, setSelectedTab] = useState<AiTab | undefined>(undefined);
+    const [draggedIndex, setDraggedIndex] = useState<number | undefined>(undefined);
 
     // Apply theme to body
     useEffect(() => {
@@ -85,7 +74,7 @@ function App() {
     const loadTheme = async () => {
         try {
             const result = await chrome.storage.local.get('theme');
-            setTheme(result.theme || 'custom-light');
+            setTheme(result.theme ?? 'custom-light');
         } catch (error) {
             console.error('Error loading theme:', error);
         }
@@ -96,7 +85,7 @@ function App() {
         try {
             const tabs = await chrome.tabs.query({});
             const aiTabs = tabs.filter(tab => {
-                const url = tab.url || '';
+                const url = tab.url ?? '';
                 return url.includes('chatgpt.com') ||
                     url.includes('chat.openai.com') ||
                     url.includes('gemini.google.com') ||
@@ -106,7 +95,7 @@ function App() {
                     url.includes('grok.com');
             }).map(tab => {
                 let provider = 'unknown';
-                const url = tab.url || '';
+                const url = tab.url ?? '';
                 if (url.includes('chatgpt.com') || url.includes('chat.openai.com')) provider = 'chatgpt';
                 else if (url.includes('gemini.google.com')) provider = 'gemini';
                 else if (url.includes('copilot.microsoft.com') || url.includes('bing.com/chat')) provider = 'copilot';
@@ -156,7 +145,7 @@ function App() {
     // Show status message
     const showStatus = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
         setStatusMessage({ message, type });
-        setTimeout(() => setStatusMessage(null), 3000);
+        setTimeout(() => setStatusMessage(undefined), 3000);
     };
 
     // Handle provider toggle
@@ -180,7 +169,7 @@ function App() {
     // Handle drag over
     const handleDragOver = (e: React.DragEvent, index: number) => {
         e.preventDefault();
-        if (draggedIndex === null || draggedIndex === index) return;
+        if (!draggedIndex || draggedIndex === index) return;
 
         const newProviders = [...providers];
         const [removed] = newProviders.splice(draggedIndex, 1);
@@ -191,7 +180,7 @@ function App() {
 
     // Handle drag end
     const handleDragEnd = () => {
-        setDraggedIndex(null);
+        setDraggedIndex(undefined);
     };
 
     // Reset to default
@@ -251,6 +240,18 @@ function App() {
             showStatus(`Failed: ${(error as Error).message}`, 'error');
         }
     };
+
+
+    // Load providers and tabs on mount
+    useEffect(() => {
+        loadProviders();
+        loadTheme();
+        loadActiveTabs();
+
+        // Refresh tabs every 5 seconds
+        const interval = setInterval(loadActiveTabs, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div className="min-h-screen bg-base-100 p-4">
@@ -328,7 +329,7 @@ function App() {
 
 interface ProviderSettingsProps {
     providers: Provider[];
-    draggedIndex: number | null;
+    draggedIndex: number | undefined;
     onToggle: (index: number, enabled: boolean) => void;
     onDragStart: (index: number) => void;
     onDragOver: (e: React.DragEvent, index: number) => void;
@@ -406,9 +407,9 @@ function ProviderSettings({ providers, draggedIndex, onToggle, onDragStart, onDr
 
 interface MessagingViewProps {
     activeTabs: AiTab[];
-    selectedTab: AiTab | null;
+    selectedTab: AiTab | undefined;
     messageText: string;
-    onSelectTab: (tab: AiTab | null) => void;
+    onSelectTab: (tab: AiTab | undefined) => void;
     onMessageChange: (text: string) => void;
     onSendMessage: () => void;
     onRefresh: () => void;
@@ -482,7 +483,7 @@ function MessagingView({ activeTabs, selectedTab, messageText, onSelectTab, onMe
 
                             <div className="flex gap-2 justify-end">
                                 <button
-                                    onClick={() => onSelectTab(null)}
+                                    onClick={() => onSelectTab(undefined)}
                                     className="btn btn-ghost btn-sm"
                                 >
                                     Cancel
