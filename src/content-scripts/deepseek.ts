@@ -42,7 +42,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return handleGenerateText(request.prompt, sendResponse, {
             injectText: (prompt: string) => injectText(textareaSelector, prompt),
             findSendButton,
-            pressEnter: () => pressEnter(textareaSelector),
+            pressEnter: () => pressEnter(textareaSelector, false),
             waitForResponse: (initialCount: number) => waitForResponse(initialCount),
             getMessages
         });

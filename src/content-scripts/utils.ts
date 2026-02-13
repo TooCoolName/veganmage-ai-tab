@@ -199,12 +199,12 @@ export function pressShortcut(options: {
 /**
  * Dispatch a Ctrl+Enter keyboard event to trigger message sending
  */
-export function pressEnter(selector: string = 'textarea, div[contenteditable="true"], [role="textbox"]') {
+export function pressEnter(selector: string, ctrlKey: boolean) {
     pressShortcut({
         key: 'Enter',
         code: 'Enter',
         keyCode: 13,
-        ctrlKey: true,
+        ctrlKey,
         selector
     });
 }

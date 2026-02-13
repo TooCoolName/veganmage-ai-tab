@@ -60,7 +60,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return handleGenerateText(request.prompt, sendResponse, {
             injectText: (prompt: string) => injectText('.ql-editor', prompt),
             findSendButton,
-            pressEnter,
+            pressEnter: () => pressEnter('.ql-editor', true),
             waitForResponse: (initialCount: number) => waitForResponse(initialCount),
             getMessages
         });

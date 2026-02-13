@@ -1,4 +1,4 @@
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText, logger } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from './utils';
 
 // Copilot Content Script
 // Handles prompt injection, sending, and response extraction
@@ -49,7 +49,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return handleGenerateText(request.prompt, sendResponse, {
             injectText: (prompt: string) => injectText('textarea, [role="textbox"]', prompt),
             findSendButton,
-            pressEnter,
+            pressEnter: () => pressEnter('textarea, [role="textbox"]', true),
             waitForResponse: (initialCount: number) => waitForResponse(initialCount),
             getMessages
         });
