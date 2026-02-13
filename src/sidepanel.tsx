@@ -296,7 +296,7 @@ function App() {
     }, [loadActiveTabs]);
 
     return (
-        <div className="min-h-screen bg-base-100 p-4 relative">
+        <div className="h-screen bg-base-100 p-4 relative flex flex-col overflow-hidden">
             {/* Status Message */}
             {statusMessage && (
                 <div className="toast toast-top toast-center z-[100]">
@@ -309,7 +309,7 @@ function App() {
                 </div>
             )}
 
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto w-full flex flex-col h-full">
 
                 {/* Header */}
                 <header className="mb-4">
@@ -343,32 +343,36 @@ function App() {
 
                 {/* Provider Settings View */}
                 {activeView === 'providers' && (
-                    <ProviderSettings
-                        providers={providers}
-                        draggedIndex={draggedIndex}
-                        onToggle={handleToggle}
-                        onDragStart={handleDragStart}
-                        onDragOver={handleDragOver}
-                        onDragEnd={handleDragEnd}
-                        onSave={saveProviders}
-                        onReset={resetToDefault}
-                    />
+                    <div className="flex-1 overflow-y-auto min-h-0 p-1">
+                        <ProviderSettings
+                            providers={providers}
+                            draggedIndex={draggedIndex}
+                            onToggle={handleToggle}
+                            onDragStart={handleDragStart}
+                            onDragOver={handleDragOver}
+                            onDragEnd={handleDragEnd}
+                            onSave={saveProviders}
+                            onReset={resetToDefault}
+                        />
+                    </div>
                 )}
 
                 {/* Messaging View */}
                 {activeView === 'messaging' && (
-                    <MessagingView
-                        activeTabs={activeTabs}
-                        selectedTab={selectedTab}
-                        messageText={messageText}
-                        messages={messages}
-                        isSending={isSending}
-                        onSelectTab={setSelectedTab}
-                        onMessageChange={setMessageText}
-                        onSendMessage={sendMessageToTab}
-                        onRefresh={loadActiveTabs}
-                        onNewChat={createNewChat}
-                    />
+                    <div className="flex-1 min-h-0 flex flex-col">
+                        <MessagingView
+                            activeTabs={activeTabs}
+                            selectedTab={selectedTab}
+                            messageText={messageText}
+                            messages={messages}
+                            isSending={isSending}
+                            onSelectTab={setSelectedTab}
+                            onMessageChange={setMessageText}
+                            onSendMessage={sendMessageToTab}
+                            onRefresh={loadActiveTabs}
+                            onNewChat={createNewChat}
+                        />
+                    </div>
                 )}
 
             </div>
@@ -496,9 +500,9 @@ function MessagingView({
     }, [filteredMessages, isSending]);
 
     return (
-        <div className="space-y-4">
+        <div className="flex flex-col h-full gap-4">
             {/* Active Tabs List */}
-            <div className="card bg-base-200 shadow-lg">
+            <div className="card bg-base-200 shadow-lg shrink-0">
                 <div className="card-body p-4">
                     <div className="flex justify-between items-center mb-3">
                         <h2 className="card-title text-lg">
@@ -514,7 +518,7 @@ function MessagingView({
                             <p className="text-sm">No active AI tabs found</p>
                         </div>
                     ) : (
-                        <div className="space-y-1">
+                        <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
                             {activeTabs.map((tab) => (
                                 <div
                                     key={tab.id}
@@ -540,12 +544,12 @@ function MessagingView({
 
             {/* Message History & Composer */}
             {selectedTab && (
-                <div className="card bg-base-200 shadow-lg overflow-hidden">
-                    <div className="card-body p-0">
+                <div className="card bg-base-200 shadow-lg overflow-hidden flex-1 flex flex-col min-h-0">
+                    <div className="card-body p-0 flex flex-col h-full min-h-0">
                         {/* Messages Area */}
                         <div
                             ref={scrollRef}
-                            className="h-[350px] overflow-y-auto p-4 space-y-4 bg-base-100/50 scroll-smooth"
+                            className="flex-1 overflow-y-auto p-4 space-y-4 bg-base-100/50 scroll-smooth min-h-0"
                         >
                             {filteredMessages.length === 0 ? (
                                 <div className="h-full flex items-center justify-center text-base-content/30 italic text-sm">
