@@ -93,6 +93,21 @@ async function runBuild(signal?: AbortSignal) {
             console.warn("⚠️  Warning: ./public folder not found.");
         }
 
+        if (process.argv.includes("--zip")) {
+            console.log("📦 Zipping dist folder...");
+            const zipProc = spawn(["zip", "-r", "veganmageaitab.zip", "."], {
+                cwd: "./dist",
+                stdout: "inherit",
+                stderr: "inherit",
+            });
+            const exitCode = await zipProc.exited;
+            if (exitCode !== 0) {
+                console.error("❌ Zip failed");
+            } else {
+                console.log("✅ Zip created: dist/veganmageaitab.zip");
+            }
+        }
+
         console.log(`✅ Build complete in ${(performance.now() - start).toFixed(2)}ms`);
 
     } catch (err) {

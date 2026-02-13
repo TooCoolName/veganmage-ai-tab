@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "bun run build.ts",
+    "build": "bun run build.ts --zip",
     "watch": "bun run build.ts --watch",
     "lint": "bun eslint .",
     "tc": "tsc --noEmit"
