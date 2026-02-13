@@ -153,9 +153,9 @@ function App() {
     };
 
     // Show status message
-    const showStatus = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    const showStatus = (message: string, type: 'success' | 'error' | 'info') => {
         setStatusMessage({ message, type });
-        setTimeout(() => setStatusMessage(undefined), 3000);
+        setTimeout(() => setStatusMessage(undefined), 5000);
     };
 
     // Handle provider toggle
@@ -296,16 +296,17 @@ function App() {
     }, [loadActiveTabs]);
 
     return (
-        <div className="min-h-screen bg-base-100 p-4">
-            <div className="max-w-4xl mx-auto">
-                {/* Status Message */}
-                {statusMessage && (
-                    <div className="toast toast-top toast-center z-50">
-                        <div className={`alert alert-${statusMessage.type} py-2 px-4 shadow-lg`}>
-                            <span className="text-sm font-medium">{statusMessage.message}</span>
-                        </div>
+        <div className="min-h-screen bg-base-100 p-4 relative">
+            {/* Status Message */}
+            {statusMessage && (
+                <div className="toast toast-top toast-center z-[100]">
+                    <div className={`alert alert-${statusMessage.type} py-8 shadow-lg`}>
+                        <span className="font-medium">{statusMessage.message}</span>
                     </div>
-                )}
+                </div>
+            )}
+
+            <div className="max-w-4xl mx-auto">
 
                 {/* Header */}
                 <header className="mb-4">
