@@ -298,6 +298,15 @@ function App() {
     return (
         <div className="min-h-screen bg-base-100 p-4">
             <div className="max-w-4xl mx-auto">
+                {/* Status Message */}
+                {statusMessage && (
+                    <div className="toast toast-top toast-center z-50">
+                        <div className={`alert alert-${statusMessage.type} py-2 px-4 shadow-lg`}>
+                            <span className="text-sm font-medium">{statusMessage.message}</span>
+                        </div>
+                    </div>
+                )}
+
                 {/* Header */}
                 <header className="mb-4">
                     <div className="flex justify-between items-start">
@@ -358,14 +367,6 @@ function App() {
                     />
                 )}
 
-                {/* Status Message */}
-                {statusMessage && (
-                    <div className="mt-2 text-center">
-                        <div className={`alert alert-${statusMessage.type} py-2 px-4 shadow-sm inline-flex w-auto`}>
-                            <span className="text-sm font-medium">{statusMessage.message}</span>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );
