@@ -20,8 +20,7 @@
     "*://chat.deepseek.com/*"
   ],
   "background": {
-    "service_worker": "background/service-worker.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
   "action": {
     "default_icon": {

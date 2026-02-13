@@ -1,21 +1,13 @@
 import { build, spawn } from "bun";
-import { cp, rm, mkdir, exists, readdir } from "node:fs/promises";
+import { cp, rm, mkdir, exists } from "node:fs/promises";
 import { watch } from "node:fs";
-
 
 const isWatch = process.argv.includes("--watch");
 
-// Helper to get all content scripts
-async function getContentScripts() {
-    const contentScriptsDir = "./src/content-scripts";
-    if (await exists(contentScriptsDir)) {
-        const files = await readdir(contentScriptsDir);
-        return files
-            .filter(f => f.endsWith(".ts") || f.endsWith(".tsx"))
-            .map(f => `./src/content-scripts/${f}`);
-    }
-    return [];
-}
+const tasks = [
+    { entry: "./src/background.ts", name: "background" },
+    { entry: "./src/sidepanel.tsx", name: "sidepanel" },
+];
 
 async function runBuild(signal?: AbortSignal) {
     if (signal?.aborted) throw new Error("Aborted");
@@ -24,30 +16,12 @@ async function runBuild(signal?: AbortSignal) {
 
     try {
         // 1. Build JS/TS
-        const contentScripts = await getContentScripts();
-        const entrypoints = [
-            "./src/background/service-worker.ts",
-            "./src/sidepanel.tsx",
-            ...contentScripts
-        ];
-
-        if (signal?.aborted) throw new Error("Aborted");
-
-        // Check if entrypoints exist
-        const validEntrypoints = [];
-        for (const entry of entrypoints) {
-            if (await exists(entry)) {
-                validEntrypoints.push(entry);
-            } else {
-                console.warn(`⚠️  Warning: Entrypoint not found: ${entry}`);
-            }
-        }
-
-        if (validEntrypoints.length > 0) {
+        for (const task of tasks) {
+            if (signal?.aborted) throw new Error("Aborted");
             const result = await build({
-                entrypoints: validEntrypoints,
+                entrypoints: [task.entry],
                 outdir: "./dist",
-                root: "./src", // This ensures output structure mirrors src
+                naming: "[name].js", // Ensures names stay clean
                 target: "browser",
                 minify: !isWatch,
                 define: {
@@ -56,7 +30,7 @@ async function runBuild(signal?: AbortSignal) {
             });
 
             if (!result.success) {
-                console.error(`❌ Build failed:`);
+                console.error(`❌ Build failed for entrypoint: ${task.name}`);
                 for (const log of result.logs) {
                     console.error(log);
                 }
@@ -67,71 +41,52 @@ async function runBuild(signal?: AbortSignal) {
 
         // 2. Build CSS (Tailwind)
         if (signal?.aborted) throw new Error("Aborted");
+        // We output directly to dist. Make sure sidepanel.html links to "sidepanel.css"
+        const tailwindProc = spawn([
+            "bun",
+            "tailwindcss",
+            "-i", "./src/sidepanel.css",
+            "-o", "./dist/sidepanel.css",
+            ...(isWatch ? [] : ["--minify"])
+        ], {
+            stdout: "inherit",
+            stderr: "inherit",
+        });
 
-        // Check if sidepanel.css exists in root or src
-        let cssInput = "./src/sidepanel.css";
-        if (await exists("./sidepanel.css")) {
-            cssInput = "./sidepanel.css";
-        }
+        const abortHandler = () => tailwindProc.kill();
+        signal?.addEventListener("abort", abortHandler);
 
-        if (await exists(cssInput)) {
-            const tailwindProc = spawn([
-                "bun",
-                "tailwindcss",
-                "-i", cssInput,
-                "-o", "./dist/sidepanel.css",
-                ...(isWatch ? [] : ["--minify"])
-            ], {
-                stdout: "inherit",
-                stderr: "inherit",
-            });
-
-            const abortHandler = () => tailwindProc.kill();
-            signal?.addEventListener("abort", abortHandler);
-
-            try {
-                await tailwindProc.exited;
-            } finally {
-                signal?.removeEventListener("abort", abortHandler);
-            }
-        } else {
-            console.warn(`⚠️  Warning: CSS input ${cssInput} not found.`);
+        try {
+            await tailwindProc.exited;
+        } finally {
+            signal?.removeEventListener("abort", abortHandler);
         }
 
         if (signal?.aborted) throw new Error("Aborted");
 
         // 3. Sync Public Assets
+        // This copies everything (manifest.json, icons, html) in one go
         if (await exists("./public")) {
             await cp("./public", "./dist", { recursive: true });
-        }
 
-        // Sync root assets that should be in dist
-        if (await exists("./icons")) {
-            await cp("./icons", "./dist/icons", { recursive: true });
-        }
-        if (await exists("./sidepanel.html")) {
-            await cp("./sidepanel.html", "./dist/sidepanel.html");
-        }
+            // Copy the correct manifest based on environment
+            const manifestSource = isWatch ? "manifest.dev.json" : "manifest.prod.json";
+            if (await exists(`./public/${manifestSource}`)) {
+                await cp(`./public/${manifestSource}`, "./dist/manifest.json");
+                console.log(`📄 Using ${manifestSource}`);
+            }
 
-        // 4. Handle Manifest
-        const manifestName = isWatch ? "manifest.dev.json" : "manifest.prod.json";
-        // Check public first, then root
-        let manifestSrc = `./public/${manifestName}`;
-        if (!await exists(manifestSrc)) {
-            manifestSrc = `./${manifestName}`;
-        }
-
-        if (await exists(manifestSrc)) {
-            await cp(manifestSrc, "./dist/manifest.json");
-            console.log(`✅ Using ${manifestName}`);
+            // Cleanup extra manifest files from dist
+            const extraManifests = ["manifest.dev.json", "manifest.prod.json"];
+            for (const manifest of extraManifests) {
+                const path = `./dist/${manifest}`;
+                if (await exists(path)) {
+                    await rm(path);
+                }
+            }
         } else {
-            console.warn(`⚠️  Warning: ${manifestName} not found.`);
+            console.warn("⚠️  Warning: ./public folder not found.");
         }
-
-        // Clean up dev/prod manifests from dist if they were copied from public
-        if (await exists("./dist/manifest.dev.json")) await rm("./dist/manifest.dev.json");
-        if (await exists("./dist/manifest.prod.json")) await rm("./dist/manifest.prod.json");
-
 
         console.log(`✅ Build complete in ${(performance.now() - start).toFixed(2)}ms`);
 
@@ -200,11 +155,7 @@ if (isWatch) {
         timeout = setTimeout(triggerBuild, 200);
     };
 
-    // Watch source code, public assets, and root assets
+    // Watch both source code and public assets
     watch("./src", { recursive: true }, watcher);
-    if (await exists("./public")) watch("./public", { recursive: true }, watcher);
-    // Also watch root files if needed, but recursive watch on root is bad due to node_modules
-    // Maybe just watch specific root files?
-    watch("./sidepanel.html", watcher);
-    watch("./sidepanel.css", watcher);
+    watch("./public", { recursive: true }, watcher);
 }
