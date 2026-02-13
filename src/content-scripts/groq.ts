@@ -1,4 +1,4 @@
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText } from './utils';
+import { waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText } from './utils';
 
 // Groq Content Script
 // Handles prompt injection, sending, and response extraction
@@ -67,12 +67,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
         getMessages: () => document.querySelectorAll('main.grow > .flex'),
-        // Check if generating by looking for a Stop button
-        isGenerating: (_el: Element) => {
-            const stopBtn = document.querySelector('button[aria-label="Stop generating"], button[aria-label="Stop"]');
-            return !!stopBtn;
+        isGenerating: (el: Element) => {
+            return !el.querySelector('button');
         },
-        extractText: getMessageText,
+        extractText: (el: Element) => {
+            const content = el.children[1];
+            return content ? (content as HTMLElement).innerText : '';
+        },
         initialCount
     });
 }
