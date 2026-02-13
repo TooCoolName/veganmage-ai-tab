@@ -17,7 +17,8 @@
         "*://claude.ai/*",
         "*://gemini.google.com/*",
         "*://grok.com/*",
-        "*://chat.deepseek.com/*"
+        "*://chat.deepseek.com/*",
+        "*://chat.groq.com/*"
     ],
     "background": {
         "service_worker": "background.js"
@@ -89,6 +90,16 @@
             ],
             "js": [
                 "content-scripts/grok.js"
+            ],
+            "run_at": "document_end",
+            "all_frames": true
+        },
+        {
+            "matches": [
+                "https://chat.groq.com/*"
+            ],
+            "js": [
+                "content-scripts/groq.js"
             ],
             "run_at": "document_end",
             "all_frames": true

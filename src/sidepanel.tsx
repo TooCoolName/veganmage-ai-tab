@@ -34,7 +34,8 @@ const DEFAULT_PROVIDERS: Provider[] = [
     { id: 'gemini', name: 'Gemini', url: 'https://gemini.google.com', enabled: true },
     { id: 'copilot', name: 'Copilot', url: 'https://copilot.microsoft.com', enabled: true },
     { id: 'deepseek', name: 'DeepSeek', url: 'https://chat.deepseek.com', enabled: true },
-    { id: 'grok', name: 'Grok', url: 'https://grok.com', enabled: true }
+    { id: 'grok', name: 'Grok', url: 'https://grok.com', enabled: true },
+    { id: 'groq', name: 'Groq', url: 'https://chat.groq.com', enabled: true }
 ];
 
 const STORAGE_KEY = 'providerSettings';
@@ -102,7 +103,8 @@ function App() {
                     url.includes('copilot.microsoft.com') ||
                     url.includes('bing.com/chat') ||
                     url.includes('chat.deepseek.com') ||
-                    url.includes('grok.com');
+                    url.includes('grok.com') ||
+                    url.includes('chat.groq.com');
             }).map(tab => {
                 let provider = 'unknown';
                 const url = tab.url ?? '';
@@ -111,6 +113,7 @@ function App() {
                 else if (url.includes('copilot.microsoft.com') || url.includes('bing.com/chat')) provider = 'copilot';
                 else if (url.includes('chat.deepseek.com')) provider = 'deepseek';
                 else if (url.includes('grok.com')) provider = 'grok';
+                else if (url.includes('chat.groq.com')) provider = 'groq';
 
                 // Find provider name safely
                 const providerObj = providers.find(p => p.id === provider);
