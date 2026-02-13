@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Vegan Mage AI tabs",
+  "name": "Vegan Mage AI tab",
   "version": "1.1",
   "description": "Extension of Vegan Mage for enhanced workflows automating LLM providers chat exchange.",
   "permissions": [
@@ -9,7 +9,7 @@
     "sidePanel"
   ],
   "action": {
-    "default_title": "Vegan Mage AI tabs"
+    "default_title": "Vegan Mage AI tab"
   },
   "side_panel": {
     "default_path": "sidepanel.html"
