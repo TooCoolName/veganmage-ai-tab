@@ -1,4 +1,4 @@
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText, logger } from './utils';
 
 // Copilot Content Script
 // Handles prompt injection, sending, and response extraction
@@ -15,7 +15,11 @@ function findSendButton() {
 
 // Function to create a new chat by clicking the "Start new chat" button
 function createNewChat() {
-    const newChatButton = document.querySelector('button[aria-label="Start new chat"]') as HTMLElement;
+    const buttons = document.querySelectorAll('.pointer-events-none button');
+    if (!buttons?.[2]) {
+        return undefined
+    }
+    const newChatButton = buttons[2] as HTMLElement;
     if (newChatButton) {
         newChatButton.click();
         console.log('New chat created via button click');
