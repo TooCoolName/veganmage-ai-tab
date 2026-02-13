@@ -20,6 +20,14 @@ interface StatusMessage {
     type: 'success' | 'error' | 'info';
 }
 
+interface Message {
+    id: string;
+    tabId: number;
+    text: string;
+    role: 'user' | 'assistant';
+    timestamp: number;
+}
+
 // Default provider configuration
 const DEFAULT_PROVIDERS: Provider[] = [
     { id: 'chatgpt', name: 'ChatGPT', url: 'https://chatgpt.com', enabled: true },
@@ -40,6 +48,8 @@ function App() {
     const [activeView, setActiveView] = useState<'providers' | 'messaging'>('providers');
     const [messageText, setMessageText] = useState<string>('');
     const [selectedTab, setSelectedTab] = useState<AiTab | undefined>(undefined);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [isSending, setIsSending] = useState<boolean>(false);
     const [draggedIndex, setDraggedIndex] = useState<number | undefined>(undefined);
 
     // Apply theme to body
@@ -203,18 +213,45 @@ function App() {
             return;
         }
 
+        const prompt = messageText;
+        const currentTabId = selectedTab.id;
+
+        // Add user message to state
+        const userMsg: Message = {
+            id: crypto.randomUUID(),
+            tabId: currentTabId,
+            text: prompt,
+            role: 'user',
+            timestamp: Date.now()
+        };
+        setMessages(prev => [...prev, userMsg]);
+        setMessageText('');
+        setIsSending(true);
+
         try {
-            const response = await chrome.tabs.sendMessage(selectedTab.id, {
+            const result = await chrome.tabs.sendMessage(currentTabId, {
                 action: 'generate_text',
-                prompt: messageText
+                prompt: prompt
             });
 
-            showStatus('Message sent', 'success');
-            setMessageText('');
-            console.log('Response:', response);
+            if (result?.success) {
+                const assistantMsg: Message = {
+                    id: crypto.randomUUID(),
+                    tabId: currentTabId,
+                    text: result.response,
+                    role: 'assistant',
+                    timestamp: Date.now()
+                };
+                setMessages(prev => [...prev, assistantMsg]);
+                showStatus('Response received', 'success');
+            } else {
+                showStatus(`Failed: ${result?.error ?? 'Unknown error'}`, 'error');
+            }
         } catch (error) {
             console.error('Error sending message:', error);
             showStatus(`Failed: ${(error as Error).message}`, 'error');
+        } finally {
+            setIsSending(false);
         }
     };
 
@@ -311,6 +348,8 @@ function App() {
                         activeTabs={activeTabs}
                         selectedTab={selectedTab}
                         messageText={messageText}
+                        messages={messages}
+                        isSending={isSending}
                         onSelectTab={setSelectedTab}
                         onMessageChange={setMessageText}
                         onSendMessage={sendMessageToTab}
@@ -414,6 +453,8 @@ interface MessagingViewProps {
     activeTabs: AiTab[];
     selectedTab: AiTab | undefined;
     messageText: string;
+    messages: Message[];
+    isSending: boolean;
     onSelectTab: (tab: AiTab | undefined) => void;
     onMessageChange: (text: string) => void;
     onSendMessage: () => void;
@@ -422,7 +463,33 @@ interface MessagingViewProps {
 }
 
 // Messaging View Component
-function MessagingView({ activeTabs, selectedTab, messageText, onSelectTab, onMessageChange, onSendMessage, onRefresh, onNewChat }: MessagingViewProps) {
+function MessagingView({
+    activeTabs,
+    selectedTab,
+    messageText,
+    messages,
+    isSending,
+    onSelectTab,
+    onMessageChange,
+    onSendMessage,
+    onRefresh,
+    onNewChat
+}: MessagingViewProps) {
+    // eslint-disable-next-line no-restricted-syntax
+    const scrollRef = React.useRef<HTMLDivElement>(null);
+
+    // Show only the last exchange (user prompt + AI response)
+    const filteredMessages = messages
+        .filter(m => m.tabId === selectedTab?.id)
+        .slice(-2);
+
+    // Auto-scroll to bottom
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [filteredMessages, isSending]);
+
     return (
         <div className="space-y-4">
             {/* Active Tabs List */}
@@ -466,55 +533,104 @@ function MessagingView({ activeTabs, selectedTab, messageText, onSelectTab, onMe
                 </div>
             </div>
 
-            {/* Message Composer */}
-            <div className="card bg-base-200 shadow-lg">
-                <div className="card-body p-4">
-                    <h2 className="card-title text-lg mb-2">
-                        Message
-                    </h2>
+            {/* Message History & Composer */}
+            {selectedTab && (
+                <div className="card bg-base-200 shadow-lg overflow-hidden">
+                    <div className="card-body p-0">
+                        {/* Messages Area */}
+                        <div
+                            ref={scrollRef}
+                            className="h-[350px] overflow-y-auto p-4 space-y-4 bg-base-100/50 scroll-smooth"
+                        >
+                            {filteredMessages.length === 0 ? (
+                                <div className="h-full flex items-center justify-center text-base-content/30 italic text-sm">
+                                    No messages yet for this tab
+                                </div>
+                            ) : (
+                                filteredMessages.map((msg) => (
+                                    <div
+                                        key={msg.id}
+                                        className={`chat ${msg.role === 'user' ? 'chat-end' : 'chat-start'}`}
+                                    >
+                                        <div className="chat-header opacity-50 text-[10px] mb-1">
+                                            {msg.role === 'user' ? 'You' : selectedTab.providerName}
+                                        </div>
+                                        <div className={`chat-bubble text-sm ${msg.role === 'user'
+                                            ? 'chat-bubble-primary'
+                                            : 'chat-bubble-base-300'
+                                            }`}>
+                                            {msg.text}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                            {isSending && (
+                                <div className="chat chat-start">
+                                    <div className="chat-header opacity-50 text-[10px] mb-1">
+                                        {selectedTab.providerName}
+                                    </div>
+                                    <div className="chat-bubble chat-bubble-base-300 opacity-70">
+                                        <span className="loading loading-dots loading-sm"></span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
-                    {selectedTab ? (
-                        <div className="space-y-3">
-                            <div className="text-xs bg-info/10 p-2 rounded border border-info/20">
-                                Sending to: <span className="font-bold">{selectedTab.title}</span>
-                            </div>
+                        {/* Composer Area */}
+                        <div className="p-4 bg-base-200 border-t border-base-300">
+                            <div className="flex flex-col gap-3">
+                                <textarea
+                                    className="textarea textarea-bordered w-full h-20 text-sm"
+                                    placeholder="Enter message..."
+                                    value={messageText}
+                                    onChange={(e) => onMessageChange(e.target.value)}
+                                    disabled={isSending}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                                            onSendMessage();
+                                        }
+                                    }}
+                                />
 
-                            <textarea
-                                className="textarea textarea-bordered w-full h-24 text-sm"
-                                placeholder="Enter message..."
-                                value={messageText}
-                                onChange={(e) => onMessageChange(e.target.value)}
-                            />
-
-                            <div className="flex gap-2 justify-end">
-                                <button
-                                    onClick={() => onSelectTab(undefined)}
-                                    className="btn btn-ghost btn-sm"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={onNewChat}
-                                    className="btn btn-secondary btn-sm"
-                                >
-                                    New Chat
-                                </button>
-                                <button
-                                    onClick={onSendMessage}
-                                    disabled={!messageText.trim()}
-                                    className="btn btn-primary btn-sm"
-                                >
-                                    Send
-                                </button>
+                                <div className="flex gap-2 justify-between items-center">
+                                    <div className="text-[10px] opacity-50">
+                                        Ctrl+Enter to send
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => onSelectTab(undefined)}
+                                            className="btn btn-ghost btn-xs"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={onNewChat}
+                                            className="btn btn-secondary btn-xs"
+                                        >
+                                            New Chat
+                                        </button>
+                                        <button
+                                            onClick={onSendMessage}
+                                            disabled={!messageText.trim() || isSending}
+                                            className={`btn btn-primary btn-xs ${isSending ? 'loading' : ''}`}
+                                        >
+                                            {isSending ? 'Sending...' : 'Send'}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    ) : (
-                        <div className="text-center py-4 text-base-content/50">
-                            <p className="text-sm">Select a tab to compose</p>
-                        </div>
-                    )}
+                    </div>
                 </div>
-            </div>
+            )}
+
+            {!selectedTab && (
+                <div className="card bg-base-200 shadow-lg">
+                    <div className="card-body p-8 items-center text-center text-base-content/50">
+                        <p className="text-sm">Select a tab from the list above to start messaging</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
