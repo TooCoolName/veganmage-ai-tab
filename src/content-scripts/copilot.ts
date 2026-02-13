@@ -57,7 +57,7 @@ function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
         getMessages: () => document.querySelectorAll('.group\\/ai-message'),
         isGenerating: (el: Element) => {
-            return !!el.querySelector('button');
+            return !el.querySelector('button');
         },
         extractText: (el: Element) => {
             // Check if this is a group/ai-message container

@@ -65,7 +65,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
         getMessages: () => document.querySelectorAll('.message-bubble'),
-        isGenerating: (el: Element) => !!el.parentElement?.querySelector('button'),
+        isGenerating: (el: Element) => !el.parentElement?.querySelector('button'),
         extractText: getMessageText,
         initialCount
     });

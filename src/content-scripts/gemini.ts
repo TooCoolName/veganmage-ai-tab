@@ -71,7 +71,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
         getMessages: () => document.querySelectorAll('.response-container'),
-        isGenerating: (el: Element) => !!el.querySelector('button'),
+        isGenerating: (el: Element) => !el.querySelector('button'),
         extractText: (el) => getMessageText(el.querySelector('.model-response-text') ?? undefined),
         initialCount
     });

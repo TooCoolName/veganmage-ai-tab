@@ -55,7 +55,7 @@ function waitForResponse(initialCount?: number) {
         getMessages: () => document.querySelectorAll('.ds-message'),
         isGenerating: (el: Element) => {
             // Check if any element with role="button" exists within the message container
-            return !!el.parentElement?.querySelector('[role="button"]');
+            return !el.parentElement?.querySelector('[role="button"]');
         },
         extractText: getMessageText,
         initialCount
