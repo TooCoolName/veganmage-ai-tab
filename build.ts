@@ -5,8 +5,13 @@ import { watch } from "node:fs";
 const isWatch = process.argv.includes("--watch");
 
 const tasks = [
-    { entry: "./src/background.ts", name: "background" },
-    { entry: "./src/sidepanel.tsx", name: "sidepanel" },
+    { entry: "./src/background.ts", out: "." },
+    { entry: "./src/sidepanel.tsx", out: "." },
+    { entry: "./src/content-scripts/chatgpt.ts", out: "content-scripts" },
+    { entry: "./src/content-scripts/copilot.ts", out: "content-scripts" },
+    { entry: "./src/content-scripts/deepseek.ts", out: "content-scripts" },
+    { entry: "./src/content-scripts/gemini.ts", out: "content-scripts" },
+    { entry: "./src/content-scripts/grok.ts", out: "content-scripts" },
 ];
 
 async function runBuild(signal?: AbortSignal) {
@@ -20,7 +25,7 @@ async function runBuild(signal?: AbortSignal) {
             if (signal?.aborted) throw new Error("Aborted");
             const result = await build({
                 entrypoints: [task.entry],
-                outdir: "./dist",
+                outdir: `./dist/${task.out}`,
                 naming: "[name].js", // Ensures names stay clean
                 target: "browser",
                 minify: !isWatch,
@@ -30,7 +35,7 @@ async function runBuild(signal?: AbortSignal) {
             });
 
             if (!result.success) {
-                console.error(`❌ Build failed for entrypoint: ${task.name}`);
+                console.error(`❌ Build failed for entrypoint: ${task.entry}`);
                 for (const log of result.logs) {
                     console.error(log);
                 }

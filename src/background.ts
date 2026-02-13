@@ -251,3 +251,9 @@ async function executeProviderRequest(tabId: number, prompt: string) {
   });
   return response;
 }
+
+console.log("Vegan Mage extension loaded");
+
+chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((error) => console.error(error));
