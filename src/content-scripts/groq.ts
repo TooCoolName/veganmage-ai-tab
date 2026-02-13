@@ -51,7 +51,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'generate_text') {
         // Groq usually has messages in divs. We need to find the container. 
         // This selector is a guess and should be refined.
-        const getMessages = () => document.querySelectorAll('main.grow > .flex');
+        const getMessages = () => document.querySelectorAll('main .grow > .flex');
 
         return handleGenerateText(request.prompt, sendResponse, {
             injectText: (prompt: string) => injectText('#chat', prompt),
@@ -66,7 +66,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Helper to wait for response completion
 function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
-        getMessages: () => document.querySelectorAll('main.grow > .flex'),
+        getMessages: () => document.querySelectorAll('main .grow > .flex'),
         isGenerating: (el: Element) => {
             return !el.querySelector('button');
         },
