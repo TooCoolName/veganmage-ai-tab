@@ -1,4 +1,4 @@
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText, pressShortcut } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText, pressShortcut, logger } from './utils';
 
 // Gemini Content Script
 // Handles prompt injection, sending, and response extraction
@@ -37,7 +37,7 @@ function createNewChat() {
         shiftKey: true
     });
 
-    console.log('Triggered Ctrl+Shift+O for new chat');
+    logger.info('Triggered native new chat shortcut');
     return true;
 }
 

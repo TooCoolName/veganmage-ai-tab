@@ -3,6 +3,26 @@
  */
 
 /**
+ * Logger utility that sends logs to the background script
+ */
+export const logger = {
+    info: (msg: string, params?: Record<string, unknown>) => sendLog('info', msg, params),
+    warn: (msg: string, params?: Record<string, unknown>) => sendLog('warn', msg, params),
+    error: (msg: string, params?: Record<string, unknown>) => sendLog('error', msg, params),
+    debug: (msg: string, params?: Record<string, unknown>) => sendLog('debug', msg, params),
+};
+
+function sendLog(level: string, msg: string, params?: Record<string, unknown>) {
+    chrome.runtime.sendMessage({
+        action: 'log',
+        payload: { level, msg, ...params }
+    }).catch(() => {
+        // Fallback to console if background logger fails
+        console.log(`[${level.toUpperCase()}] ${msg}`, params ?? '');
+    });
+}
+
+/**
  * Get text content from an element, preferring innerText to preserve line breaks
  */
 export function getMessageText(element: Element | undefined): string {
@@ -39,16 +59,21 @@ export function waitForResponse({
     minStableIterations = 2,
     initialCount: providedInitialCount
 }: WaitForResponseOptions): Promise<string> {
+    const initialCount = providedInitialCount ?? getMessages().length;
+    logger.debug('waitForResponse started', { initialCount, timeout, providedInitialCount });
+
     return new Promise((resolve, reject) => {
-        const initialCount = providedInitialCount ?? getMessages().length;
         const startTime = Date.now();
 
         let lastText = "";
         let stableIterations = 0;
+        let detectedNewMessage = false;
 
         const interval = setInterval(() => {
-            if (Date.now() - startTime > timeout) {
+            const elapsed = Date.now() - startTime;
+            if (elapsed > timeout) {
                 clearInterval(interval);
+                logger.error('Response generation timed out', { elapsed, timeout });
                 reject(new Error('Response generation timed out'));
                 return;
             }
@@ -56,11 +81,22 @@ export function waitForResponse({
             const messages = getMessages();
 
             // 1. Wait for new message container
-            if (messages.length <= initialCount) return;
+            if (messages.length <= initialCount) {
+                logger.debug('Initial count not exceeded', { count: messages.length });
+                return;
+            }
+
+            if (!detectedNewMessage) {
+                detectedNewMessage = true;
+                logger.debug('New message detected', { count: messages.length });
+            }
 
             // 2. Check if still generating
             const lastMsg = messages[messages.length - 1];
             if (isGenerating(lastMsg)) {
+                if (stableIterations > 0) {
+                    logger.debug('AI resumed generating');
+                }
                 stableIterations = 0;
                 lastText = extractText(lastMsg);
                 return;
@@ -72,8 +108,12 @@ export function waitForResponse({
             if (currentText.length > 0) {
                 if (currentText === lastText) {
                     stableIterations++;
+                    if (stableIterations === 1) {
+                        logger.debug('Response text stable, checking for finality', { textLength: currentText.length });
+                    }
                     if (stableIterations >= minStableIterations) {
                         clearInterval(interval);
+                        logger.debug('Response stable and complete', { iterations: stableIterations, textLength: currentText.length });
                         resolve(currentText);
                     }
                 } else {
@@ -82,7 +122,7 @@ export function waitForResponse({
                 }
             } else if (lastText.length > 0) {
                 // If text becomes empty after being non-empty, something is wrong or it's resetting
-                // but we usually want to wait for stability of non-empty text.
+                logger.warn('Response text became empty after being non-empty');
             }
         }, checkInterval);
     });
@@ -191,23 +231,26 @@ export function handleGenerateText(
     setTimeout(() => {
         // 1. Capture initial message count BEFORE any action    
         const initialCount = options.getMessages().length;
-        console.log(`Initial message count: ${initialCount}`);
+        logger.debug('Initial message count', { initialCount });
 
         const sendButton = options.findSendButton();
         if (sendButton) {
             sendButton.click();
-            console.log('Clicked send button');
+            logger.info('Clicked send button');
         } else {
             // Fallback to Ctrl+Enter
             options.pressEnter();
+            logger.info('Dispatched Enter shortcut as fallback');
         }
         // 3. Wait for response (1s delay before checking to allow UI to update)
         setTimeout(() => {
             options.waitForResponse(initialCount)
                 .then(response => {
+                    logger.info('Response received successfully');
                     sendResponse({ success: true, response: response });
                 })
                 .catch(error => {
+                    logger.error('Error waiting for response', { error: error.message });
                     sendResponse({ success: false, error: error.message });
                 });
         }, 1000);

@@ -1,5 +1,14 @@
+import pino from 'pino';
+
 // T071: Tab Registry - We use a helper instead of a global object
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
+
+const logger = pino({
+  browser: {
+    asObject: true
+  },
+  level: 'debug'
+});
 
 interface Registry {
   [key: string]: number[];
@@ -75,7 +84,7 @@ async function updateTabRegistry(tabId: number, url: string | undefined, remove 
 
   if (changed) {
     await saveRegistry(registry);
-    console.log('Registry updated:', registry);
+    logger.info({ registry }, 'Registry updated');
   }
 }
 
@@ -127,6 +136,34 @@ chrome.runtime.onMessageExternal.addListener((message: ExternalMessage, sender, 
     .catch(error => sendResponse({ success: false, error: error.message }));
 
   return true;
+});
+
+// Internal message listener for features like logging
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'log') {
+    const { level = 'info', msg, ...params } = message.payload ?? {};
+    const source = sender.tab ? `tab:${sender.tab.id}` : 'internal';
+
+    const payload = { ...params, source };
+    switch (level) {
+      case 'error': logger.error(payload, msg); break;
+      case 'warn': logger.warn(payload, msg); break;
+      case 'debug': logger.debug(payload, msg); break;
+      default: logger.info(payload, msg); break;
+    }
+
+    sendResponse({ success: true });
+    return true; // Keep channel open
+  }
+
+  // Handle other internal messages if necessary
+  if (message.action === 'provider_settings_updated') {
+    logger.info('Provider settings updated from sidepanel');
+    sendResponse({ success: true });
+    return false;
+  }
+
+  return false;
 });
 
 async function handleExternalMessage(message: ExternalMessage) {
@@ -207,7 +244,7 @@ async function findAvailableProviderTabInternal() {
           }
 
         } catch (e) {
-          console.log(`Tab ${tabId} for ${provider} is not available: ${(e as Error).message}`);
+          logger.warn({ tabId, provider, error: (e as Error).message }, 'Tab is not available');
           registryChanged = true;
           // Do not add to activeTabs, effectively removing it
         }
@@ -252,7 +289,7 @@ async function executeProviderRequest(tabId: number, prompt: string) {
   return response;
 }
 
-console.log("Vegan Mage extension loaded");
+logger.info("Vegan Mage extension loaded");
 
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
