@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // Interfaces
@@ -48,17 +48,17 @@ function App() {
     }, [theme]);
 
     // Load providers from storage
-    const loadProviders = async () => {
+    const loadProviders = useCallback(async () => {
         try {
             const result = await chrome.storage.local.get(STORAGE_KEY);
-            const loadedProviders: Provider[] = result[STORAGE_KEY] || [...DEFAULT_PROVIDERS];
+            const loadedProviders: Provider[] = result[STORAGE_KEY] ?? [...DEFAULT_PROVIDERS];
 
             // Migration: Ensure URLs exist and icons are removed if they were saved before
             const updatedProviders = loadedProviders.map(p => {
                 const defaultP = DEFAULT_PROVIDERS.find(dp => dp.id === p.id);
                 return {
                     ...p,
-                    url: p.url || defaultP?.url || '',
+                    url: p.url ?? defaultP?.url ?? '',
                     icon: undefined // Explicitly remove icon
                 };
             });
@@ -68,20 +68,20 @@ function App() {
             console.error('Error loading providers:', error);
             setProviders([...DEFAULT_PROVIDERS]);
         }
-    };
+    }, []);
 
     // Load theme from storage
-    const loadTheme = async () => {
+    const loadTheme = useCallback(async () => {
         try {
             const result = await chrome.storage.local.get('theme');
             setTheme(result.theme ?? 'custom-light');
         } catch (error) {
             console.error('Error loading theme:', error);
         }
-    };
+    }, []);
 
     // Load active tabs
-    const loadActiveTabs = async () => {
+    const loadActiveTabs = useCallback(async () => {
         try {
             const tabs = await chrome.tabs.query({});
             const aiTabs = tabs.filter(tab => {
@@ -116,7 +116,7 @@ function App() {
         } catch (error) {
             console.error('Error loading tabs:', error);
         }
-    };
+    }, [providers]);
 
     // Save providers to storage
     const saveProviders = async () => {
@@ -244,14 +244,19 @@ function App() {
 
     // Load providers and tabs on mount
     useEffect(() => {
-        loadProviders();
-        loadTheme();
-        loadActiveTabs();
+        const init = async () => {
+            await loadProviders();
+            await loadTheme();
+            await loadActiveTabs();
+        };
+        init();
+    }, [loadProviders, loadTheme, loadActiveTabs]);
 
-        // Refresh tabs every 5 seconds
+    // Refresh tabs periodically
+    useEffect(() => {
         const interval = setInterval(loadActiveTabs, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [loadActiveTabs]);
 
     return (
         <div className="min-h-screen bg-base-100 p-4">

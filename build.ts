@@ -1,7 +1,7 @@
 import { build, spawn } from "bun";
 import { cp, rm, mkdir, exists, readdir } from "node:fs/promises";
 import { watch } from "node:fs";
-import { join } from "node:path";
+
 
 const isWatch = process.argv.includes("--watch");
 
