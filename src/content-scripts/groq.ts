@@ -1,4 +1,4 @@
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText, pressShortcut } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText } from './utils';
 
 // Groq Content Script
 // Handles prompt injection, sending, and response extraction
@@ -23,28 +23,14 @@ function findSendButton() {
 
 // Function to create a new chat - assuming standard shortcuts or button
 function createNewChat() {
-    // Try to find a "New Chat" button first
-    const buttons = document.querySelectorAll('button, a');
-    for (const btn of buttons) {
-        if ((btn.textContent?.includes('New Chat') || btn.getAttribute('aria-label')?.includes('New Chat'))) {
-            (btn as HTMLElement).click();
-            console.log('Clicked New Chat button');
-            return true;
-        }
+    const buttons = document.querySelectorAll('main .grow button');
+    if (buttons.length > 0) {
+        (buttons[0] as HTMLElement).click();
+        console.log('Clicked New Chat button');
+        return true;
     }
 
-    // Fallback to URL navigation if supported/needed, or keyboard shortcut if known. 
-    // For now, let's try a common shortcut or just log not found.
-    console.log('New Chat button not found, attempting generic shortcut');
-    // Many apps use Ctrl+J or Ctrl+O. Let's try Ctrl+O as a fallback similar to others
-    pressShortcut({
-        key: 'o',
-        code: 'KeyO',
-        keyCode: 79,
-        ctrlKey: true,
-        metaKey: true // Cmd+O on mac often
-    });
-
+    console.log('New Chat button not found');
     return false;
 }
 
@@ -65,12 +51,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'generate_text') {
         // Groq usually has messages in divs. We need to find the container. 
         // This selector is a guess and should be refined.
-        const getMessages = () => document.querySelectorAll('.message, [data-testid="message"], .prose');
+        const getMessages = () => document.querySelectorAll('main.grow > .flex');
 
         return handleGenerateText(request.prompt, sendResponse, {
-            injectText: (prompt: string) => injectText('textarea, [role="textbox"]', prompt),
+            injectText: (prompt: string) => injectText('#chat', prompt),
             findSendButton,
-            pressEnter: () => pressEnter('textarea, [role="textbox"]', true),
+            pressEnter: () => pressEnter('#chat', true),
             waitForResponse: (initialCount: number) => waitForResponse(initialCount),
             getMessages
         });
@@ -80,9 +66,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Helper to wait for response completion
 function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
-        getMessages: () => document.querySelectorAll('.message, [data-testid="message"], .prose'),
+        getMessages: () => document.querySelectorAll('main.grow > .flex'),
         // Check if generating by looking for a Stop button
-        isGenerating: (el: Element) => {
+        isGenerating: (_el: Element) => {
             const stopBtn = document.querySelector('button[aria-label="Stop generating"], button[aria-label="Stop"]');
             return !!stopBtn;
         },
