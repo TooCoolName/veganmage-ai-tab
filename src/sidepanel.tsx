@@ -300,7 +300,10 @@ function App() {
             {/* Status Message */}
             {statusMessage && (
                 <div className="toast toast-top toast-center z-[100]">
-                    <div className={`alert alert-${statusMessage.type} py-8 shadow-lg`}>
+                    <div className={`alert py-8 shadow-lg ${statusMessage.type === 'success' ? 'alert-success' :
+                        statusMessage.type === 'error' ? 'alert-error' :
+                            'alert-info'
+                        }`}>
                         <span className="font-medium">{statusMessage.message}</span>
                     </div>
                 </div>
