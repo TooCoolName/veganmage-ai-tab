@@ -82,20 +82,31 @@ export function waitForResponse({
 
             // 1. Wait for new message container
             if (messages.length <= initialCount) {
-                logger.debug('Initial count not exceeded', { count: messages.length });
                 return;
             }
 
+            const lastMsg = messages[messages.length - 1];
+
             if (!detectedNewMessage) {
                 detectedNewMessage = true;
-                logger.debug('New message detected', { count: messages.length });
+                const generating = isGenerating(lastMsg);
+                const text = extractText(lastMsg);
+                logger.debug('New message detected', {
+                    count: messages.length,
+                    isGenerating: generating,
+                    textLength: text.length
+                });
             }
 
             // 2. Check if still generating
-            const lastMsg = messages[messages.length - 1];
-            if (isGenerating(lastMsg)) {
+            const generating = isGenerating(lastMsg);
+
+            if (generating) {
                 if (stableIterations > 0) {
-                    logger.debug('AI resumed generating');
+                    logger.debug('AI resumed generating (button found)');
+                }
+                if (elapsed % 5000 < checkInterval) {
+                    logger.debug('AI is still generating...', { elapsed });
                 }
                 stableIterations = 0;
                 lastText = extractText(lastMsg);
@@ -109,20 +120,29 @@ export function waitForResponse({
                 if (currentText === lastText) {
                     stableIterations++;
                     if (stableIterations === 1) {
-                        logger.debug('Response text stable, checking for finality', { textLength: currentText.length });
+                        logger.debug('Response text stable, checking for finality', {
+                            textLength: currentText.length,
+                            preview: currentText.substring(0, 50)
+                        });
                     }
                     if (stableIterations >= minStableIterations) {
                         clearInterval(interval);
-                        logger.debug('Response stable and complete', { iterations: stableIterations, textLength: currentText.length });
+                        logger.info('Response stable and complete', { iterations: stableIterations, textLength: currentText.length });
                         resolve(currentText);
                     }
                 } else {
+                    logger.debug('Text changed', {
+                        oldLength: lastText.length,
+                        newLength: currentText.length
+                    });
                     lastText = currentText;
                     stableIterations = 0;
                 }
-            } else if (lastText.length > 0) {
-                // If text becomes empty after being non-empty, something is wrong or it's resetting
-                logger.warn('Response text became empty after being non-empty');
+            } else {
+                // Text is empty and not generating
+                if (elapsed % 5000 < checkInterval) { // Log every ~5s to not spam
+                    logger.debug('Waiting for text content...', { isGenerating: generating });
+                }
             }
         }, checkInterval);
     });
