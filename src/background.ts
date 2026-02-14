@@ -1,4 +1,6 @@
 import pino from 'pino';
+import { ExternalMessage, ExternalMessageKey, ExternalMessageRequest, ExternalMessageResponse, isExternalMessage } from './schema';
+import { assertNever } from './schema/types';
 
 // T071: Tab Registry - We use a helper instead of a global object
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
@@ -119,24 +121,71 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   updateTabRegistry(tabId, undefined, true);
 });
 
-// --- Message Handling ---
 
-interface ExternalMessage {
-  action?: string;
-  type?: string;
-  prompt?: string;
-  [key: string]: unknown;
-}
 
-chrome.runtime.onMessageExternal.addListener((message: ExternalMessage, sender, sendResponse) => {
-  const action = message.action ?? message.type;
+type Handler<K extends ExternalMessageKey> = (
+  payload: ExternalMessageRequest<K>,
+  sender: chrome.runtime.MessageSender
+) => Promise<ExternalMessageResponse<K>>;
 
-  handleExternalMessage({ ...message, action })
-    .then(sendResponse)
-    .catch(error => sendResponse({ success: false, error: error.message }));
-
-  return true;
+const handlePing: Handler<'ping'> = async () => ({
+  success: true,
+  data: undefined
 });
+
+const handleGenerateText: Handler<'generate_text'> = async (payload) => {
+  try {
+    const { prompt } = payload;
+    if (!prompt) throw new Error('Missing prompt');
+
+    const result = await findAvailableProviderTab();
+    if (!result) throw new Error('No active AI provider tabs found.');
+
+    const { selectedTabId } = result;
+    try {
+      const response = await executeProviderRequest(selectedTabId, prompt);
+      // Assuming the content script returns the text directly as response
+      return { success: true, data: response as string };
+    } finally {
+      activeRequests.delete(selectedTabId);
+    }
+  } catch (error) {
+    console.error('Generate text error:', error);
+    throw error; // Let the main handler catch and format the error
+  }
+};
+
+chrome.runtime.onMessageExternal.addListener((message: unknown, sender, sendResponse) => {
+  // 1. Initial Type Guard
+  if (!isExternalMessage(message)) return false;
+
+  // 2. Encapsulate execution logic
+  handleExternalMessage(message, sender)
+    .then(sendResponse)
+    .catch(err => sendResponse({
+      success: false,
+      error: err instanceof Error ? err.message : 'Internal Error'
+    }));
+
+  return true; // Keep channel open
+});
+
+async function handleExternalMessage(
+  message: ExternalMessage, // Discriminated union
+  sender: chrome.runtime.MessageSender
+) {
+  switch (message.type) {
+    case 'ping':
+      return handlePing(message.payload, sender);
+
+    case 'generate_text': {
+      return handleGenerateText(message.payload, sender);
+    }
+    default: {
+      assertNever(message)
+    }
+  }
+}
 
 // Internal message listener for features like logging
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -165,28 +214,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   return false;
 });
-
-async function handleExternalMessage(message: ExternalMessage) {
-  if (message.action === 'ping') return { success: true, data: undefined };
-
-  if (message.action === 'generate_text') {
-    const { prompt } = message;
-    if (!prompt) throw new Error('Missing prompt');
-
-    const result = await findAvailableProviderTab();
-    if (!result) throw new Error('No active AI provider tabs found.');
-
-    const { selectedTabId } = result;
-    try {
-      const response = await executeProviderRequest(selectedTabId, prompt);
-      return { success: true, data: response };
-    } finally {
-      activeRequests.delete(selectedTabId);
-    }
-  }
-
-  throw new Error(`Unknown action: ${message.action}`);
-}
 
 async function findAvailableProviderTab() {
   // Avoid mutex deadlock by ensuring catch returns void/undefined properly typed
@@ -279,7 +306,7 @@ async function executeProviderRequest(tabId: number, prompt: string) {
   // Note: 'create_new_chat' might also fail if the tab *just* died, but we just checked it.
   const createResponse = await chrome.tabs.sendMessage(tabId, { action: 'create_new_chat' });
   if (createResponse?.success === false) {
-    return createResponse;
+    throw new Error(createResponse.error ?? 'Failed to create new chat');
   }
 
   const response = await chrome.tabs.sendMessage(tabId, {
