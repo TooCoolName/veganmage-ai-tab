@@ -41,7 +41,7 @@ let tabSearchMutex: Promise<unknown> = Promise.resolve();
 
 async function getRegistry(): Promise<Registry> {
   const result = await chrome.storage.session.get('tabRegistry');
-  return result.tabRegistry ?? JSON.parse(JSON.stringify(DEFAULT_REGISTRY));
+  return (result.tabRegistry as Registry) ?? JSON.parse(JSON.stringify(DEFAULT_REGISTRY)) as Registry;
 }
 
 async function saveRegistry(registry: Registry) {
@@ -58,7 +58,7 @@ interface ProviderSetting {
 
 async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
   const result = await chrome.storage.local.get('providerSettings');
-  return result.providerSettings ?? undefined;
+  return (result.providerSettings as ProviderSetting[]) ?? undefined;
 }
 
 // --- Registry Logic ---
@@ -310,7 +310,7 @@ async function executeProviderRequest(tabId: number, prompt: string) {
     action: 'generate_text',
     prompt
   });
-  return response;
+  return response as string;
 }
 
 logger.info("Vegan Mage extension loaded");

@@ -24,7 +24,7 @@ export function isExternalMessage(message: unknown): message is ExternalMessage 
             return msg.payload === undefined;
 
         case 'generate_text':
-            return v.is(GenerateTextSchema, msg.payload);
+            return v.is(GenerateTextSchema, msg.payload) as boolean;
 
         default: {
             assertNever(msg.type)

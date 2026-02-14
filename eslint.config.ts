@@ -57,6 +57,7 @@ export default tseslint.config(
             '@typescript-eslint/no-explicit-any': 'error',
             '@typescript-eslint/prefer-nullish-coalescing': 'error',
             '@typescript-eslint/prefer-optional-chain': 'error',
+            '@typescript-eslint/no-unsafe-return': 'error',
             'no-restricted-syntax': [
                 'error',
                 {
