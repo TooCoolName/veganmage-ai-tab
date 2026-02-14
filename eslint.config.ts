@@ -58,6 +58,12 @@ export default tseslint.config(
             '@typescript-eslint/prefer-nullish-coalescing': 'error',
             '@typescript-eslint/prefer-optional-chain': 'error',
             '@typescript-eslint/no-unsafe-return': 'error',
+            '@typescript-eslint/consistent-type-assertions': [
+                'error',
+                {
+                    assertionStyle: 'never',
+                },
+            ],
             'no-restricted-syntax': [
                 'error',
                 {
