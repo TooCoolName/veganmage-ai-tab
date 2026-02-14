@@ -135,15 +135,12 @@ const handlePing: Handler<'ping'> = async () => ({
 
 const handleGenerateText: Handler<'generate_text'> = async (payload) => {
   try {
-    const { prompt } = payload;
-    if (!prompt) throw new Error('Missing prompt');
-
     const result = await findAvailableProviderTab();
     if (!result) throw new Error('No active AI provider tabs found.');
 
     const { selectedTabId } = result;
     try {
-      const response = await executeProviderRequest(selectedTabId, prompt);
+      const response = await executeProviderRequest(selectedTabId, payload.prompt);
       // Assuming the content script returns the text directly as response
       return { success: true, data: response as string };
     } finally {
