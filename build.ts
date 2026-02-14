@@ -141,7 +141,7 @@ if (isWatch) {
 
         try {
             await runBuild(signal);
-        } catch (err) {
+        } catch (err: unknown) {
             if ((err as Error).message === "Aborted") {
                 console.log(`[${new Date().toLocaleTimeString()}] ⏹️ Build cancelled for new change.`);
             } else {
