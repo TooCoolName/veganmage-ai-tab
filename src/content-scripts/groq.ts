@@ -1,3 +1,4 @@
+import { InternalRequest } from "@/schema";
 import { waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText } from './utils';
 
 // Groq Content Script
@@ -35,7 +36,7 @@ function createNewChat() {
 }
 
 // Listen for messages from background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request: InternalRequest, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => {
     // Health check ping
     if (request.action === 'ping') {
         sendResponse({ alive: true });

@@ -9,7 +9,9 @@ import {
   Registry,
   parseRegistry,
   parseProviderSettings,
-  GenerateText
+  GenerateText,
+  InternalMessageMap,
+  isInternalRequest
 } from './schema';
 import { assertNever } from './schema/types';
 
@@ -108,7 +110,7 @@ async function rebuildRegistry() {
 chrome.runtime.onInstalled.addListener(rebuildRegistry);
 chrome.runtime.onStartup.addListener(rebuildRegistry);
 
-chrome.tabs.onUpdated.addListener((tabId: number, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
   if (changeInfo.url || changeInfo.status === 'complete') {
     updateTabRegistry(tabId, tab.url);
   }
@@ -189,7 +191,9 @@ async function handleExternalMessage(
 }
 
 // Internal message listener for features like logging
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message: unknown, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => {
+  if (!isInternalRequest(message)) return false;
+
   if (message.action === 'log') {
     const { level = 'info', msg, ...params } = message.payload ?? {};
     const source = sender.tab ? `tab:${sender.tab.id}` : 'internal';
@@ -313,15 +317,16 @@ async function executeProviderRequest(tabId: number, prompt: string) {
     throw new Error(createResponse.error ?? 'Failed to create new chat');
   }
 
-  const response = await chrome.tabs.sendMessage(tabId, {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const response = (await chrome.tabs.sendMessage(tabId, {
     action: 'generate_text',
     prompt
-  });
+  })) as InternalMessageMap['generate_text']['response'];
 
-  if (typeof response !== 'string') {
-    throw new Error('Unexpected response type from generate_text');
+  if (!response.success || typeof response.response !== 'string') {
+    throw new Error(response.error ?? 'Unexpected response type from generate_text');
   }
-  return response;
+  return response.response;
 }
 
 logger.info("Vegan Mage extension loaded");

@@ -1,3 +1,4 @@
+import { InternalRequest } from "@/schema";
 import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText, pressShortcut } from './utils';
 
 // DeepSeek Content Script
@@ -23,7 +24,7 @@ function createNewChat() {
 }
 
 // Listen for messages from background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request: InternalRequest, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => {
     // Health check ping
     if (request.action === 'ping') {
         sendResponse({ alive: true });

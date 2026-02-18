@@ -1,3 +1,4 @@
+import { InternalRequest } from "@/schema";
 import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from './utils';
 
 // Copilot Content Script
@@ -31,7 +32,7 @@ function createNewChat() {
 }
 
 // Listen for messages from background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request: InternalRequest, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => {
     // Health check ping
     if (request.action === 'ping') {
         sendResponse({ alive: true });
@@ -68,7 +69,7 @@ function waitForResponse(initialCount?: number) {
             const items = el.querySelectorAll<HTMLElement>('.group\\/ai-message-item');
             if (items.length > 0) {
                 return Array.from(items)
-                    .map(item => getMessageText(item))
+                    .map((item: HTMLElement) => getMessageText(item))
                     .join('\n\n');
             }
             return getMessageText(el);

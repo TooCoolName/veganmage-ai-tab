@@ -66,8 +66,8 @@ function App() {
             const loadedProviders: Provider[] = result[STORAGE_KEY] ?? [...DEFAULT_PROVIDERS];
 
             // Migration: Ensure URLs exist and icons are removed if they were saved before
-            const updatedProviders = loadedProviders.map(p => {
-                const defaultP = DEFAULT_PROVIDERS.find(dp => dp.id === p.id);
+            const updatedProviders = loadedProviders.map((p: Provider) => {
+                const defaultP = DEFAULT_PROVIDERS.find((dp: Provider) => dp.id === p.id);
                 return {
                     ...p,
                     url: p.url ?? defaultP?.url ?? '',
@@ -96,7 +96,7 @@ function App() {
     const loadActiveTabs = useCallback(async () => {
         try {
             const tabs = await chrome.tabs.query({});
-            const aiTabs = tabs.filter(tab => {
+            const aiTabs = tabs.filter((tab: chrome.tabs.Tab) => {
                 const url = tab.url ?? '';
                 return url.includes('chatgpt.com') ||
                     url.includes('chat.openai.com') ||
@@ -106,7 +106,7 @@ function App() {
                     url.includes('chat.deepseek.com') ||
                     url.includes('grok.com') ||
                     url.includes('chat.groq.com');
-            }).map(tab => {
+            }).map((tab: chrome.tabs.Tab) => {
                 let provider = 'unknown';
                 const url = tab.url ?? '';
                 if (url.includes('chatgpt.com') || url.includes('chat.openai.com')) provider = 'chatgpt';
@@ -117,7 +117,7 @@ function App() {
                 else if (url.includes('chat.groq.com')) provider = 'groq';
 
                 // Find provider name safely
-                const providerObj = providers.find(p => p.id === provider);
+                const providerObj = providers.find((p: Provider) => p.id === provider);
                 const providerName = providerObj ? providerObj.name : provider;
 
                 return {
@@ -164,7 +164,7 @@ function App() {
 
     // Handle provider toggle
     const handleToggle = (index: number, enabled: boolean) => {
-        const enabledCount = providers.filter(p => p.enabled).length;
+        const enabledCount = providers.filter((p: Provider) => p.enabled).length;
         if (!enabled && enabledCount === 1) {
             showStatus('At least one provider must remain enabled', 'error');
             return;
@@ -228,7 +228,7 @@ function App() {
             role: 'user',
             timestamp: Date.now()
         };
-        setMessages(prev => [...prev, userMsg]);
+        setMessages((prev: Message[]) => [...prev, userMsg]);
         setMessageText('');
         setIsSending(true);
 
@@ -246,7 +246,7 @@ function App() {
                     role: 'assistant',
                     timestamp: Date.now()
                 };
-                setMessages(prev => [...prev, assistantMsg]);
+                setMessages((prev: Message[]) => [...prev, assistantMsg]);
                 showStatus('Response received', 'success');
             } else {
                 showStatus(`Failed: ${result?.error ?? 'Unknown error'}`, 'error');
@@ -409,12 +409,12 @@ function ProviderSettings({ providers, draggedIndex, onToggle, onDragStart, onDr
                 </p>
 
                 <div className="space-y-2">
-                    {providers.map((provider, index) => (
+                    {providers.map((provider: Provider, index: number) => (
                         <div
                             key={provider.id}
                             draggable
                             onDragStart={() => onDragStart(index)}
-                            onDragOver={(e) => onDragOver(e, index)}
+                            onDragOver={(e: React.DragEvent) => onDragOver(e, index)}
                             onDragEnd={onDragEnd}
                             className={`flex items-center gap-2 p-2 bg-base-100 rounded border transition-all cursor-move ${draggedIndex === index ? 'opacity-40' : 'border-base-300 hover:border-primary/40'
                                 }`}
@@ -430,7 +430,7 @@ function ProviderSettings({ providers, draggedIndex, onToggle, onDragStart, onDr
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-[10px] text-primary hover:underline block truncate"
-                                    onClick={(e) => e.stopPropagation()}
+                                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
                                 >
                                     {provider.url}
                                 </a>
@@ -440,7 +440,7 @@ function ProviderSettings({ providers, draggedIndex, onToggle, onDragStart, onDr
                                 <input
                                     type="checkbox"
                                     checked={provider.enabled}
-                                    onChange={(e) => onToggle(index, e.target.checked)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => onToggle(index, e.target.checked)}
                                 />
                                 <div className="swap-on text-xs text-success font-bold">ON</div>
                                 <div className="swap-off text-xs text-base-content/30 font-bold">OFF</div>
@@ -493,7 +493,7 @@ function MessagingView({
 
     // Show only the last exchange (user prompt + AI response)
     const filteredMessages = messages
-        .filter(m => m.tabId === selectedTab?.id)
+        .filter((m: Message) => m.tabId === selectedTab?.id)
         .slice(-2);
 
     // Auto-scroll to bottom
@@ -523,7 +523,7 @@ function MessagingView({
                         </div>
                     ) : (
                         <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
-                            {activeTabs.map((tab) => (
+                            {activeTabs.map((tab: AiTab) => (
                                 <div
                                     key={tab.id}
                                     onClick={() => onSelectTab(tab)}
@@ -560,7 +560,7 @@ function MessagingView({
                                     No messages yet for this tab
                                 </div>
                             ) : (
-                                filteredMessages.map((msg) => (
+                                filteredMessages.map((msg: Message) => (
                                     <div
                                         key={msg.id}
                                         className={`chat ${msg.role === 'user' ? 'chat-end' : 'chat-start'}`}
@@ -596,9 +596,9 @@ function MessagingView({
                                     className="textarea textarea-bordered w-full h-20 text-sm"
                                     placeholder="Enter message..."
                                     value={messageText}
-                                    onChange={(e) => onMessageChange(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onMessageChange(e.target.value)}
                                     disabled={isSending}
-                                    onKeyDown={(e) => {
+                                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                                         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                                             onSendMessage();
                                         }

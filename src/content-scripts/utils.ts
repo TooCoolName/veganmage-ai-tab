@@ -62,7 +62,7 @@ export function waitForResponse({
     const initialCount = providedInitialCount ?? getMessages().length;
     logger.debug('waitForResponse started', { initialCount, timeout, providedInitialCount });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve: (value: string | PromiseLike<string>) => void, reject: (reason?: unknown) => void) => {
         const startTime = Date.now();
 
         let lastText = "";
@@ -79,6 +79,7 @@ export function waitForResponse({
             }
 
             const messages = getMessages();
+
 
             // 1. Wait for new message container
             if (messages.length <= initialCount) {
@@ -269,9 +270,10 @@ export function handleGenerateText(
                     logger.info('Response received successfully');
                     sendResponse({ success: true, response: response });
                 })
-                .catch(error => {
-                    logger.error('Error waiting for response', { error: error.message });
-                    sendResponse({ success: false, error: error.message });
+                .catch((error: unknown) => {
+                    const errorMessage = error instanceof Error ? error.message : String(error);
+                    logger.error('Error waiting for response', { error: errorMessage });
+                    sendResponse({ success: false, error: errorMessage });
                 });
         }, 1000);
     }, options.delayBeforeSend ?? 500);
