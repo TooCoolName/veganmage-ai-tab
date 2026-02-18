@@ -15,7 +15,6 @@ import {
 } from './schema';
 import { assertNever } from './schema/types';
 
-// T071: Tab Registry - We use a helper instead of a global object
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
 const logger = pino({
@@ -24,9 +23,6 @@ const logger = pino({
   },
   level: 'debug'
 });
-
-// Registry type is now imported.
-
 
 const DEFAULT_REGISTRY: Registry = {
   chatgpt: [],
