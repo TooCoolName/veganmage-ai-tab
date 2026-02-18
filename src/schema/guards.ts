@@ -9,7 +9,6 @@ export function isExternalMessageKey(key: unknown): key is ExternalMessageKey {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-    // eslint-disable-next-line no-restricted-syntax
     return typeof value === 'object' && value !== null;
 }
 

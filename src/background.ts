@@ -146,7 +146,7 @@ const handleGenerateText: Handler<'generate_text'> = async (payload: GenerateTex
     }
   } catch (error) {
     console.error('Generate text error:', error);
-    throw error; // Let the main handler catch and format the error
+    throw error;
   }
 };
 
@@ -166,11 +166,11 @@ chrome.runtime.onMessageExternal.addListener((
       error: err instanceof Error ? err.message : 'Internal Error'
     }));
 
-  return true; // Keep channel open
+  return true;
 });
 
 async function handleExternalMessage(
-  message: ExternalMessage, // Discriminated union
+  message: ExternalMessage,
   sender: chrome.runtime.MessageSender
 ) {
   switch (message.type) {
@@ -203,7 +203,7 @@ chrome.runtime.onMessage.addListener((message: unknown, sender: chrome.runtime.M
     }
 
     sendResponse({ success: true });
-    return true; // Keep channel open
+    return true;
   }
 
   // Handle other internal messages if necessary
@@ -301,7 +301,7 @@ async function findAvailableProviderTabInternal() {
     if (selectedTabId !== undefined) {
       activeRequests.delete(selectedTabId);
     }
-    return undefined; // Explicitly return null on failure
+    return undefined;
   }
 }
 
@@ -313,7 +313,6 @@ async function executeProviderRequest(tabId: number, prompt: string) {
     throw new Error(createResponse.error ?? 'Failed to create new chat');
   }
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const response = (await chrome.tabs.sendMessage(tabId, {
     action: 'generate_text',
     prompt

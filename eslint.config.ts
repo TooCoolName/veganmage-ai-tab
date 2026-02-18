@@ -4,6 +4,7 @@ import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import importX from 'eslint-plugin-import-x';
 import globals from 'globals';
+import eslintComments from 'eslint-plugin-eslint-comments';
 
 export default tseslint.config(
     {
@@ -23,6 +24,7 @@ export default tseslint.config(
             react: reactPlugin,
             'react-hooks': reactHooksPlugin,
             'import-x': importX,
+            'eslint-comments': eslintComments,
         },
         languageOptions: {
             parserOptions: {
@@ -66,17 +68,6 @@ export default tseslint.config(
                     assertionStyle: 'never',
                 },
             ],
-            'no-restricted-syntax': [
-                'error',
-                {
-                    selector: 'Literal[value=null]',
-                    message: 'Use undefined instead of null',
-                },
-                {
-                    selector: 'TSNullKeyword',
-                    message: 'Use undefined instead of null',
-                },
-            ],
             'no-restricted-imports': [
                 'error',
                 {
@@ -96,7 +87,8 @@ export default tseslint.config(
                     "variableDeclaration": false, // Let inference work for variables
                     "memberVariableDeclaration": false
                 }
-            ]
+            ],
+            'eslint-comments/no-use': 'error',
         },
     },
 

@@ -488,7 +488,6 @@ function MessagingView({
     onRefresh,
     onNewChat
 }: MessagingViewProps) {
-    // eslint-disable-next-line no-restricted-syntax
     const scrollRef = React.useRef<HTMLDivElement>(null);
 
     // Show only the last exchange (user prompt + AI response)

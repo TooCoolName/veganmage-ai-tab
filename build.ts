@@ -163,7 +163,6 @@ if (isWatch) {
     };
 
     let timeout: Timer | undefined;
-    // eslint-disable-next-line no-restricted-syntax
     const watcher = (event: string, filename: string | Buffer | null | undefined) => {
         if (!filename) return;
         const sFilename = String(filename);
