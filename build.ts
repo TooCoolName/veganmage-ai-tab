@@ -112,10 +112,18 @@ async function runBuild(signal?: AbortSignal) {
         console.log(`✅ Build complete in ${(performance.now() - start).toFixed(2)}ms`);
 
     } catch (err) {
-        if (signal?.aborted || (err as Error).message === "Aborted") {
+        if (signal?.aborted || isErrorMessageAborted(err)) {
             throw err;
         }
         console.error("🚨 Build error:", err);
+    }
+}
+
+function isErrorMessageAborted(err: unknown): boolean {
+    if (err instanceof Error) {
+        return err.message === 'Aborted'
+    } else {
+        return false
     }
 }
 
@@ -142,7 +150,7 @@ if (isWatch) {
         try {
             await runBuild(signal);
         } catch (err: unknown) {
-            if ((err as Error).message === "Aborted") {
+            if (isErrorMessageAborted(err)) {
                 console.log(`[${new Date().toLocaleTimeString()}] ⏹️ Build cancelled for new change.`);
             } else {
                 console.error("🚨 Watcher encountered an unexpected error during build execution:", err);
