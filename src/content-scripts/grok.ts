@@ -6,8 +6,8 @@ import { getMessageText, waitForResponse as genericWaitForResponse, injectText, 
 // Function to find the send button
 function findSendButton() {
     // Priority 1: button[type="submit"]
-    const btn = document.querySelector('button[type="submit"]') as HTMLElement;
-    if (btn && !(btn as HTMLButtonElement).disabled) return btn;
+    const btn = document.querySelector<HTMLButtonElement>('button[type="submit"]');
+    if (btn && !btn.disabled) return btn;
 
     // Priority 2: Aria label "Submit" or "Send" (generic)
     const candidates = document.querySelectorAll('button');

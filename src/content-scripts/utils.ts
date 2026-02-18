@@ -25,18 +25,18 @@ function sendLog(level: string, msg: string, params?: Record<string, unknown>) {
 /**
  * Get text content from an element, preferring innerText to preserve line breaks
  */
-export function getMessageText(element: Element | undefined): string {
+export function getMessageText(element: HTMLElement | undefined): string {
     if (!element) return '';
-    return (element as HTMLElement).innerText ?? element.textContent ?? '';
+    return element.innerText ?? element.textContent ?? '';
 }
 
 interface WaitForResponseOptions {
     /** Function to get all message elements */
-    getMessages: () => NodeListOf<Element> | Element[];
+    getMessages: () => NodeListOf<HTMLElement> | HTMLElement[];
     /** Function to check if the AI is currently generating, from position of message element */
     isGenerating: (el: Element) => boolean;
     /** Function to extract text from a message element */
-    extractText?: (el: Element) => string;
+    extractText?: (el: HTMLElement) => string;
     /** Timeout in milliseconds */
     timeout?: number;
     /** Check interval in milliseconds */
@@ -152,7 +152,7 @@ export function waitForResponse({
  * Inject text into a target element using document.execCommand to trigger native behavior
  */
 export function injectText(selector: string, text: string): boolean {
-    const el = document.querySelector(selector) as HTMLElement;
+    const el = document.querySelector<HTMLElement>(selector);
     if (el) {
         el.focus();
         document.execCommand('insertText', false, text);
@@ -214,8 +214,8 @@ export function pressEnter(selector: string, ctrlKey: boolean) {
  */
 export function findSendButton(selectors: string[]): HTMLElement | undefined {
     for (const selector of selectors) {
-        const btn = document.querySelector(selector) as HTMLElement;
-        if (btn && !(btn as HTMLButtonElement).disabled) {
+        const btn = document.querySelector<HTMLButtonElement>(selector);
+        if (btn && !btn.disabled) {
             // Optional: check visibility if needed, but simple existence + enabled is usually enough
             return btn;
         }

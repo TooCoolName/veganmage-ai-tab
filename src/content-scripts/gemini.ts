@@ -15,8 +15,8 @@ function findSendButton() {
     ];
 
     for (const selector of selectors) {
-        const match = document.querySelector(selector) as HTMLElement;
-        if (match && !(match as HTMLButtonElement).disabled && match.offsetParent) { // visible check
+        const match = document.querySelector<HTMLButtonElement>(selector);
+        if (match && !match.disabled && match.offsetParent) { // visible check
             // Sometimes multiple buttons exist (e.g. update vs send), we prefer the main send
             if (match.innerText === 'Update') continue;
             return match;
@@ -70,9 +70,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Helper to wait for response completion
 function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
-        getMessages: () => document.querySelectorAll('.response-container'),
+        getMessages: () => document.querySelectorAll<HTMLElement>('.response-container'),
         isGenerating: (el: Element) => !el.querySelector('button'),
-        extractText: (el) => getMessageText(el.querySelector('.model-response-text') ?? undefined),
+        extractText: (el) => getMessageText(el.querySelector<HTMLElement>('.model-response-text') ?? undefined),
         initialCount
     });
 }

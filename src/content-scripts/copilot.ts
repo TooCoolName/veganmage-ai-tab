@@ -63,9 +63,9 @@ function waitForResponse(initialCount?: number) {
         isGenerating: (el: Element) => {
             return !el.querySelector('button');
         },
-        extractText: (el: Element) => {
+        extractText: (el: HTMLElement) => {
             // Check if this is a group/ai-message container
-            const items = el.querySelectorAll('.group\\/ai-message-item');
+            const items = el.querySelectorAll<HTMLElement>('.group\\/ai-message-item');
             if (items.length > 0) {
                 return Array.from(items)
                     .map(item => getMessageText(item))

@@ -6,8 +6,8 @@ import { waitForResponse as genericWaitForResponse, injectText, pressEnter, hand
 // Function to find the send button
 function findSendButton() {
     // Priority 1: button[type="submit"]
-    const btn = document.querySelector('button[type="submit"]') as HTMLElement;
-    if (btn && !(btn as HTMLButtonElement).disabled) return btn;
+    const btn = document.querySelector<HTMLButtonElement>('button[type="submit"]');
+    if (btn && !btn.disabled) return btn;
 
     // Priority 2: Aria label "Submit" or "Send" (generic)
     const candidates = document.querySelectorAll('button');
@@ -23,9 +23,9 @@ function findSendButton() {
 
 // Function to create a new chat - assuming standard shortcuts or button
 function createNewChat() {
-    const buttons = document.querySelectorAll('main .grow button');
+    const buttons = document.querySelectorAll<HTMLElement>('main .grow button');
     if (buttons.length > 0) {
-        (buttons[0] as HTMLElement).click();
+        buttons[0].click();
         console.log('Clicked New Chat button');
         return true;
     }
@@ -70,9 +70,9 @@ function waitForResponse(initialCount?: number) {
         isGenerating: (el: Element) => {
             return !el.querySelector('button');
         },
-        extractText: (el: Element) => {
+        extractText: (el: HTMLElement) => {
             const content = el.children[1];
-            return content ? (content as HTMLElement).innerText : '';
+            return content ? content.innerText : '';
         },
         initialCount
     });
