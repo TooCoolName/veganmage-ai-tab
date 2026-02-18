@@ -72,7 +72,11 @@ function waitForResponse(initialCount?: number) {
         },
         extractText: (el: HTMLElement) => {
             const content = el.children[1];
-            return content ? content.innerText : '';
+            if (content && content instanceof HTMLElement) {
+                return content ? content.innerText : '';
+            } else {
+                return ""
+            }
         },
         initialCount
     });
