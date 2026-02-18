@@ -19,7 +19,7 @@ export type ExternalMessage = {
     };
 }[ExternalMessageKey];
 
-export type ExternalMessageRequest<K extends ExternalMessageKey> = ExternalMessageBus[K]['request'];
+export type ExternalMessageRequest<K extends ExternalMessageKey = ExternalMessageKey> = ExternalMessageBus[K]['request'];
 export type ExternalMessageResponse<K extends ExternalMessageKey> = ExternalMessageBus[K]['response'];
 
 export const ExternalMessageKeys = ['ping', 'generate_text'] as const;

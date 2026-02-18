@@ -41,7 +41,10 @@ let tabSearchMutex: Promise<unknown> = Promise.resolve();
 
 async function getRegistry(): Promise<Registry> {
   const result = await chrome.storage.session.get('tabRegistry');
-  return (result.tabRegistry as Registry) ?? JSON.parse(JSON.stringify(DEFAULT_REGISTRY)) as Registry;
+  if (result.tabRegistry && typeof result.tabRegistry === 'object') {
+    return result.tabRegistry as Registry;
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_REGISTRY)) as Registry;
 }
 
 async function saveRegistry(registry: Registry) {
@@ -58,7 +61,11 @@ interface ProviderSetting {
 
 async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
   const result = await chrome.storage.local.get('providerSettings');
-  return (result.providerSettings as ProviderSetting[]) ?? undefined;
+  if (Array.isArray(result.providerSettings)) {
+    // Assuming the structure is correct if it's an array for now, or use a proper validator if strictly needed
+    return result.providerSettings as ProviderSetting[];
+  }
+  return undefined;
 }
 
 // --- Registry Logic ---
@@ -142,7 +149,10 @@ const handleGenerateText: Handler<'generate_text'> = async (payload) => {
     try {
       const response = await executeProviderRequest(selectedTabId, payload.prompt);
       // Assuming the content script returns the text directly as response
-      return { success: true, data: response as string };
+      if (typeof response === 'string') {
+        return { success: true, data: response };
+      }
+      throw new Error('Invalid response from content script');
     } finally {
       activeRequests.delete(selectedTabId);
     }
@@ -268,7 +278,8 @@ async function findAvailableProviderTabInternal() {
           }
 
         } catch (e) {
-          logger.warn({ tabId, provider, error: (e as Error).message }, 'Tab is not available');
+          const errorMessage = e instanceof Error ? e.message : String(e);
+          logger.warn({ tabId, provider, error: errorMessage }, 'Tab is not available');
           registryChanged = true;
           // Do not add to activeTabs, effectively removing it
         }
@@ -291,8 +302,8 @@ async function findAvailableProviderTabInternal() {
 
     return { selectedTabId };
   } catch {
-    if (selectedTabId) {
-      activeRequests.delete(selectedTabId as number);
+    if (selectedTabId !== undefined) {
+      activeRequests.delete(selectedTabId);
     }
     return undefined; // Explicitly return null on failure
   }
@@ -310,7 +321,11 @@ async function executeProviderRequest(tabId: number, prompt: string) {
     action: 'generate_text',
     prompt
   });
-  return response as string;
+
+  if (typeof response !== 'string') {
+    throw new Error('Unexpected response type from generate_text');
+  }
+  return response;
 }
 
 logger.info("Vegan Mage extension loaded");
