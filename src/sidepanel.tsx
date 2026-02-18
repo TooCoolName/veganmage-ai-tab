@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
+import { getErrorMessage } from './utils';
 
 // Interfaces
 interface Provider {
@@ -123,7 +124,7 @@ function App() {
                     ...tab,
                     provider,
                     providerName
-                } as AiTab;
+                } satisfies AiTab;
             });
             setActiveTabs(aiTabs);
         } catch (error) {
@@ -252,7 +253,7 @@ function App() {
             }
         } catch (error) {
             console.error('Error sending message:', error);
-            showStatus(`Failed: ${(error as Error).message}`, 'error');
+            showStatus(`Failed: ${(getErrorMessage(error))}`, 'error');
         } finally {
             setIsSending(false);
         }
@@ -277,7 +278,7 @@ function App() {
             showStatus('New chat created', 'success');
         } catch (error) {
             console.error('Error creating new chat:', error);
-            showStatus(`Failed: ${(error as Error).message}`, 'error');
+            showStatus(`Failed: ${(getErrorMessage(error))}`, 'error');
         }
     };
 

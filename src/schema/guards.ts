@@ -1,33 +1,34 @@
 import * as v from 'valibot';
-import { ExternalMessage, ExternalMessageKey, ExternalMessageKeys } from "./external.types";
+import { ExternalMessage, ExternalMessageKey, ExternalMessageKeySet } from "./external.types";
 import { GenerateTextSchema } from "./external.validators";
 import { assertNever } from './types';
 
 export function isExternalMessageKey(key: unknown): key is ExternalMessageKey {
-    return typeof key === 'string' && (ExternalMessageKeys as readonly string[]).includes(key);
+    return typeof key === 'string' && ExternalMessageKeySet.has(key);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    // eslint-disable-next-line no-restricted-syntax
+    return typeof value === 'object' && value !== null;
 }
 
 export function isExternalMessage(message: unknown): message is ExternalMessage {
-    if (typeof message !== 'object' || message === undefined || !message || !('type' in message)) {
+    if (!isRecord(message) || !('type' in message)) {
         return false;
     }
 
-    const msg = message as Record<string, unknown>;
-
-    if (!isExternalMessageKey(msg.type)) {
+    if (!isExternalMessageKey(message.type)) {
         return false;
     }
 
-    switch (msg.type) {
+    switch (message.type) {
         case 'ping':
-            // Ping has no payload (undefined)
-            return msg.payload === undefined;
+            return message.payload === undefined;
 
         case 'generate_text':
-            return v.is(GenerateTextSchema, msg.payload) as boolean;
+            return v.is(GenerateTextSchema, message.payload);
 
-        default: {
-            assertNever(msg.type)
-        }
+        default:
+            return assertNever(message.type);
     }
 }

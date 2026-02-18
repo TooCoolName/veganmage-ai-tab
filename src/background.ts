@@ -44,7 +44,7 @@ async function getRegistry(): Promise<Registry> {
   if (result.tabRegistry && typeof result.tabRegistry === 'object') {
     return result.tabRegistry as Registry;
   }
-  return JSON.parse(JSON.stringify(DEFAULT_REGISTRY)) as Registry;
+  return DEFAULT_REGISTRY;
 }
 
 async function saveRegistry(registry: Registry) {

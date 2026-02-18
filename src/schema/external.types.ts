@@ -22,5 +22,7 @@ export type ExternalMessage = {
 export type ExternalMessageRequest<K extends ExternalMessageKey = ExternalMessageKey> = ExternalMessageBus[K]['request'];
 export type ExternalMessageResponse<K extends ExternalMessageKey> = ExternalMessageBus[K]['response'];
 
-export const ExternalMessageKeys = ['ping', 'generate_text'] as const;
-export type ExternalMessageKey = typeof ExternalMessageKeys[number];
+export const externalMessageKeys = ['ping', 'generate_text'] as const;
+export type ExternalMessageKey = typeof externalMessageKeys[number];
+
+export const ExternalMessageKeySet = new Set<string>(externalMessageKeys);

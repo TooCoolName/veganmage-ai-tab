@@ -15,11 +15,11 @@ function findSendButton() {
 
 // Function to create a new chat by clicking the "Start new chat" button
 function createNewChat() {
-    const buttons = document.querySelectorAll('.pointer-events-none button');
-    if (!buttons?.[2]) {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.pointer-events-none button');
+    const newChatButton = buttons[2];
+    if (!newChatButton) {
         return undefined
     }
-    const newChatButton = buttons[2] as HTMLElement;
     if (newChatButton) {
         newChatButton.click();
         console.log('New chat created via button click');
