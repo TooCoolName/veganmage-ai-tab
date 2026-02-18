@@ -1,5 +1,15 @@
 import pino from 'pino';
-import { ExternalMessage, ExternalMessageKey, ExternalMessageRequest, ExternalMessageResponse, isExternalMessage } from './schema';
+import {
+  ExternalMessage,
+  ExternalMessageKey,
+  ExternalMessageRequest,
+  ExternalMessageResponse,
+  isExternalMessage,
+  ProviderSetting,
+  Registry,
+  parseRegistry,
+  parseProviderSettings
+} from './schema';
 import { assertNever } from './schema/types';
 
 // T071: Tab Registry - We use a helper instead of a global object
@@ -12,9 +22,8 @@ const logger = pino({
   level: 'debug'
 });
 
-interface Registry {
-  [key: string]: number[];
-}
+// Registry type is now imported.
+
 
 const DEFAULT_REGISTRY: Registry = {
   chatgpt: [],
@@ -41,31 +50,19 @@ let tabSearchMutex: Promise<unknown> = Promise.resolve();
 
 async function getRegistry(): Promise<Registry> {
   const result = await chrome.storage.session.get('tabRegistry');
-  if (result.tabRegistry && typeof result.tabRegistry === 'object') {
-    return result.tabRegistry as Registry;
-  }
-  return DEFAULT_REGISTRY;
+  return parseRegistry(result.tabRegistry) ?? DEFAULT_REGISTRY;
 }
 
 async function saveRegistry(registry: Registry) {
   await chrome.storage.session.set({ tabRegistry: registry });
 }
 
-interface ProviderSetting {
-  id: string;
-  enabled: boolean;
-  name: string;
-  url: string;
-  icon?: string;
-}
+// ProviderSetting interface is now imported.
+
 
 async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
   const result = await chrome.storage.local.get('providerSettings');
-  if (Array.isArray(result.providerSettings)) {
-    // Assuming the structure is correct if it's an array for now, or use a proper validator if strictly needed
-    return result.providerSettings as ProviderSetting[];
-  }
-  return undefined;
+  return parseProviderSettings(result.providerSettings);
 }
 
 // --- Registry Logic ---
