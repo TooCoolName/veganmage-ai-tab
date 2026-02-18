@@ -46,8 +46,6 @@ const PROVIDER_PATTERNS: { [key: string]: RegExp } = {
 const activeRequests = new Set<number>();
 let tabSearchMutex: Promise<unknown> = Promise.resolve();
 
-// --- Storage Helpers ---
-
 async function getRegistry(): Promise<Registry> {
   const result = await chrome.storage.session.get('tabRegistry');
   return parseRegistry(result.tabRegistry) ?? DEFAULT_REGISTRY;
@@ -57,15 +55,11 @@ async function saveRegistry(registry: Registry) {
   await chrome.storage.session.set({ tabRegistry: registry });
 }
 
-// ProviderSetting interface is now imported.
-
 
 async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
   const result = await chrome.storage.local.get('providerSettings');
   return parseProviderSettings(result.providerSettings);
 }
-
-// --- Registry Logic ---
 
 async function updateTabRegistry(tabId: number, url: string | undefined, remove = false) {
   const registry = await getRegistry();
