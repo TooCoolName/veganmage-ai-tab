@@ -4,6 +4,7 @@ import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import importX from 'eslint-plugin-import-x';
 import globals from 'globals';
+// @ts-expect-error: Missing types for this plugin
 import eslintComments from 'eslint-plugin-eslint-comments';
 
 export default tseslint.config(
