@@ -86,6 +86,15 @@ export default tseslint.config(
                     ],
                 },
             ],
+            "@typescript-eslint/typedef": [
+                "error",
+                {
+                    "parameter": true,
+                    "arrowParameter": true,
+                    "variableDeclaration": false, // Let inference work for variables
+                    "memberVariableDeclaration": false
+                }
+            ]
         },
     },
 

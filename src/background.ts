@@ -61,7 +61,7 @@ async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
   return parseProviderSettings(result.providerSettings);
 }
 
-async function updateTabRegistry(tabId: number, url: string | undefined, remove = false) {
+async function updateTabRegistry(tabId: number, url: string | undefined, remove: boolean = false) {
   const registry = await getRegistry();
   let changed = false;
 
@@ -107,13 +107,13 @@ async function rebuildRegistry() {
 chrome.runtime.onInstalled.addListener(rebuildRegistry);
 chrome.runtime.onStartup.addListener(rebuildRegistry);
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener((tabId: number, changeInfo, tab) => {
   if (changeInfo.url || changeInfo.status === 'complete') {
     updateTabRegistry(tabId, tab.url);
   }
 });
 
-chrome.tabs.onRemoved.addListener((tabId) => {
+chrome.tabs.onRemoved.addListener((tabId: number) => {
   updateTabRegistry(tabId, undefined, true);
 });
 
@@ -151,14 +151,18 @@ const handleGenerateText: Handler<'generate_text'> = async (payload) => {
   }
 };
 
-chrome.runtime.onMessageExternal.addListener((message: unknown, sender, sendResponse) => {
+chrome.runtime.onMessageExternal.addListener((
+  message: unknown,
+  sender: chrome.runtime.MessageSender,
+  sendResponse: (response?: unknown) => void
+) => {
   // 1. Initial Type Guard
   if (!isExternalMessage(message)) return false;
 
   // 2. Encapsulate execution logic
   handleExternalMessage(message, sender)
     .then(sendResponse)
-    .catch(err => sendResponse({
+    .catch((err: unknown) => sendResponse({
       success: false,
       error: err instanceof Error ? err.message : 'Internal Error'
     }));
@@ -227,7 +231,9 @@ async function findAvailableProviderTabInternal() {
   try {
     // Determine the order of providers to check
     const providerOrder = settings
-      ? settings.filter(p => p.enabled).map(p => p.id)
+      ? settings
+        .filter((p: ProviderSetting) => p.enabled)
+        .map((p: ProviderSetting) => p.id)
       : DEFAULT_PROVIDER_ORDER;
 
     for (const provider of providerOrder) {
@@ -321,4 +327,4 @@ logger.info("Vegan Mage extension loaded");
 
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
-  .catch((error) => console.error(error));
+  .catch((error: unknown) => console.error(error));
