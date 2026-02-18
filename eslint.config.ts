@@ -53,11 +53,13 @@ export default tseslint.config(
             ...reactPlugin.configs.recommended.rules,
             ...reactHooksPlugin.configs.recommended.rules,
             'react/react-in-jsx-scope': 'off',
+            "prefer-promise-reject-errors": "error",
             '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
             '@typescript-eslint/no-explicit-any': 'error',
             '@typescript-eslint/prefer-nullish-coalescing': 'error',
             '@typescript-eslint/prefer-optional-chain': 'error',
             '@typescript-eslint/no-unsafe-return': 'error',
+            "@typescript-eslint/only-throw-error": "error",
             '@typescript-eslint/consistent-type-assertions': [
                 'error',
                 {

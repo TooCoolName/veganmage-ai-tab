@@ -8,7 +8,8 @@ import {
   ProviderSetting,
   Registry,
   parseRegistry,
-  parseProviderSettings
+  parseProviderSettings,
+  GenerateText
 } from './schema';
 import { assertNever } from './schema/types';
 
@@ -129,7 +130,7 @@ const handlePing: Handler<'ping'> = async () => ({
   data: undefined
 });
 
-const handleGenerateText: Handler<'generate_text'> = async (payload) => {
+const handleGenerateText: Handler<'generate_text'> = async (payload: GenerateText) => {
   try {
     const result = await findAvailableProviderTab();
     if (!result) throw new Error('No active AI provider tabs found.');

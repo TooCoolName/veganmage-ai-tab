@@ -72,7 +72,7 @@ function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
         getMessages: () => document.querySelectorAll<HTMLElement>('.response-container'),
         isGenerating: (el: Element) => !el.querySelector('button'),
-        extractText: (el) => getMessageText(el.querySelector<HTMLElement>('.model-response-text') ?? undefined),
+        extractText: (el: HTMLElement) => getMessageText(el.querySelector<HTMLElement>('.model-response-text') ?? undefined),
         initialCount
     });
 }

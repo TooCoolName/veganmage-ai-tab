@@ -265,7 +265,7 @@ export function handleGenerateText(
         // 3. Wait for response (1s delay before checking to allow UI to update)
         setTimeout(() => {
             options.waitForResponse(initialCount)
-                .then(response => {
+                .then((response: string) => {
                     logger.info('Response received successfully');
                     sendResponse({ success: true, response: response });
                 })
