@@ -104,8 +104,6 @@ async function rebuildRegistry() {
   await saveRegistry(registry);
 }
 
-// --- Event Listeners ---
-
 chrome.runtime.onInstalled.addListener(rebuildRegistry);
 chrome.runtime.onStartup.addListener(rebuildRegistry);
 
