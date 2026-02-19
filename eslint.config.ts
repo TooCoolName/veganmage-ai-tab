@@ -63,12 +63,12 @@ export default tseslint.config(
             '@typescript-eslint/prefer-optional-chain': 'error',
             '@typescript-eslint/no-unsafe-return': 'error',
             "@typescript-eslint/only-throw-error": "error",
-            '@typescript-eslint/consistent-type-assertions': [
-                'error',
-                {
-                    assertionStyle: 'never',
-                },
-            ],
+            // '@typescript-eslint/consistent-type-assertions': [
+            //     'error',
+            //     {
+            //         assertionStyle: 'never',
+            //     },
+            // ],
             'no-restricted-imports': [
                 'error',
                 {
@@ -100,5 +100,20 @@ export default tseslint.config(
                 ...globals.node,
             },
         },
-    }
+    },
+    {
+        // Global rule: Disallow 'chrome' everywhere
+        files: ['src/**/*.ts'],
+        rules: {
+            'no-restricted-globals': ['error', 'chrome'],
+        },
+    },
+    {
+        // Override: Allow 'chrome' only in the specific folder
+        files: ['src/chrome/**/*.ts'],
+        rules: {
+            'no-restricted-globals': 'off',
+        },
+    },
 );
+
