@@ -14,7 +14,7 @@ import {
   isInternalRequest
 } from './schema';
 import { assertNever } from './schema/types';
-import { runtime, MessageSender, MessageListener, SendResponse } from './chrome';
+import { runtime, MessageSender, SendResponse, tabs, storage, sidePanel, TabChangeInfo, Tab } from './chrome';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
@@ -47,17 +47,17 @@ const activeRequests = new Set<number>();
 let tabSearchMutex: Promise<unknown> = Promise.resolve();
 
 async function getRegistry(): Promise<Registry> {
-  const result = await chrome.storage.session.get('tabRegistry');
+  const result = await storage.session.get('tabRegistry');
   return parseRegistry(result.tabRegistry) ?? DEFAULT_REGISTRY;
 }
 
 async function saveRegistry(registry: Registry) {
-  await chrome.storage.session.set({ tabRegistry: registry });
+  await storage.session.set({ tabRegistry: registry });
 }
 
 
 async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
-  const result = await chrome.storage.local.get('providerSettings');
+  const result = await storage.local.get('providerSettings');
   return parseProviderSettings(result.providerSettings);
 }
 
@@ -91,9 +91,9 @@ async function updateTabRegistry(tabId: number, url: string | undefined, remove:
 // Full sync to ensure state is accurate after a "sleep"
 async function rebuildRegistry() {
   const registry: Registry = JSON.parse(JSON.stringify(DEFAULT_REGISTRY));
-  const tabs = await chrome.tabs.query({});
+  const allTabs = await tabs.query({});
 
-  for (const tab of tabs) {
+  for (const tab of allTabs) {
     if (!tab.url || !tab.id) continue;
     for (const [provider, pattern] of Object.entries(PROVIDER_PATTERNS)) {
       if (pattern.test(tab.url)) {
@@ -107,13 +107,13 @@ async function rebuildRegistry() {
 runtime.onInstalled.addListener(rebuildRegistry);
 runtime.onStartup.addListener(rebuildRegistry);
 
-chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
+tabs.onUpdated.addListener((tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   if (changeInfo.url || changeInfo.status === 'complete') {
     updateTabRegistry(tabId, tab.url);
   }
 });
 
-chrome.tabs.onRemoved.addListener((tabId: number) => {
+tabs.onRemoved.addListener((tabId: number) => {
   updateTabRegistry(tabId, undefined, true);
 });
 
@@ -255,7 +255,7 @@ async function findAvailableProviderTabInternal() {
         }
 
         try {
-          const tab = await chrome.tabs.get(tabId);
+          const tab = await tabs.get(tabId);
 
           // specific check: is it still the correct URL?
           const pattern = PROVIDER_PATTERNS[provider];
@@ -264,7 +264,7 @@ async function findAvailableProviderTabInternal() {
           }
 
           // Verify with ping
-          const response = await chrome.tabs.sendMessage(tabId, { action: 'ping' });
+          const response = await tabs.sendMessage<{ action: string }, { alive: boolean }>(tabId, { action: 'ping' });
           if (response?.alive) {
             selectedTabId = tabId;
             // Mark as active immediately to prevent other concurrent searches picking it
@@ -309,12 +309,12 @@ async function findAvailableProviderTabInternal() {
 async function executeProviderRequest(tabId: number, prompt: string) {
   // Execute
   // Note: 'create_new_chat' might also fail if the tab *just* died, but we just checked it.
-  const createResponse = await chrome.tabs.sendMessage(tabId, { action: 'create_new_chat' });
+  const createResponse = await tabs.sendMessage<{ action: string }, { success: boolean, error?: string }>(tabId, { action: 'create_new_chat' });
   if (createResponse?.success === false) {
     throw new Error(createResponse.error ?? 'Failed to create new chat');
   }
 
-  const response = (await chrome.tabs.sendMessage(tabId, {
+  const response = (await tabs.sendMessage(tabId, {
     action: 'generate_text',
     prompt
   })) as InternalMessageMap['generate_text']['response'];
@@ -327,6 +327,6 @@ async function executeProviderRequest(tabId: number, prompt: string) {
 
 logger.info("Vegan Mage extension loaded");
 
-chrome.sidePanel
+sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
   .catch((error: unknown) => console.error(error));

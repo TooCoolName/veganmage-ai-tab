@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getErrorMessage } from './utils';
-import { runtime } from './chrome';
+import { runtime, tabs, storage, Tab } from './chrome';
 
 // Interfaces
 interface Provider {
@@ -12,7 +12,7 @@ interface Provider {
     icon?: string;
 }
 
-interface AiTab extends chrome.tabs.Tab {
+interface AiTab extends Tab {
     provider: string;
     providerName: string;
 }
@@ -63,8 +63,8 @@ function App() {
     // Load providers from storage
     const loadProviders = useCallback(async () => {
         try {
-            const result = await chrome.storage.local.get(STORAGE_KEY);
-            const loadedProviders: Provider[] = result[STORAGE_KEY] ?? [...DEFAULT_PROVIDERS];
+            const result = await storage.local.get(STORAGE_KEY);
+            const loadedProviders = (result[STORAGE_KEY] as Provider[] | undefined) ?? [...DEFAULT_PROVIDERS];
 
             // Migration: Ensure URLs exist and icons are removed if they were saved before
             const updatedProviders = loadedProviders.map((p: Provider) => {
@@ -86,8 +86,8 @@ function App() {
     // Load theme from storage
     const loadTheme = useCallback(async () => {
         try {
-            const result = await chrome.storage.local.get('theme');
-            setTheme(result.theme ?? 'custom-light');
+            const result = await storage.local.get('theme');
+            setTheme((result.theme as string) ?? 'custom-light');
         } catch (error) {
             console.error('Error loading theme:', error);
         }
@@ -96,18 +96,18 @@ function App() {
     // Load active tabs
     const loadActiveTabs = useCallback(async () => {
         try {
-            const tabs = await chrome.tabs.query({});
-            const aiTabs = tabs.filter((tab: chrome.tabs.Tab) => {
+            const allTabs = await tabs.query({});
+            const aiTabs = allTabs.filter((tab: Tab) => {
                 const url = tab.url ?? '';
-                return url.includes('chatgpt.com') ||
-                    url.includes('chat.openai.com') ||
-                    url.includes('gemini.google.com') ||
-                    url.includes('copilot.microsoft.com') ||
-                    url.includes('bing.com/chat') ||
-                    url.includes('chat.deepseek.com') ||
-                    url.includes('grok.com') ||
+                return url.includes('chatgpt.com') ??
+                    url.includes('chat.openai.com') ??
+                    url.includes('gemini.google.com') ??
+                    url.includes('copilot.microsoft.com') ??
+                    url.includes('bing.com/chat') ??
+                    url.includes('chat.deepseek.com') ??
+                    url.includes('grok.com') ??
                     url.includes('chat.groq.com');
-            }).map((tab: chrome.tabs.Tab) => {
+            }).map((tab: Tab) => {
                 let provider = 'unknown';
                 const url = tab.url ?? '';
                 if (url.includes('chatgpt.com') || url.includes('chat.openai.com')) provider = 'chatgpt';
@@ -136,7 +136,7 @@ function App() {
     // Save providers to storage
     const saveProviders = async () => {
         try {
-            await chrome.storage.local.set({ [STORAGE_KEY]: providers });
+            await storage.local.set({ [STORAGE_KEY]: providers });
             showStatus('Settings saved', 'success');
 
             // Notify background script
@@ -154,7 +154,7 @@ function App() {
     const toggleTheme = () => {
         const newTheme = theme === 'custom-light' ? 'custom-dark' : 'custom-light';
         setTheme(newTheme);
-        chrome.storage.local.set({ theme: newTheme });
+        storage.local.set({ theme: newTheme });
     };
 
     // Show status message
@@ -234,7 +234,7 @@ function App() {
         setIsSending(true);
 
         try {
-            const result = await chrome.tabs.sendMessage(currentTabId, {
+            const result = await tabs.sendMessage<{ action: string, prompt: string }, { success: boolean, response: string, error?: string }>(currentTabId, {
                 action: 'generate_text',
                 prompt: prompt
             });
@@ -273,7 +273,7 @@ function App() {
         }
 
         try {
-            await chrome.tabs.sendMessage(selectedTab.id, {
+            await tabs.sendMessage(selectedTab.id, {
                 action: 'create_new_chat'
             });
             showStatus('New chat created', 'success');
