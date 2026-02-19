@@ -1,4 +1,4 @@
-import { PanelOptions, GetPanelOptions, PanelBehavior, OpenOptions } from './types';
+import { PanelOptions, GetPanelOptions, PanelBehavior } from './types';
 
 export const sidePanel = {
     setOptions(options: PanelOptions): Promise<void> {
@@ -12,9 +12,5 @@ export const sidePanel = {
     },
     getPanelBehavior(): Promise<PanelBehavior> {
         return chrome.sidePanel.getPanelBehavior();
-    },
-    open(options: OpenOptions): Promise<void> {
-        // @ts-expect-error - might not be in older @types/chrome
-        return chrome.sidePanel.open(options as Parameters<typeof chrome.sidePanel.open>[0]) as Promise<void>;
     }
 };
