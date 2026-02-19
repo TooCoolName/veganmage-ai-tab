@@ -20,4 +20,19 @@ export type StorageArea = chrome.storage.StorageArea;
 export type PanelBehavior = chrome.sidePanel.PanelBehavior;
 export type PanelOptions = chrome.sidePanel.PanelOptions;
 export type GetPanelOptions = chrome.sidePanel.GetPanelOptions;
-export type OpenOptions = unknown; // Might be missing in older @types/chrome
+
+import * as v from 'valibot';
+
+export interface ValidatedSchema {
+    [key: string]: {
+        request: v.BaseSchema<unknown, unknown, v.GenericIssue>;
+        response: v.BaseSchema<unknown, unknown, v.GenericIssue>;
+    };
+}
+
+export interface SimpleSchema {
+    [key: string]: {
+        request: unknown;
+        response: unknown;
+    };
+}

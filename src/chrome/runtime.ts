@@ -9,8 +9,12 @@ export const runtime = {
         return chrome.runtime.getURL(path);
     },
 
-    sendMessage<T = unknown, R = unknown>(message: T): Promise<R> {
+    sendMessage<T = unknown, R = unknown>(message: unknown): Promise<unknown> {
         return chrome.runtime.sendMessage(message);
+    },
+
+    sendMessageExternal<T = unknown, R = unknown>(extensionId: string, message: unknown): Promise<unknown> {
+        return chrome.runtime.sendMessage(extensionId, message);
     },
 
     onMessage: {
