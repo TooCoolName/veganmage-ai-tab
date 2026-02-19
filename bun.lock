@@ -5,6 +5,7 @@
     "": {
       "name": "veganmageaitab",
       "dependencies": {
+        "@toocoolname/chrome-proxy": "^1.0.0",
         "pino": "^10.3.1",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
@@ -179,6 +180,8 @@
     "@tailwindcss/postcss": ["@tailwindcss/postcss@4.1.18", "", { "dependencies": { "@alloc/quick-lru": "^5.2.0", "@tailwindcss/node": "4.1.18", "@tailwindcss/oxide": "4.1.18", "postcss": "^8.4.41", "tailwindcss": "4.1.18" } }, "sha512-Ce0GFnzAOuPyfV5SxjXGn0CubwGcuDB0zcdaPuCSzAa/2vII24JTkH+I6jcbXLb1ctjZMZZI6OjDaLPJQL1S0g=="],
 
     "@tailwindcss/typography": ["@tailwindcss/typography@0.5.19", "", { "dependencies": { "postcss-selector-parser": "6.0.10" }, "peerDependencies": { "tailwindcss": ">=3.0.0 || insiders || >=4.0.0-alpha.20 || >=4.0.0-beta.1" } }, "sha512-w31dd8HOx3k9vPtcQh5QHP9GwKcgbMp87j58qi6xgiBnFFtKEAgCWnDw4qUT8aHwkCp8bKvb/KGKWWHedP0AAg=="],
+
+    "@toocoolname/chrome-proxy": ["@toocoolname/chrome-proxy@1.0.0", "", { "dependencies": { "@types/chrome": "^0.0.244", "valibot": "^1.2.0" } }, "sha512-rcDkGerOdn0xfGR2m0eo6VT1x3DYVt4CL2nO1zTF0yphxbWwL2E+69qi/++wMtavuWBsH7Ns5YahM01ACebpSg=="],
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.10.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg=="],
 

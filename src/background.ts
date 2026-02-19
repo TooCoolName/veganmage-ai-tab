@@ -14,7 +14,7 @@ import {
   isInternalRequest
 } from './schema';
 import { assertNever } from './schema/types';
-import { runtime, MessageSender, SendResponse, tabs, storage, sidePanel, TabChangeInfo, Tab } from './chrome';
+import { chromeMessage, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, MessageSender, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
@@ -47,17 +47,17 @@ const activeRequests = new Set<number>();
 let tabSearchMutex: Promise<unknown> = Promise.resolve();
 
 async function getRegistry(): Promise<Registry> {
-  const result = await storage.session.get('tabRegistry');
+  const result = await chromeStorage.session.get('tabRegistry');
   return parseRegistry(result.tabRegistry) ?? DEFAULT_REGISTRY;
 }
 
 async function saveRegistry(registry: Registry) {
-  await storage.session.set({ tabRegistry: registry });
+  await chromeStorage.session.set({ tabRegistry: registry });
 }
 
 
 async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
-  const result = await storage.local.get('providerSettings');
+  const result = await chromeStorage.local.get('providerSettings');
   return parseProviderSettings(result.providerSettings);
 }
 
@@ -91,7 +91,7 @@ async function updateTabRegistry(tabId: number, url: string | undefined, remove:
 // Full sync to ensure state is accurate after a "sleep"
 async function rebuildRegistry() {
   const registry: Registry = JSON.parse(JSON.stringify(DEFAULT_REGISTRY));
-  const allTabs = await tabs.query({});
+  const allTabs = await chromeTabs.query({});
 
   for (const tab of allTabs) {
     if (!tab.url || !tab.id) continue;
@@ -104,20 +104,18 @@ async function rebuildRegistry() {
   await saveRegistry(registry);
 }
 
-runtime.onInstalled.addListener(rebuildRegistry);
-runtime.onStartup.addListener(rebuildRegistry);
+chromeRuntime.onInstalled.addListener(rebuildRegistry);
+chromeRuntime.onStartup.addListener(rebuildRegistry);
 
-tabs.onUpdated.addListener((tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
+chromeTabs.onUpdated.addListener((tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   if (changeInfo.url || changeInfo.status === 'complete') {
     updateTabRegistry(tabId, tab.url);
   }
 });
 
-tabs.onRemoved.addListener((tabId: number) => {
+chromeTabs.onRemoved.addListener((tabId: number) => {
   updateTabRegistry(tabId, undefined, true);
 });
-
-
 
 type Handler<K extends ExternalMessageKey> = (
   payload: ExternalMessageRequest<K>,
@@ -151,7 +149,7 @@ const handleGenerateText: Handler<'generate_text'> = async (payload: GenerateTex
   }
 };
 
-runtime.onMessageExternal.addListener((
+chromeMessage.createExternalListener((
   message: unknown,
   sender: MessageSender,
   sendResponse: SendResponse
@@ -255,7 +253,7 @@ async function findAvailableProviderTabInternal() {
         }
 
         try {
-          const tab = await tabs.get(tabId);
+          const tab = await chromeTabs.get(tabId);
 
           // specific check: is it still the correct URL?
           const pattern = PROVIDER_PATTERNS[provider];
@@ -264,7 +262,7 @@ async function findAvailableProviderTabInternal() {
           }
 
           // Verify with ping
-          const response = await tabs.sendMessage<{ action: string }, { alive: boolean }>(tabId, { action: 'ping' });
+          const response = await chromeTabs.sendMessage<{ action: string }, { alive: boolean }>(tabId, { action: 'ping' });
           if (response?.alive) {
             selectedTabId = tabId;
             // Mark as active immediately to prevent other concurrent searches picking it
@@ -327,6 +325,6 @@ async function executeProviderRequest(tabId: number, prompt: string) {
 
 logger.info("Vegan Mage extension loaded");
 
-sidePanel
+chromeSidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
   .catch((error: unknown) => console.error(error));
