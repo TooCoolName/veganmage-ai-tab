@@ -1,5 +1,6 @@
 import { InternalRequest } from "@/schema";
 import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from './utils';
+import { runtime, MessageSender, SendResponse } from '@/chrome';
 
 // Copilot Content Script
 // Handles prompt injection, sending, and response extraction
@@ -32,7 +33,7 @@ function createNewChat() {
 }
 
 // Listen for messages from background script
-chrome.runtime.onMessage.addListener((request: InternalRequest, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => {
+runtime.onMessage.addListener((request: InternalRequest, sender: MessageSender, sendResponse: SendResponse) => {
     // Health check ping
     if (request.action === 'ping') {
         sendResponse({ alive: true });

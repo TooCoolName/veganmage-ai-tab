@@ -14,6 +14,7 @@ import {
   isInternalRequest
 } from './schema';
 import { assertNever } from './schema/types';
+import { runtime, MessageSender, MessageListener, SendResponse } from './chrome';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
@@ -103,8 +104,8 @@ async function rebuildRegistry() {
   await saveRegistry(registry);
 }
 
-chrome.runtime.onInstalled.addListener(rebuildRegistry);
-chrome.runtime.onStartup.addListener(rebuildRegistry);
+runtime.onInstalled.addListener(rebuildRegistry);
+runtime.onStartup.addListener(rebuildRegistry);
 
 chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
   if (changeInfo.url || changeInfo.status === 'complete') {
@@ -120,7 +121,7 @@ chrome.tabs.onRemoved.addListener((tabId: number) => {
 
 type Handler<K extends ExternalMessageKey> = (
   payload: ExternalMessageRequest<K>,
-  sender: chrome.runtime.MessageSender
+  sender: MessageSender
 ) => Promise<ExternalMessageResponse<K>>;
 
 const handlePing: Handler<'ping'> = async () => ({
@@ -150,10 +151,10 @@ const handleGenerateText: Handler<'generate_text'> = async (payload: GenerateTex
   }
 };
 
-chrome.runtime.onMessageExternal.addListener((
+runtime.onMessageExternal.addListener((
   message: unknown,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: unknown) => void
+  sender: MessageSender,
+  sendResponse: SendResponse
 ) => {
   // 1. Initial Type Guard
   if (!isExternalMessage(message)) return false;
@@ -171,7 +172,7 @@ chrome.runtime.onMessageExternal.addListener((
 
 async function handleExternalMessage(
   message: ExternalMessage,
-  sender: chrome.runtime.MessageSender
+  sender: MessageSender
 ) {
   switch (message.type) {
     case 'ping':
@@ -187,7 +188,7 @@ async function handleExternalMessage(
 }
 
 // Internal message listener for features like logging
-chrome.runtime.onMessage.addListener((message: unknown, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => {
+runtime.onMessage.addListener((message: unknown, sender: MessageSender, sendResponse: SendResponse) => {
   if (!isInternalRequest(message)) return false;
 
   if (message.action === 'log') {

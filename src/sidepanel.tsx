@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getErrorMessage } from './utils';
+import { runtime } from './chrome';
 
 // Interfaces
 interface Provider {
@@ -139,7 +140,7 @@ function App() {
             showStatus('Settings saved', 'success');
 
             // Notify background script
-            chrome.runtime.sendMessage({
+            runtime.sendMessage({
                 action: 'provider_settings_updated',
                 providers: providers
             }).catch(() => { });

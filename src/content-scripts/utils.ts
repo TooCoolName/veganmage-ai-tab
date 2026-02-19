@@ -1,6 +1,7 @@
 /**
  * Common utilities for content scripts
  */
+import { runtime } from '@/chrome';
 
 /**
  * Logger utility that sends logs to the background script
@@ -13,7 +14,7 @@ export const logger = {
 };
 
 function sendLog(level: string, msg: string, params?: Record<string, unknown>) {
-    chrome.runtime.sendMessage({
+    runtime.sendMessage({
         action: 'log',
         payload: { level, msg, ...params }
     }).catch(() => {
