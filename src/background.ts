@@ -13,6 +13,8 @@ import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStor
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
+const tabMessenger = chromeMessage.createTabMessenger<InternalMessageMap>();
+
 const logger = pino({
   browser: {
     asObject: true
@@ -213,8 +215,8 @@ async function findAvailableProviderTabInternal() {
           }
 
           // Verify with ping
-          const response = await chromeTabs.sendMessage<{ action: string }, { alive: boolean }>(tabId, { action: 'ping' });
-          if (response?.alive) {
+          const response = await tabMessenger.send(tabId, 'ping', undefined);
+          if (response.success) {
             selectedTabId = tabId;
             // Mark as active immediately to prevent other concurrent searches picking it
             activeRequests.add(tabId);
@@ -258,20 +260,18 @@ async function findAvailableProviderTabInternal() {
 async function executeProviderRequest(tabId: number, prompt: string) {
   // Execute
   // Note: 'create_new_chat' might also fail if the tab *just* died, but we just checked it.
-  const createResponse = await tabs.sendMessage<{ action: string }, { success: boolean, error?: string }>(tabId, { action: 'create_new_chat' });
-  if (createResponse?.success === false) {
-    throw new Error(createResponse.error ?? 'Failed to create new chat');
+  const createResponse = await tabMessenger.send(tabId, 'create_new_chat', undefined);
+  if (!createResponse.success) {
+    throw new Error(createResponse.error ?? 'Call to create_new_chat failed');
   }
 
-  const response = (await tabs.sendMessage(tabId, {
-    action: 'generate_text',
-    prompt
-  })) as InternalMessageMap['generate_text']['response'];
+  const response = await tabMessenger.send(tabId, 'generate_text', prompt);
 
-  if (!response.success || typeof response.response !== 'string') {
-    throw new Error(response.error ?? 'Unexpected response type from generate_text');
+  if (!response.success) {
+    throw new Error(response.error ?? 'Call to generate_text failed');
   }
-  return response.response;
+
+  return response.data;
 }
 
 logger.info("Vegan Mage extension loaded");

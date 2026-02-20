@@ -1,16 +1,16 @@
 
 export type InternalMessageMap = {
     ping: {
-        request: { action: 'ping' };
-        response: { alive: true };
+        request: undefined;
+        response: undefined;
     };
     create_new_chat: {
-        request: { action: 'create_new_chat' };
-        response: { success: boolean; error?: string };
+        request: undefined;
+        response: undefined;
     };
     generate_text: {
-        request: { action: 'generate_text'; prompt: string };
-        response: { success: boolean; response?: string; error?: string };
+        request: string;
+        response: string;
     };
     log: {
         request: {
