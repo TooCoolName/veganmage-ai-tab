@@ -138,12 +138,6 @@ function App() {
         try {
             await storage.local.set({ [STORAGE_KEY]: providers });
             showStatus('Settings saved', 'success');
-
-            // Notify background script
-            runtime.sendMessage({
-                action: 'provider_settings_updated',
-                providers: providers
-            }).catch(() => { });
         } catch (error) {
             console.error('Error saving providers:', error);
             showStatus('Failed to save settings', 'error');

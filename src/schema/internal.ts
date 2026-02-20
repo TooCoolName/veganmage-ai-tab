@@ -19,10 +19,6 @@ export type InternalMessageMap = {
         };
         response: { success: boolean };
     };
-    provider_settings_updated: {
-        request: { action: 'provider_settings_updated' };
-        response: { success: true };
-    };
 };
 
 export type InternalRequest = InternalMessageMap[keyof InternalMessageMap]['request'];

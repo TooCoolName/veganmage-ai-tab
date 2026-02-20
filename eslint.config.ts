@@ -110,7 +110,7 @@ export default tseslint.config(
     },
     {
         // Override: Allow 'chrome' only in the specific folder
-        files: ['src/chrome/**/*.ts'],
+        files: ['src/chrome/**/*.ts', 'src/background.ts'],
         rules: {
             'no-restricted-globals': 'off',
         },

@@ -1,14 +1,14 @@
+import { ChromeResult } from "@toocoolname/chrome-proxy";
 import { GenerateText } from "./external.validators";
-import { ApiResponse } from "./types";
 
 export type ExternalMessageBus = {
     ping: {
         request: undefined;
-        response: ApiResponse<undefined>;
+        response: ChromeResult<undefined>;
     };
     generate_text: {
         request: GenerateText;
-        response: ApiResponse<string>;
+        response: ChromeResult<string>;
     };
 };
 

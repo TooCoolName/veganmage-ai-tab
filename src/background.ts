@@ -1,20 +1,18 @@
 import pino from 'pino';
 import {
-  ExternalMessage,
   ExternalMessageKey,
   ExternalMessageRequest,
   ExternalMessageResponse,
-  isExternalMessage,
   ProviderSetting,
   Registry,
   parseRegistry,
   parseProviderSettings,
   GenerateText,
   InternalMessageMap,
-  isInternalRequest
+  isInternalRequest,
+  ExternalMessengerSchema
 } from './schema';
-import { assertNever } from './schema/types';
-import { chromeMessage, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, MessageSender, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
+import { chromeMessage, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, MessageSender, SendResponse, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
@@ -127,10 +125,11 @@ const handlePing: Handler<'ping'> = async () => ({
   data: undefined
 });
 
+
 const handleGenerateText: Handler<'generate_text'> = async (payload: GenerateText) => {
   try {
     const result = await findAvailableProviderTab();
-    if (!result) throw new Error('No active AI provider tabs found.');
+    if (!result) return { success: false, error: 'No active AI provider tabs found.' };
 
     const { selectedTabId } = result;
     try {
@@ -139,54 +138,26 @@ const handleGenerateText: Handler<'generate_text'> = async (payload: GenerateTex
       if (typeof response === 'string') {
         return { success: true, data: response };
       }
-      throw new Error('Invalid response from content script');
+      return { success: false, error: 'Invalid response from content script' };
     } finally {
       activeRequests.delete(selectedTabId);
     }
   } catch (error) {
     console.error('Generate text error:', error);
-    throw error;
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 };
 
-chromeMessage.createExternalListener((
-  message: unknown,
-  sender: MessageSender,
-  sendResponse: SendResponse
-) => {
-  // 1. Initial Type Guard
-  if (!isExternalMessage(message)) return false;
 
-  // 2. Encapsulate execution logic
-  handleExternalMessage(message, sender)
-    .then(sendResponse)
-    .catch((err: unknown) => sendResponse({
-      success: false,
-      error: err instanceof Error ? err.message : 'Internal Error'
-    }));
+const handlers = {
+  ping: async (_payload: unknown) => handlePing(undefined, {} as MessageSender),
+  generate_text: async (payload: GenerateText) => handleGenerateText(payload, {} as MessageSender)
+};
 
-  return true;
-});
-
-async function handleExternalMessage(
-  message: ExternalMessage,
-  sender: MessageSender
-) {
-  switch (message.type) {
-    case 'ping':
-      return handlePing(message.payload, sender);
-
-    case 'generate_text': {
-      return handleGenerateText(message.payload, sender);
-    }
-    default: {
-      assertNever(message)
-    }
-  }
-}
+chromeMessage.createExternalListener(ExternalMessengerSchema, handlers);
 
 // Internal message listener for features like logging
-runtime.onMessage.addListener((message: unknown, sender: MessageSender, sendResponse: SendResponse) => {
+chrome.runtime.onMessage.addListener((message: unknown, sender: MessageSender, sendResponse: SendResponse) => {
   if (!isInternalRequest(message)) return false;
 
   if (message.action === 'log') {
@@ -201,15 +172,8 @@ runtime.onMessage.addListener((message: unknown, sender: MessageSender, sendResp
       default: logger.info(payload, msg); break;
     }
 
-    sendResponse({ success: true });
+    sendResponse({ success: true, data: undefined });
     return true;
-  }
-
-  // Handle other internal messages if necessary
-  if (message.action === 'provider_settings_updated') {
-    logger.info('Provider settings updated from sidepanel');
-    sendResponse({ success: true });
-    return false;
   }
 
   return false;
