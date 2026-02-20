@@ -1,6 +1,6 @@
-import { InternalRequest } from "@/schema";
+import { TabInternalMessageSchema } from "@/schema";
+import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
 import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText, pressShortcut } from './utils';
-import { runtime, MessageSender, SendResponse } from '@/chrome';
 
 // Function to find the send button
 function findSendButton() {
@@ -25,28 +25,29 @@ function createNewChat() {
 }
 
 // Listen for messages from background script
-runtime.onMessage.addListener((request: InternalRequest, sender: MessageSender, sendResponse: SendResponse) => {
-    // Health check ping
-    if (request.action === 'ping') {
-        sendResponse({ alive: true });
-        return;
-    }
-
-    if (request.action === 'create_new_chat') {
-        const success = createNewChat();
-        sendResponse({ success: success });
-        return;
-    }
-
-    if (request.action === 'generate_text') {
+chromeMessage.createLocalListener(TabInternalMessageSchema, {
+    ping: async (): Promise<ChromeResult<undefined>> => {
+        return { success: true, data: undefined };
+    },
+    create_new_chat: async (): Promise<ChromeResult<undefined>> => {
+        createNewChat();
+        return { success: true, data: undefined };
+    },
+    generate_text: async (prompt: string): Promise<ChromeResult<string>> => {
         const getMessages = () => document.querySelectorAll('[data-message-author-role="assistant"]');
-        return handleGenerateText(request.prompt, sendResponse, {
-            injectText: (prompt: string) => injectText('#prompt-textarea', prompt),
-            findSendButton,
-            pressEnter: () => pressEnter('#prompt-textarea', true),
-            waitForResponse: (initialCount: number) => waitForResponse(initialCount),
-            getMessages
-        });
+        try {
+            const response = await handleGenerateText(prompt, {
+                injectText: (prompt: string) => injectText('#prompt-textarea', prompt),
+                findSendButton,
+                pressEnter: () => pressEnter('#prompt-textarea', true),
+                waitForResponse: (initialCount: number) => waitForResponse(initialCount),
+                getMessages
+            });
+            return { success: true, data: response };
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            return { success: false, error: errorMessage };
+        }
     }
 });
 

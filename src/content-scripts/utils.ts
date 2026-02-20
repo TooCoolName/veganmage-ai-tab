@@ -230,7 +230,6 @@ export function findSendButton(selectors: string[]): HTMLElement | undefined {
  */
 export function handleGenerateText(
     prompt: string | undefined,
-    sendResponse: (response: Record<string, unknown>) => void,
     options: {
         injectText: (prompt: string) => void;
         findSendButton: () => HTMLElement | undefined;
@@ -239,45 +238,44 @@ export function handleGenerateText(
         getMessages: () => NodeListOf<Element> | Element[];
         delayBeforeSend?: number;
     }
-): boolean {
+): Promise<string> {
     if (!prompt) {
-        sendResponse({ success: false, error: 'No prompt provided' });
-        return false;
+        return Promise.reject(new Error('No prompt provided'));
     }
 
-    // 0. Inject text
-    options.injectText(prompt);
+    return new Promise<string>((resolve: (value: string | PromiseLike<string>) => void, reject: (reason?: unknown) => void) => {
+        // 0. Inject text
+        options.injectText(prompt);
 
-
-    // 1. Wait for injection
-    setTimeout(() => {
-        // 1. Capture initial message count BEFORE any action    
-        const initialCount = options.getMessages().length;
-        logger.debug('Initial message count', { initialCount });
-
-        const sendButton = options.findSendButton();
-        if (sendButton) {
-            sendButton.click();
-            logger.info('Clicked send button');
-        } else {
-            // Fallback to Ctrl+Enter
-            options.pressEnter();
-            logger.info('Dispatched Enter shortcut as fallback');
-        }
-        // 3. Wait for response (1s delay before checking to allow UI to update)
+        // 1. Wait for injection
         setTimeout(() => {
-            options.waitForResponse(initialCount)
-                .then((response: string) => {
-                    logger.info('Response received successfully');
-                    sendResponse({ success: true, response: response });
-                })
-                .catch((error: unknown) => {
-                    const errorMessage = error instanceof Error ? error.message : String(error);
-                    logger.error('Error waiting for response', { error: errorMessage });
-                    sendResponse({ success: false, error: errorMessage });
-                });
-        }, 1000);
-    }, options.delayBeforeSend ?? 500);
+            // 2. Capture initial message count BEFORE any action    
+            const initialCount = options.getMessages().length;
+            logger.debug('Initial message count', { initialCount });
 
-    return true; // Keep channel open for async response
+            const sendButton = options.findSendButton();
+            if (sendButton) {
+                sendButton.click();
+                logger.info('Clicked send button');
+            } else {
+                // Fallback to Ctrl+Enter
+                options.pressEnter();
+                logger.info('Dispatched Enter shortcut as fallback');
+            }
+
+            // 3. Wait for response (1s delay before checking to allow UI to update)
+            setTimeout(() => {
+                options.waitForResponse(initialCount)
+                    .then((response: string) => {
+                        logger.info('Response received successfully');
+                        resolve(response);
+                    })
+                    .catch((error: unknown) => {
+                        const errorMessage = error instanceof Error ? error.message : String(error);
+                        logger.error('Error waiting for response', { error: errorMessage });
+                        reject(new Error(errorMessage));
+                    });
+            }, 1000);
+        }, options.delayBeforeSend ?? 500);
+    });
 }

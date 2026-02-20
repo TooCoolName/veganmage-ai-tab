@@ -1,6 +1,6 @@
-import { InternalRequest } from "@/schema";
+import { TabInternalMessageSchema } from "@/schema";
+import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
 import { waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText } from './utils';
-import { runtime, MessageSender, SendResponse } from '@/chrome';
 
 // Groq Content Script
 // Handles prompt injection, sending, and response extraction
@@ -37,31 +37,32 @@ function createNewChat() {
 }
 
 // Listen for messages from background script
-runtime.onMessage.addListener((request: InternalRequest, sender: MessageSender, sendResponse: SendResponse) => {
-    // Health check ping
-    if (request.action === 'ping') {
-        sendResponse({ alive: true });
-        return;
-    }
-
-    if (request.action === 'create_new_chat') {
-        const success = createNewChat();
-        sendResponse({ success: success });
-        return;
-    }
-
-    if (request.action === 'generate_text') {
+chromeMessage.createLocalListener(TabInternalMessageSchema, {
+    ping: async (): Promise<ChromeResult<undefined>> => {
+        return { success: true, data: undefined };
+    },
+    create_new_chat: async (): Promise<ChromeResult<undefined>> => {
+        createNewChat();
+        return { success: true, data: undefined };
+    },
+    generate_text: async (prompt: string): Promise<ChromeResult<string>> => {
         // Groq usually has messages in divs. We need to find the container. 
         // This selector is a guess and should be refined.
         const getMessages = () => document.querySelectorAll('main .grow > .flex');
 
-        return handleGenerateText(request.prompt, sendResponse, {
-            injectText: (prompt: string) => injectText('#chat', prompt),
-            findSendButton,
-            pressEnter: () => pressEnter('#chat', true),
-            waitForResponse: (initialCount: number) => waitForResponse(initialCount),
-            getMessages
-        });
+        try {
+            const response = await handleGenerateText(prompt, {
+                injectText: (prompt: string) => injectText('#chat', prompt),
+                findSendButton,
+                pressEnter: () => pressEnter('#chat', true),
+                waitForResponse: (initialCount: number) => waitForResponse(initialCount),
+                getMessages
+            });
+            return { success: true, data: response };
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            return { success: false, error: errorMessage };
+        }
     }
 });
 
