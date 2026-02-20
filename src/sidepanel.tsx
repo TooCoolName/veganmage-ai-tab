@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getErrorMessage } from './utils';
-import { chromeStorage, chromeTabs, Tab } from '@toocoolname/chrome-proxy';
+import { chromeMessage, chromeStorage, chromeTabs, Tab } from '@toocoolname/chrome-proxy';
+import { TabInternalMessageSchema } from './schema';
+
+const tabMessenger = chromeMessage.createTabMessenger(TabInternalMessageSchema);
 
 // Interfaces
 interface Provider {
@@ -228,23 +231,20 @@ function App() {
         setIsSending(true);
 
         try {
-            const result = await chromeTabs.sendMessage<{ action: string, prompt: string }, { success: boolean, response: string, error?: string }>(currentTabId, {
-                action: 'generate_text',
-                prompt: prompt
-            });
+            const result = await tabMessenger.send(currentTabId, 'generate_text', prompt);
 
-            if (result?.success) {
+            if (result.success) {
                 const assistantMsg: Message = {
                     id: crypto.randomUUID(),
                     tabId: currentTabId,
-                    text: result.response,
+                    text: result.data,
                     role: 'assistant',
                     timestamp: Date.now()
                 };
                 setMessages((prev: Message[]) => [...prev, assistantMsg]);
                 showStatus('Response received', 'success');
             } else {
-                showStatus(`Failed: ${result?.error ?? 'Unknown error'}`, 'error');
+                showStatus(`Failed: ${result.error ?? 'Unknown error'}`, 'error');
             }
         } catch (error) {
             console.error('Error sending message:', error);
@@ -267,10 +267,12 @@ function App() {
         }
 
         try {
-            await chromeTabs.sendMessage(selectedTab.id, {
-                action: 'create_new_chat'
-            });
-            showStatus('New chat created', 'success');
+            const result = await tabMessenger.send(selectedTab.id, 'create_new_chat', undefined);
+            if (result.success) {
+                showStatus('New chat created', 'success');
+            } else {
+                throw new Error(result.error ?? 'Unknown error');
+            }
         } catch (error) {
             console.error('Error creating new chat:', error);
             showStatus(`Failed: ${(getErrorMessage(error))}`, 'error');
