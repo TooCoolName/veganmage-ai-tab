@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getErrorMessage } from './utils';
-import { runtime, tabs, storage, Tab } from './chrome';
+import { chromeStorage, chromeTabs, Tab } from '@toocoolname/chrome-proxy';
 
 // Interfaces
 interface Provider {
@@ -63,7 +63,7 @@ function App() {
     // Load providers from storage
     const loadProviders = useCallback(async () => {
         try {
-            const result = await storage.local.get(STORAGE_KEY);
+            const result = await chromeStorage.local.get(STORAGE_KEY);
             const loadedProviders = (result[STORAGE_KEY] as Provider[] | undefined) ?? [...DEFAULT_PROVIDERS];
 
             // Migration: Ensure URLs exist and icons are removed if they were saved before
@@ -86,7 +86,7 @@ function App() {
     // Load theme from storage
     const loadTheme = useCallback(async () => {
         try {
-            const result = await storage.local.get('theme');
+            const result = await chromeStorage.local.get('theme');
             setTheme((result.theme as string) ?? 'custom-light');
         } catch (error) {
             console.error('Error loading theme:', error);
@@ -96,7 +96,7 @@ function App() {
     // Load active tabs
     const loadActiveTabs = useCallback(async () => {
         try {
-            const allTabs = await tabs.query({});
+            const allTabs = await chromeTabs.query({});
             const aiTabs = allTabs.filter((tab: Tab) => {
                 const url = tab.url ?? '';
                 return url.includes('chatgpt.com') ??
@@ -136,7 +136,7 @@ function App() {
     // Save providers to storage
     const saveProviders = async () => {
         try {
-            await storage.local.set({ [STORAGE_KEY]: providers });
+            await chromeStorage.local.set({ [STORAGE_KEY]: providers });
             showStatus('Settings saved', 'success');
         } catch (error) {
             console.error('Error saving providers:', error);
@@ -148,7 +148,7 @@ function App() {
     const toggleTheme = () => {
         const newTheme = theme === 'custom-light' ? 'custom-dark' : 'custom-light';
         setTheme(newTheme);
-        storage.local.set({ theme: newTheme });
+        chromeStorage.local.set({ theme: newTheme });
     };
 
     // Show status message
@@ -228,7 +228,7 @@ function App() {
         setIsSending(true);
 
         try {
-            const result = await tabs.sendMessage<{ action: string, prompt: string }, { success: boolean, response: string, error?: string }>(currentTabId, {
+            const result = await chromeTabs.sendMessage<{ action: string, prompt: string }, { success: boolean, response: string, error?: string }>(currentTabId, {
                 action: 'generate_text',
                 prompt: prompt
             });
@@ -267,7 +267,7 @@ function App() {
         }
 
         try {
-            await tabs.sendMessage(selectedTab.id, {
+            await chromeTabs.sendMessage(selectedTab.id, {
                 action: 'create_new_chat'
             });
             showStatus('New chat created', 'success');
