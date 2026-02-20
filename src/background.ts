@@ -6,9 +6,9 @@ import {
   parseProviderSettings,
   GenerateText,
   ExternalMessegeSchema,
-  BgInternalMessageMap,
   BgInternalMessageSchema,
-  TabInternalMessageSchema
+  TabInternalMessageSchema,
+  BgInternalLogRequest
 } from './schema';
 import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
 
@@ -145,7 +145,7 @@ const externalHandlers = {
 chromeMessage.createExternalListener(ExternalMessegeSchema, externalHandlers)
 
 const internalHandlers = {
-  log: async (request: BgInternalMessageMap['log']['request']): Promise<ChromeResult<BgInternalMessageMap['log']['response']>> => {
+  log: async (request: BgInternalLogRequest): Promise<ChromeResult<undefined>> => {
     const { level = 'info', msg, ...params } = request.payload ?? {};
     const source = 'internal';
 

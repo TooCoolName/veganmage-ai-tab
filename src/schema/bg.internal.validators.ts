@@ -13,9 +13,4 @@ export const BgInternalMessageSchema = {
     }
 };
 
-export type BgInternalMessageMap = {
-    [K in keyof typeof BgInternalMessageSchema]: {
-        request: v.InferInput<(typeof BgInternalMessageSchema)[K]['request']>;
-        response: v.InferInput<(typeof BgInternalMessageSchema)[K]['response']>;
-    }
-};
+export type BgInternalLogRequest = v.InferOutput<typeof BgInternalMessageSchema.log.request>;
