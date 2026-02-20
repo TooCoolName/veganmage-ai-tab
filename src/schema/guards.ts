@@ -1,8 +1,5 @@
 import * as v from 'valibot';
-import { ExternalMessage, ExternalMessageKey, ExternalMessageKeySet } from "./external.types";
-import { GenerateTextSchema } from "./external.validators";
-import { ProviderSettingsSchema, RegistrySchema, Registry, ProviderSetting } from "./settings.validators";
-import { assertNever } from './types';
+]import { ProviderSettingsSchema, RegistrySchema, Registry, ProviderSetting } from "./settings.validators";
 
 
 export function parseRegistry(data: unknown): Registry | undefined {
