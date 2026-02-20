@@ -2,13 +2,10 @@ import * as v from 'valibot';
 
 export const BgInternalMessageSchema = {
     log: {
-        request: v.object({
-            action: v.literal('log'),
-            payload: v.objectWithRest({
-                level: v.optional(v.string()),
-                msg: v.string()
-            }, v.unknown())
-        }),
+        request: v.objectWithRest({
+            level: v.optional(v.string()),
+            msg: v.string()
+        }, v.unknown()),
         response: v.undefined()
     }
 };

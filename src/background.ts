@@ -146,7 +146,7 @@ chromeMessage.createExternalListener(ExternalMessegeSchema, externalHandlers)
 
 const internalHandlers = {
   log: async (request: BgInternalLogRequest): Promise<ChromeResult<undefined>> => {
-    const { level = 'info', msg, ...params } = request.payload ?? {};
+    const { level = 'info', msg, ...params } = request ?? {};
     const source = 'internal';
 
     const payload = { ...params, source };

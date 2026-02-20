@@ -1,7 +1,10 @@
 /**
  * Common utilities for content scripts
  */
-import { runtime } from '@/chrome';
+import { chromeMessage } from '@toocoolname/chrome-proxy';
+import { BgInternalMessageSchema } from '@/schema';
+
+const bgMessenger = chromeMessage.createLocalMessenger(BgInternalMessageSchema);
 
 /**
  * Logger utility that sends logs to the background script
@@ -14,10 +17,7 @@ export const logger = {
 };
 
 function sendLog(level: string, msg: string, params?: Record<string, unknown>) {
-    runtime.sendMessage({
-        action: 'log',
-        payload: { level, msg, ...params }
-    }).catch(() => {
+    bgMessenger.send('log', { level, msg, ...params }).catch(() => {
         // Fallback to console if background logger fails
         console.log(`[${level.toUpperCase()}] ${msg}`, params ?? '');
     });
