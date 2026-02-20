@@ -1,8 +1,5 @@
 import pino from 'pino';
 import {
-  ExternalMessageKey,
-  ExternalMessageRequest,
-  ExternalMessageResponse,
   ProviderSetting,
   Registry,
   parseRegistry,
@@ -12,7 +9,7 @@ import {
   isInternalRequest,
   ExternalMessengerSchema
 } from './schema';
-import { chromeMessage, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, MessageSender, SendResponse, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
+import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, MessageSender, SendResponse, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
@@ -116,10 +113,10 @@ chromeTabs.onRemoved.addListener((tabId: number) => {
 });
 
 const handlers = {
-  ping: async () => {
-    return { success: true, data: undefined as undefined };
+  ping: async (): Promise<ChromeResult<undefined>> => {
+    return { success: true, data: undefined };
   },
-  generate_text: async (payload: GenerateText) => {
+  generate_text: async (payload: GenerateText): Promise<ChromeResult<string>> => {
     try {
       const result = await findAvailableProviderTab();
       if (!result) return { success: false, error: 'No active AI provider tabs found.' };
