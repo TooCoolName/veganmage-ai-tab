@@ -8,13 +8,13 @@ import {
   ExternalMessegeSchema,
   BgInternalMessageMap,
   BgInternalMessageSchema,
-  TabInternalMessageMap
+  TabInternalMessageSchema
 } from './schema';
 import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
-const tabMessenger = chromeMessage.createTabMessenger<TabInternalMessageMap>();
+const tabMessenger = chromeMessage.createTabMessenger(TabInternalMessageSchema);
 
 const logger = pino({
   browser: {

@@ -5,7 +5,7 @@
     "": {
       "name": "veganmageaitab",
       "dependencies": {
-        "@toocoolname/chrome-proxy": "^1.0.2",
+        "@toocoolname/chrome-proxy": "^1.0.3",
         "pino": "^10.3.1",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
@@ -181,7 +181,7 @@
 
     "@tailwindcss/typography": ["@tailwindcss/typography@0.5.19", "", { "dependencies": { "postcss-selector-parser": "6.0.10" }, "peerDependencies": { "tailwindcss": ">=3.0.0 || insiders || >=4.0.0-alpha.20 || >=4.0.0-beta.1" } }, "sha512-w31dd8HOx3k9vPtcQh5QHP9GwKcgbMp87j58qi6xgiBnFFtKEAgCWnDw4qUT8aHwkCp8bKvb/KGKWWHedP0AAg=="],
 
-    "@toocoolname/chrome-proxy": ["@toocoolname/chrome-proxy@1.0.2", "", { "dependencies": { "@types/chrome": "^0.0.244", "valibot": "^1.2.0" } }, "sha512-g2OzHIr5FGBMWxSGrNnmnghPgxkI1Smotmm3DVKFc7mUR4hL8964hHgAhgrl4dPwJ5c7a6zrtFETOcHilmdZIQ=="],
+    "@toocoolname/chrome-proxy": ["@toocoolname/chrome-proxy@1.0.3", "", { "dependencies": { "@types/chrome": "^0.0.244", "valibot": "^1.2.0" } }, "sha512-SFyTgAb/GjSSwHP00WgGGlZVv/dXHWMkufKWRReXdE3nhKsZoVLxJpUcBYt6Eby68PnEjKz8ytWD76/S5z4xRw=="],
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.10.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg=="],
 
