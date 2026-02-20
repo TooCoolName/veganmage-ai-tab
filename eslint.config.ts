@@ -58,17 +58,28 @@ export default tseslint.config(
             'react/react-in-jsx-scope': 'off',
             "prefer-promise-reject-errors": "error",
             '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-            // '@typescript-eslint/no-explicit-any': 'error',
+            '@typescript-eslint/no-explicit-any': 'error',
             '@typescript-eslint/prefer-nullish-coalescing': 'error',
             '@typescript-eslint/prefer-optional-chain': 'error',
             '@typescript-eslint/no-unsafe-return': 'error',
             "@typescript-eslint/only-throw-error": "error",
-            // '@typescript-eslint/consistent-type-assertions': [
-            //     'error',
-            //     {
-            //         assertionStyle: 'never',
-            //     },
-            // ],
+            '@typescript-eslint/consistent-type-assertions': [
+                'error',
+                {
+                    assertionStyle: 'never',
+                },
+            ],
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: 'Literal[value=null]',
+                    message: 'Use undefined instead of null',
+                },
+                {
+                    selector: 'TSNullKeyword',
+                    message: 'Use undefined instead of null',
+                },
+            ],
             'no-restricted-imports': [
                 'error',
                 {
