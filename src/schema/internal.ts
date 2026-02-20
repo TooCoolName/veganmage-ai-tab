@@ -17,13 +17,9 @@ export type InternalMessageMap = {
             action: 'log';
             payload: { level?: string; msg: string;[key: string]: unknown }
         };
-        response: { success: boolean };
+        response: undefined;
     };
 };
 
 export type InternalRequest = InternalMessageMap[keyof InternalMessageMap]['request'];
 export type InternalResponse = InternalMessageMap[keyof InternalMessageMap]['response'];
-
-export function isInternalRequest(message: unknown): message is InternalRequest {
-    return typeof message === 'object' && !!message && 'action' in message;
-}

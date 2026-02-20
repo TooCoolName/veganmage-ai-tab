@@ -6,10 +6,9 @@ import {
   parseProviderSettings,
   GenerateText,
   InternalMessageMap,
-  isInternalRequest,
-  ExternalMessengerSchema
+  ExternalMessegeSchema
 } from './schema';
-import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, MessageSender, SendResponse, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
+import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
@@ -114,7 +113,7 @@ chromeTabs.onRemoved.addListener((tabId: number) => {
   updateTabRegistry(tabId, undefined, true);
 });
 
-const handlers = {
+const externalHandlers = {
   ping: async (): Promise<ChromeResult<undefined>> => {
     return { success: true, data: undefined };
   },
@@ -141,17 +140,12 @@ const handlers = {
   }
 };
 
-chrome.runtime.onMessageExternal.addListener(
-  chromeMessage.createExternalListener(ExternalMessengerSchema, handlers)
-);
+chromeMessage.createExternalListener(ExternalMessegeSchema, externalHandlers)
 
-// Internal message listener for features like logging
-chrome.runtime.onMessage.addListener((message: unknown, sender: MessageSender, sendResponse: SendResponse) => {
-  if (!isInternalRequest(message)) return false;
-
-  if (message.action === 'log') {
-    const { level = 'info', msg, ...params } = message.payload ?? {};
-    const source = sender.tab ? `tab:${sender.tab.id}` : 'internal';
+const internalHandlers = {
+  log: async (request: InternalMessageMap['log']['request']): Promise<ChromeResult<InternalMessageMap['log']['response']>> => {
+    const { level = 'info', msg, ...params } = request.payload ?? {};
+    const source = 'internal';
 
     const payload = { ...params, source };
     switch (level) {
@@ -161,12 +155,11 @@ chrome.runtime.onMessage.addListener((message: unknown, sender: MessageSender, s
       default: logger.info(payload, msg); break;
     }
 
-    sendResponse({ success: true, data: undefined });
-    return true;
+    return { success: true, data: undefined };
   }
+};
 
-  return false;
-});
+chromeMessage.createLocalListener(InternalMessageMap, internalHandlers);
 
 async function findAvailableProviderTab() {
   // Avoid mutex deadlock by ensuring catch returns void/undefined properly typed
