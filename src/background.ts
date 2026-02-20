@@ -5,14 +5,16 @@ import {
   parseRegistry,
   parseProviderSettings,
   GenerateText,
-  InternalMessageMap,
-  ExternalMessegeSchema
+  ExternalMessegeSchema,
+  BgInternalMessageMap,
+  BgInternalMessageSchema,
+  TabInternalMessageMap
 } from './schema';
 import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
-const tabMessenger = chromeMessage.createTabMessenger<InternalMessageMap>();
+const tabMessenger = chromeMessage.createTabMessenger<TabInternalMessageMap>();
 
 const logger = pino({
   browser: {
@@ -143,7 +145,7 @@ const externalHandlers = {
 chromeMessage.createExternalListener(ExternalMessegeSchema, externalHandlers)
 
 const internalHandlers = {
-  log: async (request: InternalMessageMap['log']['request']): Promise<ChromeResult<InternalMessageMap['log']['response']>> => {
+  log: async (request: BgInternalMessageMap['log']['request']): Promise<ChromeResult<BgInternalMessageMap['log']['response']>> => {
     const { level = 'info', msg, ...params } = request.payload ?? {};
     const source = 'internal';
 
@@ -159,7 +161,7 @@ const internalHandlers = {
   }
 };
 
-chromeMessage.createLocalListener(InternalMessageMap, internalHandlers);
+chromeMessage.createLocalListener(BgInternalMessageSchema, internalHandlers);
 
 async function findAvailableProviderTab() {
   // Avoid mutex deadlock by ensuring catch returns void/undefined properly typed
