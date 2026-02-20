@@ -115,46 +115,36 @@ chromeTabs.onRemoved.addListener((tabId: number) => {
   updateTabRegistry(tabId, undefined, true);
 });
 
-type Handler<K extends ExternalMessageKey> = (
-  payload: ExternalMessageRequest<K>,
-  sender: MessageSender
-) => Promise<ExternalMessageResponse<K>>;
-
-const handlePing: Handler<'ping'> = async () => ({
-  success: true,
-  data: undefined
-});
-
-
-const handleGenerateText: Handler<'generate_text'> = async (payload: GenerateText) => {
-  try {
-    const result = await findAvailableProviderTab();
-    if (!result) return { success: false, error: 'No active AI provider tabs found.' };
-
-    const { selectedTabId } = result;
+const handlers = {
+  ping: async () => {
+    return { success: true, data: undefined as undefined };
+  },
+  generate_text: async (payload: GenerateText) => {
     try {
-      const response = await executeProviderRequest(selectedTabId, payload.prompt);
-      // Assuming the content script returns the text directly as response
-      if (typeof response === 'string') {
-        return { success: true, data: response };
+      const result = await findAvailableProviderTab();
+      if (!result) return { success: false, error: 'No active AI provider tabs found.' };
+
+      const { selectedTabId } = result;
+      try {
+        const response = await executeProviderRequest(selectedTabId, payload.prompt);
+        // Assuming the content script returns the text directly as response
+        if (typeof response === 'string') {
+          return { success: true, data: response };
+        }
+        return { success: false, error: 'Invalid response from content script' };
+      } finally {
+        activeRequests.delete(selectedTabId);
       }
-      return { success: false, error: 'Invalid response from content script' };
-    } finally {
-      activeRequests.delete(selectedTabId);
+    } catch (error) {
+      console.error('Generate text error:', error);
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
-  } catch (error) {
-    console.error('Generate text error:', error);
-    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 };
 
-
-const handlers = {
-  ping: async (_payload: unknown) => handlePing(undefined, {} as MessageSender),
-  generate_text: async (payload: GenerateText) => handleGenerateText(payload, {} as MessageSender)
-};
-
-chromeMessage.createExternalListener(ExternalMessengerSchema, handlers);
+chrome.runtime.onMessageExternal.addListener(
+  chromeMessage.createExternalListener(ExternalMessengerSchema, handlers)
+);
 
 // Internal message listener for features like logging
 chrome.runtime.onMessage.addListener((message: unknown, sender: MessageSender, sendResponse: SendResponse) => {
