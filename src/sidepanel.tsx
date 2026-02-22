@@ -498,7 +498,7 @@ function MessagingView({
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [filteredMessages, isSending]);
+    }, [filteredMessages, isSending, scrollRef]);
 
     return (
         <div className="flex flex-col h-full gap-4">
