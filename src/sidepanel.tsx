@@ -45,6 +45,7 @@ const DEFAULT_PROVIDERS: Provider[] = [
 ];
 
 const STORAGE_KEY = 'providerSettings';
+const THEME_KEY = 'theme'
 
 // Main App Component
 function App() {
@@ -67,8 +68,7 @@ function App() {
     // Load providers from storage
     const loadProviders = useCallback(async () => {
         try {
-            const result = await chromeStorage.local.get(STORAGE_KEY);
-            const loadedProviders = (result[STORAGE_KEY] as Provider[] | undefined) ?? [...DEFAULT_PROVIDERS];
+            const loadedProviders = await chromeStorage.local.get<Provider[]>(STORAGE_KEY) ?? DEFAULT_PROVIDERS;
 
             // Migration: Ensure URLs exist and icons are removed if they were saved before
             const updatedProviders = loadedProviders.map((p: Provider) => {
@@ -90,8 +90,8 @@ function App() {
     // Load theme from storage
     const loadTheme = useCallback(async () => {
         try {
-            const result = await chromeStorage.local.get('theme');
-            setTheme((result.theme as string) ?? 'custom-light');
+            const result = await chromeStorage.local.get<string>(THEME_KEY) ?? 'custom-light';
+            setTheme((result));
         } catch (error) {
             console.error('Error loading theme:', error);
         }
@@ -140,7 +140,7 @@ function App() {
     // Save providers to storage
     const saveProviders = async () => {
         try {
-            await chromeStorage.local.set({ [STORAGE_KEY]: providers });
+            await chromeStorage.local.set(STORAGE_KEY, providers);
             showStatus('Settings saved', 'success');
         } catch (error) {
             console.error('Error saving providers:', error);
@@ -152,7 +152,7 @@ function App() {
     const toggleTheme = () => {
         const newTheme = theme === 'custom-light' ? 'custom-dark' : 'custom-light';
         setTheme(newTheme);
-        chromeStorage.local.set({ theme: newTheme });
+        chromeStorage.local.set(THEME_KEY, newTheme);
     };
 
     // Show status message
