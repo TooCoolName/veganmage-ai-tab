@@ -180,7 +180,9 @@ if (isWatch) {
         console.log(`[WATCH] Change detected: ${event} on ${sFilename}`);
 
         clearTimeout(timeout);
-        timeout = setTimeout(triggerBuild, 200);
+        timeout = setTimeout(() => {
+            triggerBuild().catch(err => console.error("Trigger build failed:", err));
+        }, 200);
     };
 
     // Watch both source code and public assets

@@ -102,17 +102,17 @@ async function rebuildRegistry() {
   await saveRegistry(registry);
 }
 
-chromeRuntime.onInstalled.addListener(rebuildRegistry);
-chromeRuntime.onStartup.addListener(rebuildRegistry);
+chromeRuntime.onInstalled.addListener(() => { void rebuildRegistry(); });
+chromeRuntime.onStartup.addListener(() => { void rebuildRegistry(); });
 
 chromeTabs.onUpdated.addListener((tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   if (changeInfo.url || changeInfo.status === 'complete') {
-    updateTabRegistry(tabId, tab.url);
+    void updateTabRegistry(tabId, tab.url);
   }
 });
 
 chromeTabs.onRemoved.addListener((tabId: number) => {
-  updateTabRegistry(tabId, undefined, true);
+  void updateTabRegistry(tabId, undefined, true);
 });
 
 const externalHandlers = {

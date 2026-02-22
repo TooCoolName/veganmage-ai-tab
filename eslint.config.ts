@@ -63,6 +63,8 @@ export default tseslint.config(
             '@typescript-eslint/prefer-optional-chain': 'error',
             '@typescript-eslint/no-unsafe-return': 'error',
             "@typescript-eslint/only-throw-error": "error",
+            '@typescript-eslint/no-floating-promises': 'error',
+            '@typescript-eslint/no-misused-promises': 'error',
             '@typescript-eslint/consistent-type-assertions': [
                 'error',
                 {

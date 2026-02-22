@@ -152,7 +152,7 @@ function App() {
     const toggleTheme = () => {
         const newTheme = theme === 'custom-light' ? 'custom-dark' : 'custom-light';
         setTheme(newTheme);
-        chromeStorage.local.set(THEME_KEY, newTheme);
+        chromeStorage.local.set(THEME_KEY, newTheme).catch(console.error);
     };
 
     // Show status message
@@ -200,7 +200,7 @@ function App() {
     const resetToDefault = () => {
         if (confirm('Reset to default settings?')) {
             setProviders([...DEFAULT_PROVIDERS]);
-            saveProviders();
+            void saveProviders();
         }
     };
 
@@ -288,12 +288,12 @@ function App() {
             await loadTheme();
             await loadActiveTabs();
         };
-        init();
+        void init();
     }, [loadProviders, loadTheme, loadActiveTabs]);
 
     // Refresh tabs periodically
     useEffect(() => {
-        const interval = setInterval(loadActiveTabs, 5000);
+        const interval = setInterval(() => { void loadActiveTabs(); }, 5000);
         return () => clearInterval(interval);
     }, [loadActiveTabs]);
 
@@ -353,7 +353,7 @@ function App() {
                             onDragStart={handleDragStart}
                             onDragOver={handleDragOver}
                             onDragEnd={handleDragEnd}
-                            onSave={saveProviders}
+                            onSave={() => { void saveProviders(); }}
                             onReset={resetToDefault}
                         />
                     </div>
@@ -370,9 +370,9 @@ function App() {
                             isSending={isSending}
                             onSelectTab={setSelectedTab}
                             onMessageChange={setMessageText}
-                            onSendMessage={sendMessageToTab}
-                            onRefresh={loadActiveTabs}
-                            onNewChat={createNewChat}
+                            onSendMessage={() => { void sendMessageToTab(); }}
+                            onRefresh={() => { void loadActiveTabs(); }}
+                            onNewChat={() => { void createNewChat(); }}
                         />
                     </div>
                 )}
