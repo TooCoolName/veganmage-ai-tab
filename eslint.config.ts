@@ -126,5 +126,12 @@ export default tseslint.config(
             'no-restricted-globals': 'off',
         },
     },
+    {
+        // Override: Allow 'chrome' only in the specific folder
+        files: ['build.ts'],
+        rules: {
+            'no-restricted-syntax': 'off',
+        },
+    },
 );
 
