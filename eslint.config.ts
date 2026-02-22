@@ -103,7 +103,6 @@ export default tseslint.config(
             'eslint-comments/no-use': 'error',
         },
     },
-
     {
         files: ['**/*.{js,mjs,cjs}'],
         languageOptions: {
@@ -117,13 +116,6 @@ export default tseslint.config(
         files: ['src/**/*.ts'],
         rules: {
             'no-restricted-globals': ['error', 'chrome'],
-        },
-    },
-    {
-        // Override: Allow 'chrome' only in the specific folder
-        files: ['src/chrome/**/*.ts', 'src/background.ts'],
-        rules: {
-            'no-restricted-globals': 'off',
         },
     },
     {

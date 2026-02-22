@@ -14,10 +14,3 @@ export const TabInternalMessageSchema = {
         response: v.string()
     }
 };
-
-export type TabInternalMessageMap = {
-    [K in keyof typeof TabInternalMessageSchema]: {
-        request: v.InferInput<(typeof TabInternalMessageSchema)[K]['request']>;
-        response: v.InferInput<(typeof TabInternalMessageSchema)[K]['response']>;
-    }
-};
