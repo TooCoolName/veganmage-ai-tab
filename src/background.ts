@@ -46,17 +46,17 @@ let tabSearchMutex: Promise<unknown> = Promise.resolve();
 
 async function getRegistry(): Promise<Registry> {
   const result = await chromeStorage.session.get('tabRegistry');
-  return parseRegistry(result.tabRegistry) ?? DEFAULT_REGISTRY;
+  return parseRegistry(result) ?? DEFAULT_REGISTRY;
 }
 
 async function saveRegistry(registry: Registry) {
-  await chromeStorage.session.set({ tabRegistry: registry });
+  await chromeStorage.session.set('tabRegistry', registry);
 }
 
 
 async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
   const result = await chromeStorage.local.get('providerSettings');
-  return parseProviderSettings(result.providerSettings);
+  return parseProviderSettings(result);
 }
 
 async function updateTabRegistry(tabId: number, url: string | undefined, remove: boolean = false) {
