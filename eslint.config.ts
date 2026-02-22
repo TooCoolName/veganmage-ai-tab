@@ -95,7 +95,7 @@ export default tseslint.config(
                 "error",
                 {
                     "parameter": true,
-                    "arrowParameter": true,
+                    "arrowParameter": false,
                     "variableDeclaration": false, // Let inference work for variables
                     "memberVariableDeclaration": false
                 }
