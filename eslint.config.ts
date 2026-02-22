@@ -133,5 +133,12 @@ export default tseslint.config(
             'no-restricted-syntax': 'off',
         },
     },
+    {
+        // Override: Allow 'chrome' only in the specific folder
+        files: ['src/null.utils.ts'],
+        rules: {
+            'no-restricted-syntax': 'off',
+        },
+    },
 );
 

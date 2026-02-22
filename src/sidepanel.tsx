@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { getErrorMessage } from './utils';
 import { chromeMessage, chromeStorage, chromeTabs, Tab } from '@toocoolname/chrome-proxy';
 import { TabInternalMessageSchema } from './schema';
+import { useNullRef } from './null.utils';
 
 const tabMessenger = chromeMessage.createTabMessenger(TabInternalMessageSchema);
 
@@ -485,7 +486,7 @@ function MessagingView({
     onRefresh,
     onNewChat
 }: MessagingViewProps) {
-    const scrollRef = React.useRef<HTMLDivElement>(null);
+    const scrollRef = useNullRef<HTMLDivElement>();
 
     // Show only the last exchange (user prompt + AI response)
     const filteredMessages = messages
