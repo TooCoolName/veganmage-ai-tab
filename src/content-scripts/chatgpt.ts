@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText, pressShortcut } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, findSendButton as genericFindSendButton, handleGenerateText, pressShortcut } from './utils';
 
 // Function to find the send button
 function findSendButton() {
@@ -37,7 +37,7 @@ chromeMessage.createLocalListener(TabInternalMessageSchema, {
         const getMessages = () => document.querySelectorAll('[data-message-author-role="assistant"]');
         try {
             const response = await handleGenerateText(prompt, {
-                injectText: (prompt: string) => injectText('#prompt-textarea', prompt),
+                inputSelector: '#prompt-textarea',
                 findSendButton,
                 pressEnter: () => pressEnter('#prompt-textarea', true),
                 waitForResponse: (initialCount: number) => waitForResponse(initialCount),

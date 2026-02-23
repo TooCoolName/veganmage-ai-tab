@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText, pressShortcut } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut } from './utils';
 
 // Grok Content Script
 // Handles prompt injection, sending, and response extraction
@@ -50,7 +50,7 @@ chromeMessage.createLocalListener(TabInternalMessageSchema, {
         const getMessages = () => document.querySelectorAll('.message-bubble');
         try {
             const response = await handleGenerateText(prompt, {
-                injectText: (prompt: string) => injectText('textarea, [role="textbox"]', prompt),
+                inputSelector: 'textarea, [role="textbox"]',
                 findSendButton,
                 pressEnter: () => pressEnter('textarea, [role="textbox"]', true),
                 waitForResponse: (initialCount: number) => waitForResponse(initialCount),

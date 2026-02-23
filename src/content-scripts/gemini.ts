@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText, pressShortcut, logger } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut, logger } from './utils';
 
 // Gemini Content Script
 // Handles prompt injection, sending, and response extraction
@@ -56,7 +56,7 @@ chromeMessage.createLocalListener(TabInternalMessageSchema, {
         const getMessages = () => document.querySelectorAll('.response-container');
         try {
             const response = await handleGenerateText(prompt, {
-                injectText: (prompt: string) => injectText('.ql-editor', prompt),
+                inputSelector: '.ql-editor',
                 findSendButton,
                 pressEnter: () => pressEnter('.ql-editor', true),
                 waitForResponse: (initialCount: number) => waitForResponse(initialCount),

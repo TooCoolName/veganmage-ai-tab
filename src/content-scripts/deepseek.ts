@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText, pressShortcut } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut } from './utils';
 
 // DeepSeek Content Script
 // Handles prompt injection, sending, and response extraction
@@ -38,7 +38,7 @@ chromeMessage.createLocalListener(TabInternalMessageSchema, {
         const getMessages = () => document.querySelectorAll('.ds-message');
         try {
             const response = await handleGenerateText(prompt, {
-                injectText: (prompt: string) => injectText(textareaSelector, prompt),
+                inputSelector: textareaSelector,
                 findSendButton,
                 pressEnter: () => pressEnter(textareaSelector, false),
                 waitForResponse: (initialCount: number) => waitForResponse(initialCount),

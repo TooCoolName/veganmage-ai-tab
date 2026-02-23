@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, injectText, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from './utils';
 
 // Copilot Content Script
 // Handles prompt injection, sending, and response extraction
@@ -45,7 +45,7 @@ chromeMessage.createLocalListener(TabInternalMessageSchema, {
         const getMessages = () => document.querySelectorAll('.group\\/ai-message');
         try {
             const response = await handleGenerateText(prompt, {
-                injectText: (prompt: string) => injectText('textarea, [role="textbox"]', prompt),
+                inputSelector: 'textarea, [role="textbox"]',
                 findSendButton,
                 pressEnter: () => pressEnter('textarea, [role="textbox"]', true),
                 waitForResponse: (initialCount: number) => waitForResponse(initialCount),

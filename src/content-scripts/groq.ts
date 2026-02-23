@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { waitForResponse as genericWaitForResponse, injectText, pressEnter, handleGenerateText } from './utils';
+import { waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText } from './utils';
 
 // Groq Content Script
 // Handles prompt injection, sending, and response extraction
@@ -52,7 +52,7 @@ chromeMessage.createLocalListener(TabInternalMessageSchema, {
 
         try {
             const response = await handleGenerateText(prompt, {
-                injectText: (prompt: string) => injectText('#chat', prompt),
+                inputSelector: '#chat',
                 findSendButton,
                 pressEnter: () => pressEnter('#chat', true),
                 waitForResponse: (initialCount: number) => waitForResponse(initialCount),

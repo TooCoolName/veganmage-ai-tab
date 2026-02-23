@@ -231,7 +231,7 @@ export function findSendButton(selectors: string[]): HTMLElement | undefined {
 export function handleGenerateText(
     prompt: string | undefined,
     options: {
-        injectText: (prompt: string) => void;
+        inputSelector: string;
         findSendButton: () => HTMLElement | undefined;
         pressEnter: () => void;
         waitForResponse: (initialCount: number) => Promise<string>;
@@ -244,38 +244,50 @@ export function handleGenerateText(
     }
 
     return new Promise<string>((resolve: (value: string | PromiseLike<string>) => void, reject: (reason?: unknown) => void) => {
-        // 0. Inject text
-        options.injectText(prompt);
+        const waitStartTime = Date.now();
+        const checkInterval = setInterval(() => {
+            const inputEl = document.querySelector(options.inputSelector);
+            if (inputEl || Date.now() - waitStartTime > 5000) {
+                clearInterval(checkInterval);
 
-        // 1. Wait for injection
-        setTimeout(() => {
-            // 2. Capture initial message count BEFORE any action    
-            const initialCount = options.getMessages().length;
-            logger.debug('Initial message count', { initialCount });
+                if (!inputEl) {
+                    return reject(new Error('Input element not found: ' + options.inputSelector));
+                }
 
-            const sendButton = options.findSendButton();
-            if (sendButton) {
-                sendButton.click();
-                logger.info('Clicked send button');
-            } else {
-                // Fallback to Ctrl+Enter
-                options.pressEnter();
-                logger.info('Dispatched Enter shortcut as fallback');
+                // 0. Inject text
+                injectText(options.inputSelector, prompt);
+
+                // 1. Wait for injection
+                setTimeout(() => {
+                    // 2. Capture initial message count BEFORE any action    
+                    const initialCount = options.getMessages().length;
+                    logger.debug('Initial message count', { initialCount });
+
+                    const sendButton = options.findSendButton();
+                    if (sendButton) {
+                        sendButton.click();
+                        logger.info('Clicked send button');
+                    } else {
+                        // Fallback to Ctrl+Enter
+                        options.pressEnter();
+                        logger.info('Dispatched Enter shortcut as fallback');
+                    }
+
+                    // 3. Wait for response (1s delay before checking to allow UI to update)
+                    setTimeout(() => {
+                        options.waitForResponse(initialCount)
+                            .then((response: string) => {
+                                logger.info('Response received successfully');
+                                resolve(response);
+                            })
+                            .catch((error: unknown) => {
+                                const errorMessage = error instanceof Error ? error.message : String(error);
+                                logger.error('Error waiting for response', { error: errorMessage });
+                                reject(new Error(errorMessage));
+                            });
+                    }, 1000);
+                }, options.delayBeforeSend ?? 500);
             }
-
-            // 3. Wait for response (1s delay before checking to allow UI to update)
-            setTimeout(() => {
-                options.waitForResponse(initialCount)
-                    .then((response: string) => {
-                        logger.info('Response received successfully');
-                        resolve(response);
-                    })
-                    .catch((error: unknown) => {
-                        const errorMessage = error instanceof Error ? error.message : String(error);
-                        logger.error('Error waiting for response', { error: errorMessage });
-                        reject(new Error(errorMessage));
-                    });
-            }, 1000);
-        }, options.delayBeforeSend ?? 500);
+        }, 100);
     });
 }
