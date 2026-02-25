@@ -7,6 +7,13 @@ import { useNullRef } from './null.utils';
 
 const tabMessenger = chromeMessage.createTabMessenger(TabInternalMessageSchema);
 
+const fireAndForget = (promise: Promise<unknown>, taskName = 'Task') => {
+    promise.catch((err) => {
+        console.error(`Unhandled error in ${taskName}:`, err);
+    });
+};
+
+
 // Interfaces
 interface Provider {
     id: string;
@@ -200,7 +207,7 @@ function App() {
     const resetToDefault = () => {
         if (confirm('Reset to default settings?')) {
             setProviders([...DEFAULT_PROVIDERS]);
-            void saveProviders();
+            fireAndForget(saveProviders());
         }
     };
 
@@ -288,12 +295,14 @@ function App() {
             await loadTheme();
             await loadActiveTabs();
         };
-        void init();
+        fireAndForget(init());
     }, [loadProviders, loadTheme, loadActiveTabs]);
 
     // Refresh tabs periodically
     useEffect(() => {
-        const interval = setInterval(() => { void loadActiveTabs(); }, 5000);
+        const interval = setInterval(() => {
+            fireAndForget(loadActiveTabs());
+        }, 5000);
         return () => clearInterval(interval);
     }, [loadActiveTabs]);
 
@@ -353,7 +362,7 @@ function App() {
                             onDragStart={handleDragStart}
                             onDragOver={handleDragOver}
                             onDragEnd={handleDragEnd}
-                            onSave={() => { void saveProviders(); }}
+                            onSave={() => { fireAndForget(saveProviders()); }}
                             onReset={resetToDefault}
                         />
                     </div>
@@ -370,9 +379,9 @@ function App() {
                             isSending={isSending}
                             onSelectTab={setSelectedTab}
                             onMessageChange={setMessageText}
-                            onSendMessage={() => { void sendMessageToTab(); }}
-                            onRefresh={() => { void loadActiveTabs(); }}
-                            onNewChat={() => { void createNewChat(); }}
+                            onSendMessage={() => { fireAndForget(sendMessageToTab()); }}
+                            onRefresh={() => { fireAndForget(loadActiveTabs()); }}
+                            onNewChat={() => { fireAndForget(createNewChat()); }}
                         />
                     </div>
                 )}
