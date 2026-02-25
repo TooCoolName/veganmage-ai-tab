@@ -176,8 +176,9 @@ function App() {
             return;
         }
 
-        const newProviders = [...providers];
-        newProviders[index].enabled = enabled;
+        const newProviders = providers.map((p, i) =>
+            i === index ? { ...p, enabled } : p
+        );
         setProviders(newProviders);
     };
 
@@ -189,7 +190,7 @@ function App() {
     // Handle drag over
     const handleDragOver = (e: React.DragEvent, index: number) => {
         e.preventDefault();
-        if (!draggedIndex || draggedIndex === index) return;
+        if (draggedIndex === undefined || draggedIndex === index) return;
 
         const newProviders = [...providers];
         const [removed] = newProviders.splice(draggedIndex, 1);
@@ -362,7 +363,7 @@ function App() {
                             onDragStart={handleDragStart}
                             onDragOver={handleDragOver}
                             onDragEnd={handleDragEnd}
-                            onSave={() => { fireAndForget(saveProviders()); }}
+                            onSave={() => fireAndForget(saveProviders())}
                             onReset={resetToDefault}
                         />
                     </div>
