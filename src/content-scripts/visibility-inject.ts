@@ -14,10 +14,10 @@ window.addEventListener('WAKE_UP', () => {
 
 // Listen for a custom 'GO_TO_SLEEP' event to restore normal behavior
 window.addEventListener('GO_TO_SLEEP', () => {
-    // @ts-ignore - visibilityState and hidden are read-only but we defined them as configurable
-    delete (document as any).visibilityState;
-    // @ts-ignore
-    delete (document as any).hidden;
+    // Use Reflect.deleteProperty to avoid lint/TS errors with 'delete' on read-only properties
+    // and to avoid prohibited type assertions.
+    Reflect.deleteProperty(document, 'visibilityState');
+    Reflect.deleteProperty(document, 'hidden');
     document.dispatchEvent(new Event('visibilitychange'));
     window.dispatchEvent(new Event('blur'));
     console.log('Tab allowed to sleep at:', new Date().toTimeString());
