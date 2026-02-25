@@ -76,6 +76,7 @@ function waitForResponse(initialCount?: number) {
         getMessages: () => document.querySelectorAll<HTMLElement>('.response-container'),
         isGenerating: (el: Element) => !el.querySelector('button'),
         extractText: (el: HTMLElement) => getMessageText(el.querySelector<HTMLElement>('.model-response-text') ?? undefined),
-        initialCount
+        initialCount,
+        isGeneratingCheckArea: () => document.querySelector("#thread-bottom") ?? undefined
     });
 }

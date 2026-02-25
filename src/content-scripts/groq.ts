@@ -81,6 +81,7 @@ function waitForResponse(initialCount?: number) {
                 return ""
             }
         },
-        initialCount
+        initialCount,
+        isGeneratingCheckArea: () => document.querySelector("#thread-bottom") ?? undefined
     });
 }

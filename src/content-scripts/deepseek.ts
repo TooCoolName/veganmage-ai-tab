@@ -61,6 +61,7 @@ function waitForResponse(initialCount?: number) {
             return !el.parentElement?.querySelector('[role="button"]');
         },
         extractText: getMessageText,
-        initialCount
+        initialCount,
+        isGeneratingCheckArea: () => document.querySelector("#thread-bottom") ?? undefined
     });
 }
