@@ -13,6 +13,7 @@ const tasks = [
     { entry: "./src/content-scripts/gemini.ts", out: "content-scripts" },
     { entry: "./src/content-scripts/grok.ts", out: "content-scripts" },
     { entry: "./src/content-scripts/groq.ts", out: "content-scripts" },
+    { entry: "./src/content-scripts/visibility-inject.ts", out: "content-scripts" },
 ];
 
 async function runBuild(signal?: AbortSignal) {

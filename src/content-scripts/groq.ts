@@ -1,12 +1,9 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, injectReceiver } from './utils';
+import { waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText } from './utils';
 
 // Groq Content Script
 // Handles prompt injection, sending, and response extraction
-
-// Prevent Groq from pausing renders when in background tab
-injectReceiver();
 
 // Function to find the send button
 function findSendButton() {

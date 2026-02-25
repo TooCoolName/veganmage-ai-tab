@@ -1,13 +1,10 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut, logger, injectReceiver } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut, logger } from './utils';
 import { isNotNull } from "@/null.utils";
 
 // Gemini Content Script
 // Handles prompt injection, sending, and response extraction
-
-// Prevent Gemini from pausing renders when in background tab
-injectReceiver();
 
 // Function to find the send button
 function findSendButton() {

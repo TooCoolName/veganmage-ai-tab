@@ -45,6 +45,24 @@
     {
       "matches": [
         "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://gemini.google.com/*",
+        "https://copilot.microsoft.com/*",
+        "https://bing.com/chat*",
+        "https://chat.deepseek.com/*",
+        "https://grok.com/*",
+        "https://chat.groq.com/*"
+      ],
+      "js": [
+        "content-scripts/visibility-inject.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://chatgpt.com/*",
         "https://chat.openai.com/*"
       ],
       "js": [
