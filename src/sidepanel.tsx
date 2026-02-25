@@ -51,7 +51,7 @@ const DEFAULT_PROVIDERS: Provider[] = [
     { id: 'groq', name: 'Groq', url: 'https://chat.groq.com', enabled: true }
 ];
 
-const STORAGE_KEY = 'providerSettings';
+const PROVIDERS_KEY = 'providerSettings';
 const THEME_KEY = 'theme'
 
 // Main App Component
@@ -75,7 +75,7 @@ function App() {
     // Load providers from storage
     const loadProviders = useCallback(async () => {
         try {
-            const loadedProviders = await chromeStorage.local.get<Provider[]>(STORAGE_KEY) ?? DEFAULT_PROVIDERS;
+            const loadedProviders = await chromeStorage.local.get<Provider[]>(PROVIDERS_KEY) ?? DEFAULT_PROVIDERS;
 
             // Migration: Ensure URLs exist and icons are removed if they were saved before
             const updatedProviders = loadedProviders.map((p: Provider) => {
@@ -147,7 +147,7 @@ function App() {
     // Save providers to storage
     const saveProviders = async () => {
         try {
-            await chromeStorage.local.set(STORAGE_KEY, providers);
+            await chromeStorage.local.set(PROVIDERS_KEY, providers);
             showStatus('Settings saved', 'success');
         } catch (error) {
             console.error('Error saving providers:', error);
