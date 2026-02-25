@@ -79,7 +79,6 @@ function waitForResponse(initialCount?: number) {
             }
             return getMessageText(el);
         },
-        initialCount,
-        isGeneratingCheckArea: () => document.querySelector("#thread-bottom") ?? undefined
+        initialCount
     });
 }

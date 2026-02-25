@@ -73,7 +73,6 @@ function waitForResponse(initialCount?: number) {
         getMessages: () => document.querySelectorAll('.message-bubble'),
         isGenerating: (el: Element) => !el.parentElement?.querySelector('button'),
         extractText: getMessageText,
-        initialCount,
-        isGeneratingCheckArea: () => document.querySelector("#thread-bottom") ?? undefined
+        initialCount
     });
 }
