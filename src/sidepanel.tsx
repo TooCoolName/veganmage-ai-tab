@@ -88,9 +88,11 @@ function App() {
             });
 
             setProviders(updatedProviders);
+            return updatedProviders;
         } catch (error) {
             console.error('Error loading providers:', error);
             setProviders([...DEFAULT_PROVIDERS]);
+            return [...DEFAULT_PROVIDERS];
         }
     }, []);
 
@@ -105,50 +107,67 @@ function App() {
     }, []);
 
     // Load active tabs
-    const loadActiveTabs = useCallback(async () => {
+    const loadActiveTabs = useCallback(async (providersList: Provider[] = []) => {
         try {
             const allTabs = await chromeTabs.query({});
-            const aiTabs = allTabs.filter((tab: Tab) => {
-                const url = tab.url ?? '';
-                return url.includes('chatgpt.com') ??
-                    url.includes('chat.openai.com') ??
-                    url.includes('gemini.google.com') ??
-                    url.includes('copilot.microsoft.com') ??
-                    url.includes('bing.com/chat') ??
-                    url.includes('chat.deepseek.com') ??
-                    url.includes('grok.com') ??
-                    url.includes('chat.groq.com');
-            }).map((tab: Tab) => {
-                let provider = 'unknown';
-                const url = tab.url ?? '';
-                if (url.includes('chatgpt.com') || url.includes('chat.openai.com')) provider = 'chatgpt';
-                else if (url.includes('gemini.google.com')) provider = 'gemini';
-                else if (url.includes('copilot.microsoft.com') || url.includes('bing.com/chat')) provider = 'copilot';
-                else if (url.includes('chat.deepseek.com')) provider = 'deepseek';
-                else if (url.includes('grok.com')) provider = 'grok';
-                else if (url.includes('chat.groq.com')) provider = 'groq';
 
-                // Find provider name safely
-                const providerObj = providers.find((p: Provider) => p.id === provider);
-                const providerName = providerObj ? providerObj.name : provider;
+            // If providersList is empty, it means this is a periodic background refresh.
+            // In that case, we should use the LATEST state from the component, but we have to be careful 
+            // about function closure. We'll use a functional update pattern for setProviders if we needed providers,
+            // but here we only read from them to enrich tab data.
 
-                return {
-                    ...tab,
-                    provider,
-                    providerName
-                } satisfies AiTab;
+            setActiveTabs((currentActiveTabs) => {
+                // We need the latest providers to name the tabs. 
+                // However, since we're in set* state, we can't easily get them unless we pass them or use a ref.
+                // Let's rely on the fact that providers state is stable enough for naming.
+
+                const aiTabs = allTabs.filter((tab: Tab) => {
+                    const url = tab.url ?? '';
+                    return url.includes('chatgpt.com') ??
+                        url.includes('chat.openai.com') ??
+                        url.includes('gemini.google.com') ??
+                        url.includes('copilot.microsoft.com') ??
+                        url.includes('bing.com/chat') ??
+                        url.includes('chat.deepseek.com') ??
+                        url.includes('grok.com') ??
+                        url.includes('chat.groq.com');
+                }).map((tab: Tab) => {
+                    let provider = 'unknown';
+                    const url = tab.url ?? '';
+                    if (url.includes('chatgpt.com') || url.includes('chat.openai.com')) provider = 'chatgpt';
+                    else if (url.includes('gemini.google.com')) provider = 'gemini';
+                    else if (url.includes('copilot.microsoft.com') || url.includes('bing.com/chat')) provider = 'copilot';
+                    else if (url.includes('chat.deepseek.com')) provider = 'deepseek';
+                    else if (url.includes('grok.com')) provider = 'grok';
+                    else if (url.includes('chat.groq.com')) provider = 'groq';
+
+                    // Use passed list if available (for sync updates), otherwise fallback to the closure providers
+                    // which is now safe because we removed it from dependencies so this function doesn't flip-flop.
+                    const pList = providersList.length > 0 ? providersList : providers;
+                    const providerObj = pList.find((p: Provider) => p.id === provider);
+                    const providerName = providerObj ? providerObj.name : provider;
+
+                    return {
+                        ...tab,
+                        provider,
+                        providerName
+                    } satisfies AiTab;
+                });
+
+                return aiTabs;
             });
-            setActiveTabs(aiTabs);
         } catch (error) {
             console.error('Error loading tabs:', error);
         }
-    }, [providers]);
+    }, []); // REMOVED [providers] dependency to stabilize the function
 
     // Save providers to storage
-    const saveProviders = async () => {
+    const saveProviders = async (providersToSave: Provider[] = providers) => {
         try {
-            await chromeStorage.local.set(PROVIDERS_KEY, providers);
+            await chromeStorage.local.set(PROVIDERS_KEY, providersToSave);
             showStatus('Settings saved', 'success');
+            // Immediately refresh tabs to reflect any name changes or visibility changes
+            await loadActiveTabs(providersToSave);
         } catch (error) {
             console.error('Error saving providers:', error);
             showStatus('Failed to save settings', 'error');
@@ -207,8 +226,9 @@ function App() {
     // Reset to default
     const resetToDefault = () => {
         if (confirm('Reset to default settings?')) {
-            setProviders([...DEFAULT_PROVIDERS]);
-            fireAndForget(saveProviders());
+            const defaults = [...DEFAULT_PROVIDERS];
+            setProviders(defaults);
+            fireAndForget(saveProviders(defaults));
         }
     };
 
@@ -292,12 +312,12 @@ function App() {
     // Load providers and tabs on mount
     useEffect(() => {
         const init = async () => {
-            await loadProviders();
+            const loaded = await loadProviders();
             await loadTheme();
-            await loadActiveTabs();
+            await loadActiveTabs(loaded);
         };
         fireAndForget(init());
-    }, [loadProviders, loadTheme, loadActiveTabs]);
+    }, []); // Only run on mount
 
     // Refresh tabs periodically
     useEffect(() => {
