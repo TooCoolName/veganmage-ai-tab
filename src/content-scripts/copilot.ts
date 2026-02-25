@@ -1,9 +1,12 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, findSendButton as genericFindSendButton, handleGenerateText, injectReceiver } from './utils';
 
 // Copilot Content Script
 // Handles prompt injection, sending, and response extraction
+
+// Prevent Copilot from pausing renders when in background tab
+injectReceiver();
 
 // Function to find the send button
 function findSendButton() {

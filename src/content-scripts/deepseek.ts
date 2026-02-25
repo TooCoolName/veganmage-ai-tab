@@ -1,9 +1,12 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut } from './utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut, injectReceiver } from './utils';
 
 // DeepSeek Content Script
 // Handles prompt injection, sending, and response extraction
+
+// Prevent DeepSeek from pausing renders when in background tab
+injectReceiver();
 
 // Function to find the send button - disabled as requested because buttons cannot be detected reliably
 function findSendButton() {

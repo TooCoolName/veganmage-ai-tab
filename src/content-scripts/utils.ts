@@ -8,6 +8,56 @@ import { check } from 'valibot';
 const bgMessenger = chromeMessage.createLocalMessenger(BgInternalMessageSchema);
 
 /**
+ * Injects a script into the page's main world to override visibility properties.
+ * This sets up permanent overrides for document.visibilityState and document.hidden
+ * and adds a listener to trigger events on demand.
+ */
+export function injectReceiver() {
+    try {
+        const script = document.createElement('script');
+        script.id = 'veganmage-visibility-override';
+        script.textContent = `
+            // Listen for a custom 'WAKE_UP' event to force visibility
+            window.addEventListener('WAKE_UP', () => {
+                Object.defineProperty(document, 'visibilityState', { get: () => 'visible', configurable: true });
+                Object.defineProperty(document, 'hidden', { get: () => false, configurable: true });
+                document.dispatchEvent(new Event('visibilitychange'));
+                window.dispatchEvent(new Event('focus'));
+                console.log('Tab awakened at:', new Date().toTimeString());
+            });
+
+            // Listen for a custom 'GO_TO_SLEEP' event to restore normal behavior
+            window.addEventListener('GO_TO_SLEEP', () => {
+                delete (document as any).visibilityState;
+                delete (document as any).hidden;
+                document.dispatchEvent(new Event('visibilitychange'));
+                window.dispatchEvent(new Event('blur'));
+                console.log('Tab allowed to sleep at:', new Date().toTimeString());
+            });
+        `;
+        (document.head || document.documentElement).appendChild(script);
+        script.remove();
+        logger.debug('Injected visibility mock receiver');
+    } catch (e) {
+        logger.error('Failed to inject visibility mock receiver', { error: String(e) });
+    }
+}
+
+/**
+ * Force the tab to appear visible and focused
+ */
+export function wakeUpTab() {
+    window.dispatchEvent(new Event('WAKE_UP'));
+}
+
+/**
+ * Restore normal tab visibility and focus state
+ */
+export function sleepTab() {
+    window.dispatchEvent(new Event('GO_TO_SLEEP'));
+}
+
+/**
  * Logger utility that sends logs to the background script
  */
 export const logger = {
@@ -274,6 +324,10 @@ export function handleGenerateText(
                     logger.debug('Initial message count', { initialCount });
 
                     const sendButton = options.findSendButton();
+
+                    // Wake the tab up right before we send
+                    wakeUpTab();
+
                     if (sendButton) {
                         sendButton.click();
                         logger.info('Clicked send button');
@@ -288,11 +342,13 @@ export function handleGenerateText(
                         options.waitForResponse(initialCount)
                             .then((response: string) => {
                                 logger.info('Response received successfully');
+                                sleepTab();
                                 resolve(response);
                             })
                             .catch((error: unknown) => {
                                 const errorMessage = error instanceof Error ? error.message : String(error);
                                 logger.error('Error waiting for response', { error: errorMessage });
+                                sleepTab();
                                 reject(new Error(errorMessage));
                             });
                     }, 1000);
