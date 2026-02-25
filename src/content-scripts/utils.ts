@@ -3,6 +3,7 @@
  */
 import { chromeMessage } from '@toocoolname/chrome-proxy';
 import { BgInternalMessageSchema } from '@/schema';
+import { check } from 'valibot';
 
 const bgMessenger = chromeMessage.createLocalMessenger(BgInternalMessageSchema);
 
@@ -46,6 +47,8 @@ interface WaitForResponseOptions {
     minStableIterations?: number;
     /** Optional initial message count to wait for an increase from */
     initialCount?: number;
+    /** Optional function to provide a specific element to check for generation status */
+    isGeneratingCheckArea: () => Element | undefined;
 }
 
 /**
@@ -58,12 +61,19 @@ export function waitForResponse({
     timeout = 30000,
     checkInterval = 1000,
     minStableIterations = 2,
-    initialCount: providedInitialCount
+    initialCount: providedInitialCount,
+    isGeneratingCheckArea
 }: WaitForResponseOptions): Promise<string> {
     const initialCount = providedInitialCount ?? getMessages().length;
     logger.debug('waitForResponse started', { initialCount, timeout, providedInitialCount });
 
     return new Promise<string>((resolve: (value: string | PromiseLike<string>) => void, reject: (reason?: unknown) => void) => {
+        const checkArea = isGeneratingCheckArea()
+        if (!checkArea) {
+            reject(new Error('Check area for response end detection not found'));
+            return;
+        }
+
         const startTime = Date.now();
 
         let lastText = "";
@@ -91,7 +101,7 @@ export function waitForResponse({
 
             if (!detectedNewMessage) {
                 detectedNewMessage = true;
-                const generating = isGenerating(lastMsg);
+                const generating = isGenerating(checkArea);
                 const text = extractText(lastMsg);
                 logger.debug('New message detected', {
                     count: messages.length,
@@ -101,7 +111,7 @@ export function waitForResponse({
             }
 
             // 2. Check if still generating
-            const generating = isGenerating(lastMsg);
+            const generating = isGenerating(checkArea);
 
             if (generating) {
                 if (stableIterations > 0) {
