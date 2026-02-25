@@ -98,7 +98,7 @@ interface WaitForResponseOptions {
     /** Optional initial message count to wait for an increase from */
     initialCount?: number;
     /** Optional function to provide a specific element to check for generation status */
-    isGeneratingCheckArea: () => Element | undefined;
+    isGeneratingCheckArea?: () => Element | undefined;
 }
 
 /**
@@ -118,10 +118,13 @@ export function waitForResponse({
     logger.debug('waitForResponse started', { initialCount, timeout, providedInitialCount });
 
     return new Promise<string>((resolve: (value: string | PromiseLike<string>) => void, reject: (reason?: unknown) => void) => {
-        const checkArea = isGeneratingCheckArea()
-        if (!checkArea) {
-            reject(new Error('Check area for response end detection not found'));
-            return;
+        let checkArea = undefined
+        if (isGeneratingCheckArea) {
+            checkArea = isGeneratingCheckArea()
+            if (!checkArea) {
+                reject(new Error('Check area for response end detection not found'));
+                return;
+            }
         }
 
         const startTime = Date.now();
@@ -151,7 +154,7 @@ export function waitForResponse({
 
             if (!detectedNewMessage) {
                 detectedNewMessage = true;
-                const generating = isGenerating(checkArea);
+                const generating = isGenerating(checkArea ?? lastMsg);
                 const text = extractText(lastMsg);
                 logger.debug('New message detected', {
                     count: messages.length,
@@ -161,7 +164,7 @@ export function waitForResponse({
             }
 
             // 2. Check if still generating
-            const generating = isGenerating(checkArea);
+            const generating = isGenerating(checkArea ?? lastMsg);
 
             if (generating) {
                 if (stableIterations > 0) {

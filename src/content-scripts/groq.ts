@@ -85,6 +85,5 @@ function waitForResponse(initialCount?: number) {
             }
         },
         initialCount,
-        isGeneratingCheckArea: () => document.querySelector("#thread-bottom") ?? undefined
     });
 }
