@@ -65,6 +65,7 @@ export default tseslint.config(
             "@typescript-eslint/only-throw-error": "error",
             '@typescript-eslint/no-floating-promises': 'error',
             '@typescript-eslint/no-misused-promises': 'error',
+            'no-void': 'error',
             '@typescript-eslint/consistent-type-assertions': [
                 'error',
                 {

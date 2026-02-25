@@ -14,6 +14,15 @@ import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStor
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 
+/** * Use this for "fire and forget" tasks 
+ * to satisfy the linter and ensure error handling.
+ */
+const fireAndForget = (promise: Promise<unknown>, taskName = 'Task') => {
+  promise.catch((err) => {
+    console.error(`Unhandled error in ${taskName}:`, err);
+  });
+};
+
 const tabMessenger = chromeMessage.createTabMessenger(TabInternalMessageSchema);
 
 const logger = pino({
@@ -102,17 +111,17 @@ async function rebuildRegistry() {
   await saveRegistry(registry);
 }
 
-chromeRuntime.onInstalled.addListener(() => { void rebuildRegistry(); });
-chromeRuntime.onStartup.addListener(() => { void rebuildRegistry(); });
+chromeRuntime.onInstalled.addListener(() => { fireAndForget(rebuildRegistry()); });
+chromeRuntime.onStartup.addListener(() => { fireAndForget(rebuildRegistry()); });
 
 chromeTabs.onUpdated.addListener((tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   if (changeInfo.url || changeInfo.status === 'complete') {
-    void updateTabRegistry(tabId, tab.url);
+    fireAndForget(updateTabRegistry(tabId, tab.url));
   }
 });
 
 chromeTabs.onRemoved.addListener((tabId: number) => {
-  void updateTabRegistry(tabId, undefined, true);
+  fireAndForget(updateTabRegistry(tabId, undefined, true));
 });
 
 const externalHandlers = {
