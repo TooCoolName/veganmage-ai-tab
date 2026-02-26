@@ -15,7 +15,9 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-# Build outputs (if you add a build process)
+# Build outputs
+.output/
+.wxt/
 dist/
 build/
 *.zip
