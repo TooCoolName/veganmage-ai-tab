@@ -8,6 +8,9 @@
     import { TabInternalMessageSchema } from "@/schema";
     import { fireAndForget } from "@/utils";
     import type { AppContext } from "./types";
+    import * as Card from "$lib/components/ui/card";
+    import { Button } from "$lib/components/ui/button";
+    import { Textarea } from "$lib/components/ui/textarea";
 
     const tabMessenger = chromeMessage.createTabMessenger(
         TabInternalMessageSchema,
@@ -197,20 +200,24 @@
 
 <div class="flex flex-col h-full gap-4">
     <!-- Active Tabs List -->
-    <div class="rounded-xl border bg-card text-card-foreground shadow shrink-0">
-        <div class="flex flex-col p-4">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-semibold leading-none tracking-tight">
+    <Card.Root class="shrink-0">
+        <Card.Header class="p-4 pb-0 mb-3">
+            <div class="flex justify-between items-center">
+                <Card.Title class="text-base text-card-foreground">
                     Active Tabs ({activeTabs.length})
-                </h3>
-                <button
+                </Card.Title>
+                <Button
+                    variant="link"
+                    size="sm"
+                    class="h-auto p-0 text-xs"
                     onclick={loadActiveTabs}
-                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none hover:text-accent-foreground underline"
                 >
                     Refresh
-                </button>
+                </Button>
             </div>
+        </Card.Header>
 
+        <Card.Content class="p-4 pt-0">
             {#if activeTabs.length === 0}
                 <div class="text-center py-4 text-muted-foreground">
                     <p class="text-sm">No active AI tabs found</p>
@@ -249,14 +256,12 @@
                     {/each}
                 </div>
             {/if}
-        </div>
-    </div>
+        </Card.Content>
+    </Card.Root>
 
     <!-- Message History & Composer -->
     {#if selectedTab}
-        <div
-            class="rounded-xl border bg-card text-card-foreground shadow overflow-hidden flex-1 flex flex-col min-h-0"
-        >
+        <Card.Root class="overflow-hidden flex-1 flex flex-col min-h-0">
             <div class="flex flex-col h-full min-h-0">
                 <!-- Messages -->
                 <div
@@ -310,8 +315,8 @@
                 <!-- Composer -->
                 <div class="p-4 bg-background border-t">
                     <div class="flex flex-col gap-3">
-                        <textarea
-                            class="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-20 resize-none"
+                        <Textarea
+                            class="h-20 resize-none"
                             placeholder="Enter message..."
                             bind:value={messageText}
                             disabled={isSending}
@@ -326,49 +331,51 @@
                                     );
                                 }
                             }}
-                        ></textarea>
+                        />
 
                         <div class="flex gap-2 justify-between items-center">
                             <div class="text-[10px] text-muted-foreground">
                                 Ctrl+Enter to send
                             </div>
                             <div class="flex gap-2">
-                                <button
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
                                     onclick={() => (selectedTab = undefined)}
-                                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none hover:bg-accent hover:text-accent-foreground h-8 px-3"
                                 >
                                     Cancel
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
                                     onclick={createNewChat}
-                                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
                                 >
                                     New Chat
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                    size="sm"
                                     onclick={sendMessageToTab}
                                     disabled={!messageText.trim() || isSending}
-                                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none bg-primary text-primary-foreground hover:bg-primary/90 h-8 px-3 disabled:opacity-50"
                                 >
                                     {isSending ? "Sending..." : "Send"}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Card.Root>
     {/if}
 
     {#if !selectedTab}
-        <div class="rounded-xl border bg-card text-card-foreground shadow">
-            <div
+        <Card.Root>
+            <Card.Content
                 class="p-8 flex items-center justify-center text-center text-muted-foreground"
             >
                 <p class="text-sm">
                     Select a tab from the list above to start messaging
                 </p>
-            </div>
-        </div>
+            </Card.Content>
+        </Card.Root>
     {/if}
 </div>
