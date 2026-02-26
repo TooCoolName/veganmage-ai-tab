@@ -1,5 +1,5 @@
 import { TabInternalMessageSchema } from "@/schema";
-import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
+import { chromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
 import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut } from './utils';
 
 // DeepSeek Content Script

@@ -1,16 +1,16 @@
 import pino from 'pino';
 import {
-  ProviderSetting,
-  Registry,
   parseRegistry,
   parseProviderSettings,
-  GenerateText,
   ExternalMessegeSchema,
   BgInternalMessageSchema,
   TabInternalMessageSchema,
-  BgInternalLogRequest
+  type ProviderSetting,
+  type Registry,
+  type GenerateText,
+  type BgInternalLogRequest
 } from './schema';
-import { chromeMessage, ChromeResult, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, Tab, TabChangeInfo } from '@toocoolname/chrome-proxy';
+import { chromeMessage, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, type ChromeResult, type Tab, type TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 const DEFAULT_PROVIDER_ORDER = ['chatgpt', 'gemini', 'copilot', 'deepseek', 'grok'];
 

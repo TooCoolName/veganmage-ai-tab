@@ -1,5 +1,5 @@
 import { TabInternalMessageSchema } from "@/schema";
-import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
+import { chromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
 import { waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText } from './utils';
 
 // Groq Content Script

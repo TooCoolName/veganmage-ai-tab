@@ -1,42 +1,11 @@
 import { build, spawn, type BunPlugin } from "bun";
 import { cp, rm, mkdir, exists, readFile } from "node:fs/promises";
 import { watch } from "node:fs";
-import * as babel from "@babel/core";
-
-const reactCompilerPlugin: BunPlugin = {
-    name: "react-compiler",
-    setup(build: any) {
-        build.onLoad({ filter: /\.[jt]sx?$/ }, async (args: { path: string }) => {
-            const code = await readFile(args.path, "utf8");
-
-            const result = await babel.transformAsync(code, {
-                filename: args.path,
-                plugins: [
-                    ["babel-plugin-react-compiler", { target: "19" }],
-                ],
-                presets: [
-                    ["@babel/preset-typescript", { isTSX: true, allExtensions: true }]
-                ],
-                sourceMaps: "inline",
-            });
-
-            if (!(result?.code)) {
-                return { contents: code };
-            }
-
-            return {
-                contents: result.code,
-                loader: args.path.endsWith("x") ? "jsx" : "js",
-            };
-        });
-    },
-};
 
 const isWatch = process.argv.includes("--watch");
 
-const tasks = [
+const bgTasks = [
     { entry: "./src/background.ts", out: "." },
-    { entry: "./src/sidepanel.tsx", out: "." },
     { entry: "./src/content-scripts/chatgpt.ts", out: "content-scripts" },
     { entry: "./src/content-scripts/copilot.ts", out: "content-scripts" },
     { entry: "./src/content-scripts/deepseek.ts", out: "content-scripts" },
@@ -52,8 +21,8 @@ async function runBuild(signal?: AbortSignal) {
     const start = performance.now();
 
     try {
-        // 1. Build JS/TS
-        for (const task of tasks) {
+        // 1. Build Background and Content Scripts using Bun
+        for (const task of bgTasks) {
             if (signal?.aborted) throw new Error("Aborted");
             const result = await build({
                 entrypoints: [task.entry],
@@ -64,7 +33,7 @@ async function runBuild(signal?: AbortSignal) {
                 define: {
                     "Bun.env.NODE_ENV": JSON.stringify(isWatch ? "development" : "production")
                 },
-                plugins: [reactCompilerPlugin],
+                plugins: [],
             });
 
             if (!result.success) {
@@ -77,33 +46,8 @@ async function runBuild(signal?: AbortSignal) {
             }
         }
 
-        // 2. Build CSS (Tailwind)
+        // 2. Sync Public Assets first
         if (signal?.aborted) throw new Error("Aborted");
-        // We output directly to dist. Make sure sidepanel.html links to "sidepanel.css"
-        const tailwindProc = spawn([
-            "bun",
-            "tailwindcss",
-            "-i", "./src/sidepanel.css",
-            "-o", "./dist/sidepanel.css",
-            ...(isWatch ? [] : ["--minify"])
-        ], {
-            stdout: "inherit",
-            stderr: "inherit",
-        });
-
-        const abortHandler = () => tailwindProc.kill();
-        signal?.addEventListener("abort", abortHandler);
-
-        try {
-            await tailwindProc.exited;
-        } finally {
-            signal?.removeEventListener("abort", abortHandler);
-        }
-
-        if (signal?.aborted) throw new Error("Aborted");
-
-        // 3. Sync Public Assets
-        // This copies everything (manifest.json, icons, html) in one go
         if (await exists("./public")) {
             await cp("./public", "./dist", { recursive: true });
 
@@ -125,6 +69,26 @@ async function runBuild(signal?: AbortSignal) {
         } else {
             console.warn("⚠️  Warning: ./public folder not found.");
         }
+
+        // 3. Build UI using Vite
+        if (signal?.aborted) throw new Error("Aborted");
+        const viteProc = spawn([
+            "bun", "run", "vite-build", ...(isWatch ? ["--watch"] : [])
+        ], {
+            stdout: "inherit",
+            stderr: "inherit",
+        });
+
+        const abortHandler = () => viteProc.kill();
+        signal?.addEventListener("abort", abortHandler);
+
+        try {
+            await viteProc.exited;
+        } finally {
+            signal?.removeEventListener("abort", abortHandler);
+        }
+
+        if (signal?.aborted) throw new Error("Aborted");
 
         if (process.argv.includes("--zip")) {
             console.log("📦 Zipping dist folder...");

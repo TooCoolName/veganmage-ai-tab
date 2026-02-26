@@ -1,13 +1,11 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import reactPlugin from 'eslint-plugin-react';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import importX from 'eslint-plugin-import-x';
 import globals from 'globals';
 // @ts-expect-error: Missing types for this plugin
 import eslintComments from 'eslint-plugin-eslint-comments';
-// @ts-expect-error: Missing types for this plugin
-import reactCompiler from 'eslint-plugin-react-compiler';
+import eslintPluginSvelte from 'eslint-plugin-svelte';
+import svelteEslintParser from 'svelte-eslint-parser';
 
 export default tseslint.config(
     {
@@ -17,28 +15,27 @@ export default tseslint.config(
             '**/build/**',
             '**/coverage/**',
             '*.min.js',
+            '.svelte-kit'
         ],
     },
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
+    ...eslintPluginSvelte.configs['flat/recommended'],
     {
-        files: ['**/*.{ts,tsx}'],
         plugins: {
-            react: reactPlugin,
-            'react-hooks': reactHooksPlugin,
             'import-x': importX,
             'eslint-comments': eslintComments,
-            'react-compiler': reactCompiler,
         },
+    },
+    {
+        files: ['**/*.svelte'],
         languageOptions: {
+            parser: svelteEslintParser,
             parserOptions: {
-                projectService: {
-                    allowDefaultProject: ['*.ts'],
-                },
+                parser: tseslint.parser,
+                extraFileExtensions: ['.svelte'],
+                projectService: true,
                 tsconfigRootDir: import.meta.dirname,
-                ecmaFeatures: {
-                    jsx: true,
-                },
             },
             globals: {
                 ...globals.browser,
@@ -47,6 +44,25 @@ export default tseslint.config(
                 chrome: 'readonly',
             },
         },
+    },
+    {
+        files: ['**/*.ts'],
+        languageOptions: {
+            parser: tseslint.parser,
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
+            globals: {
+                ...globals.browser,
+                ...globals.node,
+                ...globals.serviceworker,
+                chrome: 'readonly',
+            },
+        },
+    },
+    {
+        files: ['**/*.{ts,svelte}'],
         settings: {
             react: {
                 version: 'detect',
@@ -56,9 +72,6 @@ export default tseslint.config(
             },
         },
         rules: {
-            ...reactPlugin.configs.recommended.rules,
-            ...reactHooksPlugin.configs.recommended.rules,
-            'react/react-in-jsx-scope': 'off',
             "prefer-promise-reject-errors": "error",
             '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
             '@typescript-eslint/no-explicit-any': 'error',
@@ -107,7 +120,6 @@ export default tseslint.config(
                 }
             ],
             'eslint-comments/no-use': 'error',
-            'react-compiler/react-compiler': 'error',
         },
     },
     {

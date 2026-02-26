@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { ProviderSettingsSchema, RegistrySchema, Registry, ProviderSetting } from "./settings.schemas";
+import { ProviderSettingsSchema, RegistrySchema, type Registry, type ProviderSetting } from "./settings.schemas";
 
 
 export function parseRegistry(data: unknown): Registry | undefined {

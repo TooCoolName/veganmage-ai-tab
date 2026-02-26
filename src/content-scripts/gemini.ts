@@ -1,7 +1,10 @@
 import { TabInternalMessageSchema } from "@/schema";
-import { chromeMessage, ChromeResult } from '@toocoolname/chrome-proxy';
+import { chromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
 import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut, logger } from './utils';
-import { isNotNull } from "@/null.utils";
+
+function isNotNull<T>(val: T | null | undefined): val is T {
+    return val !== null && val !== undefined;
+}
 
 // Gemini Content Script
 // Handles prompt injection, sending, and response extraction
