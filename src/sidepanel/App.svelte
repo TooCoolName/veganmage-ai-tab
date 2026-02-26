@@ -5,18 +5,16 @@
     import ProviderSettings from "./ProviderSettings.svelte";
     import MessagingView from "./MessagingView.svelte";
     import { DEFAULT_PROVIDERS, type Provider } from "./types";
+    import { Button } from "$lib/components/ui/button";
+    import * as Tabs from "$lib/components/ui/tabs";
+    import { Toaster } from "$lib/components/ui/sonner";
+    import { toast } from "svelte-sonner";
 
     const PROVIDERS_KEY = "providerSettings";
     const THEME_KEY = "theme";
 
     let theme = $state("custom-light");
     let activeView = $state<"providers" | "messaging">("providers");
-    type StatusMessage = {
-        message: string;
-        type: "success" | "error" | "info";
-    };
-    let statusMessage = $state<StatusMessage>({ message: "", type: "info" });
-    let showStatusMessage = $state(false);
 
     let providers = $state(DEFAULT_PROVIDERS);
 
@@ -56,9 +54,13 @@
     };
 
     function showStatus(message: string, type: "success" | "error" | "info") {
-        statusMessage = { message, type };
-        showStatusMessage = true;
-        setTimeout(() => (showStatusMessage = false), 5000);
+        if (type === "error") {
+            toast.error(message);
+        } else if (type === "success") {
+            toast.success(message);
+        } else {
+            toast(message);
+        }
     }
 
     // To allow child components to trigger global events
@@ -71,7 +73,7 @@
     });
 
     function toggleTheme() {
-        theme = theme === "custom-light" ? "custom-dark" : "custom-light";
+        theme = theme === "custom-dark" ? "custom-light" : "custom-dark";
         fireAndForget(chromeStorage.local.set(THEME_KEY, theme), "toggleTheme");
     }
 
@@ -82,19 +84,10 @@
 </script>
 
 <div class="h-screen bg-base-100 p-4 relative flex flex-col overflow-hidden">
-    {#if showStatusMessage}
-        <div class="toast toast-top toast-center z-[100]">
-            <div
-                class="alert py-8 shadow-lg {statusMessage.type === 'success'
-                    ? 'alert-success'
-                    : statusMessage.type === 'error'
-                      ? 'alert-error'
-                      : 'alert-info'}"
-            >
-                <span class="font-medium">{statusMessage.message}</span>
-            </div>
-        </div>
-    {/if}
+    <Toaster
+        position="top-center"
+        theme={theme === "custom-dark" ? "dark" : "light"}
+    />
 
     <div class="max-w-4xl mx-auto w-full flex flex-col h-full">
         <header class="mb-4">
@@ -104,48 +97,32 @@
                         Vegan Mage AI tabs
                     </h1>
                 </div>
-                <button
-                    onclick={toggleTheme}
-                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
-                >
+                <Button onclick={toggleTheme} variant="ghost" size="sm">
                     <span
                         >{theme === "custom-dark" ? "Light" : "Dark"} Mode</span
                     >
-                </button>
+                </Button>
             </div>
         </header>
 
-        <div
-            class="flex select-none space-x-1 rounded-lg bg-base-200 p-1 mb-4 h-10 w-fit items-center justify-center text-muted-foreground"
-        >
-            <button
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {activeView ===
-                'providers'
-                    ? 'bg-background text-foreground shadow-sm'
-                    : ''}"
-                onclick={() => (activeView = "providers")}
-            >
-                Providers
-            </button>
-            <button
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {activeView ===
-                'messaging'
-                    ? 'bg-background text-foreground shadow-sm'
-                    : ''}"
-                onclick={() => (activeView = "messaging")}
-            >
-                Messages
-            </button>
-        </div>
+        <Tabs.Root bind:value={activeView} class="flex-1 flex flex-col min-h-0">
+            <Tabs.List class="grid w-fit grid-cols-2 mb-4 mx-auto">
+                <Tabs.Trigger value="providers">Providers</Tabs.Trigger>
+                <Tabs.Trigger value="messaging">Messages</Tabs.Trigger>
+            </Tabs.List>
 
-        {#if activeView === "providers"}
-            <div class="flex-1 overflow-y-auto min-h-0 p-1">
+            <Tabs.Content
+                value="providers"
+                class="flex-1 overflow-y-auto min-h-0 p-1 mt-0"
+            >
                 <ProviderSettings />
-            </div>
-        {:else if activeView === "messaging"}
-            <div class="flex-1 min-h-0 flex flex-col">
+            </Tabs.Content>
+            <Tabs.Content
+                value="messaging"
+                class="flex-1 min-h-0 flex flex-col mt-0"
+            >
                 <MessagingView />
-            </div>
-        {/if}
+            </Tabs.Content>
+        </Tabs.Root>
     </div>
 </div>
