@@ -70,12 +70,13 @@ export default tseslint.config(
             '@typescript-eslint/no-floating-promises': 'error',
             '@typescript-eslint/no-misused-promises': 'error',
             'no-void': 'error',
-            // '@typescript-eslint/consistent-type-assertions': [
-            //     'error',
-            //     {
-            //         assertionStyle: 'never',
-            //     },
-            // ],
+            'no-restricted-globals': ['error', 'chrome'],
+            '@typescript-eslint/consistent-type-assertions': [
+                'error',
+                {
+                    assertionStyle: 'never',
+                },
+            ],
             'no-restricted-imports': [
                 'error',
                 {
@@ -100,6 +101,10 @@ export default tseslint.config(
         },
     },
     {
+        //shadcn comopnents enable ignore comment 
+        'eslint-comments/no-use': 'off',
+    },
+    {
         files: ['**/*.{js,mjs,cjs}'],
         languageOptions: {
             globals: {
@@ -108,25 +113,11 @@ export default tseslint.config(
         },
     },
     {
-        // Global rule: Disallow 'chrome' everywhere
-        files: ['src/**/*.ts'],
-        rules: {
-            'no-restricted-globals': ['error', 'chrome'],
-        },
-    },
-    {
         // Override: Allow 'chrome' only in the specific folder
         files: ['build.ts'],
         rules: {
             'no-restricted-syntax': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
-        },
-    },
-    {
-        // Override: Allow 'chrome' only in the specific folder
-        files: ['src/null.utils.ts'],
-        rules: {
-            'no-restricted-syntax': 'off',
         },
     },
 );
