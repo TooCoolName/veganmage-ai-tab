@@ -1,6 +1,36 @@
-import { build, spawn } from "bun";
-import { cp, rm, mkdir, exists } from "node:fs/promises";
+import { build, spawn, type BunPlugin } from "bun";
+import { cp, rm, mkdir, exists, readFile } from "node:fs/promises";
 import { watch } from "node:fs";
+import * as babel from "@babel/core";
+
+const reactCompilerPlugin: BunPlugin = {
+    name: "react-compiler",
+    setup(build: any) {
+        build.onLoad({ filter: /\.[jt]sx?$/ }, async (args: { path: string }) => {
+            const code = await readFile(args.path, "utf8");
+
+            const result = await babel.transformAsync(code, {
+                filename: args.path,
+                plugins: [
+                    ["babel-plugin-react-compiler", { target: "19" }],
+                ],
+                presets: [
+                    ["@babel/preset-typescript", { isTSX: true, allExtensions: true }]
+                ],
+                sourceMaps: "inline",
+            });
+
+            if (!(result?.code)) {
+                return { contents: code };
+            }
+
+            return {
+                contents: result.code,
+                loader: args.path.endsWith("x") ? "jsx" : "js",
+            };
+        });
+    },
+};
 
 const isWatch = process.argv.includes("--watch");
 
@@ -34,6 +64,7 @@ async function runBuild(signal?: AbortSignal) {
                 define: {
                     "Bun.env.NODE_ENV": JSON.stringify(isWatch ? "development" : "production")
                 },
+                plugins: [reactCompilerPlugin],
             });
 
             if (!result.success) {

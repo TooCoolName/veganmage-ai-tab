@@ -6,6 +6,8 @@ import importX from 'eslint-plugin-import-x';
 import globals from 'globals';
 // @ts-expect-error: Missing types for this plugin
 import eslintComments from 'eslint-plugin-eslint-comments';
+// @ts-expect-error: Missing types for this plugin
+import reactCompiler from 'eslint-plugin-react-compiler';
 
 export default tseslint.config(
     {
@@ -26,6 +28,7 @@ export default tseslint.config(
             'react-hooks': reactHooksPlugin,
             'import-x': importX,
             'eslint-comments': eslintComments,
+            'react-compiler': reactCompiler,
         },
         languageOptions: {
             parserOptions: {
@@ -104,6 +107,7 @@ export default tseslint.config(
                 }
             ],
             'eslint-comments/no-use': 'error',
+            'react-compiler/react-compiler': 'error',
         },
     },
     {
@@ -126,6 +130,7 @@ export default tseslint.config(
         files: ['build.ts'],
         rules: {
             'no-restricted-syntax': 'off',
+            '@typescript-eslint/no-explicit-any': 'off',
         },
     },
     {

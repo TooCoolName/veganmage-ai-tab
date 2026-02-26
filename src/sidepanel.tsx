@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getErrorMessage } from './utils';
 import { chromeMessage, chromeStorage, chromeTabs, Tab } from '@toocoolname/chrome-proxy';
@@ -73,7 +73,7 @@ function App() {
     }, [theme]);
 
     // Load providers from storage
-    const loadProviders = useCallback(async () => {
+    const loadProviders = async () => {
         try {
             const loadedProviders = await chromeStorage.local.get<Provider[]>(PROVIDERS_KEY) ?? DEFAULT_PROVIDERS;
 
@@ -94,20 +94,20 @@ function App() {
             setProviders([...DEFAULT_PROVIDERS]);
             return [...DEFAULT_PROVIDERS];
         }
-    }, []);
+    };
 
     // Load theme from storage
-    const loadTheme = useCallback(async () => {
+    const loadTheme = async () => {
         try {
             const result = await chromeStorage.local.get<string>(THEME_KEY) ?? 'custom-light';
             setTheme((result));
         } catch (error) {
             console.error('Error loading theme:', error);
         }
-    }, []);
+    };
 
     // Load active tabs
-    const loadActiveTabs = useCallback(async (providersList: Provider[] = []) => {
+    const loadActiveTabs = async (providersList: Provider[] = []) => {
         try {
             const allTabs = await chromeTabs.query({});
 
@@ -116,20 +116,20 @@ function App() {
             // about function closure. We'll use a functional update pattern for setProviders if we needed providers,
             // but here we only read from them to enrich tab data.
 
-            setActiveTabs((currentActiveTabs) => {
+            setActiveTabs(() => {
                 // We need the latest providers to name the tabs. 
                 // However, since we're in set* state, we can't easily get them unless we pass them or use a ref.
                 // Let's rely on the fact that providers state is stable enough for naming.
 
                 const aiTabs = allTabs.filter((tab: Tab) => {
                     const url = tab.url ?? '';
-                    return url.includes('chatgpt.com') ??
-                        url.includes('chat.openai.com') ??
-                        url.includes('gemini.google.com') ??
-                        url.includes('copilot.microsoft.com') ??
-                        url.includes('bing.com/chat') ??
-                        url.includes('chat.deepseek.com') ??
-                        url.includes('grok.com') ??
+                    return url.includes('chatgpt.com') ||
+                        url.includes('chat.openai.com') ||
+                        url.includes('gemini.google.com') ||
+                        url.includes('copilot.microsoft.com') ||
+                        url.includes('bing.com/chat') ||
+                        url.includes('chat.deepseek.com') ||
+                        url.includes('grok.com') ||
                         url.includes('chat.groq.com');
                 }).map((tab: Tab) => {
                     let provider = 'unknown';
@@ -159,7 +159,7 @@ function App() {
         } catch (error) {
             console.error('Error loading tabs:', error);
         }
-    }, []); // REMOVED [providers] dependency to stabilize the function
+    };
 
     // Save providers to storage
     const saveProviders = async (providersToSave: Provider[] = providers) => {
@@ -525,10 +525,11 @@ function MessagingView({
 
     // Auto-scroll to bottom
     useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        const element = scrollRef.current;
+        if (element) {
+            element.scrollTop = element.scrollHeight;
         }
-    }, [filteredMessages, isSending, scrollRef]);
+    }, [filteredMessages, isSending]);
 
     return (
         <div className="flex flex-col h-full gap-4">
