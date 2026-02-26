@@ -1,5 +1,7 @@
 import { defineConfig } from 'wxt';
 
+import tailwindcss from '@tailwindcss/vite';
+
 // See https://wxt.dev/api/config.html
 export default defineConfig({
     srcDir: 'src',
@@ -27,9 +29,7 @@ export default defineConfig({
     },
     vite: () => ({
         plugins: [
-            // Tailwind is handled by the svelte module if configured, 
-            // but we can also add the vite plugin here.
-            // However, @wxt-dev/module-svelte handles svelte files.
+            tailwindcss(),
         ],
         resolve: {
             alias: {
