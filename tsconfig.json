@@ -1,5 +1,5 @@
 {
-  "extends": "@sveltejs/tsconfig/tsconfig.json",
+  "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",

@@ -2,7 +2,6 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import importX from 'eslint-plugin-import-x';
 import globals from 'globals';
-// @ts-expect-error: Missing types for this plugin
 import eslintComments from 'eslint-plugin-eslint-comments';
 import eslintPluginSvelte from 'eslint-plugin-svelte';
 import svelteEslintParser from 'svelte-eslint-parser';
@@ -74,7 +73,7 @@ export default tseslint.config(
         rules: {
             "prefer-promise-reject-errors": "error",
             '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-            //'@typescript-eslint/no-explicit-any': 'error',
+            '@typescript-eslint/no-explicit-any': 'error',
             '@typescript-eslint/prefer-nullish-coalescing': 'error',
             '@typescript-eslint/prefer-optional-chain': 'error',
             '@typescript-eslint/no-unsafe-return': 'error',
@@ -82,12 +81,12 @@ export default tseslint.config(
             '@typescript-eslint/no-floating-promises': 'error',
             '@typescript-eslint/no-misused-promises': 'error',
             'no-void': 'error',
-            // '@typescript-eslint/consistent-type-assertions': [
-            //     'error',
-            //     {
-            //         assertionStyle: 'never',
-            //     },
-            // ],
+            '@typescript-eslint/consistent-type-assertions': [
+                'error',
+                {
+                    assertionStyle: 'never',
+                },
+            ],
             'no-restricted-syntax': [
                 'error',
                 {

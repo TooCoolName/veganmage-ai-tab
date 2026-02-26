@@ -102,7 +102,7 @@
                         ...tab,
                         provider,
                         providerName,
-                    } as AiTab;
+                    };
                 });
 
             activeTabs = tabs;
