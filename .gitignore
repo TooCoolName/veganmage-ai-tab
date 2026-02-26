@@ -53,3 +53,4 @@ web-ext-artifacts/
 
 # Documentation (local reference only)
 docs/
+.eslintcache
