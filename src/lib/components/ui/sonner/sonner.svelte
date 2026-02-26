@@ -1,16 +1,11 @@
 <script lang="ts">
-	import {
-		CircleCheck,
-		Info,
-		Loader2,
-		OctagonX,
-		TriangleAlert,
-	} from "lucide-svelte";
+	import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
+	import InfoIcon from "@lucide/svelte/icons/info";
+	import Loader2Icon from "@lucide/svelte/icons/loader-2";
+	import OctagonXIcon from "@lucide/svelte/icons/octagon-x";
+	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 
-	import {
-		Toaster as Sonner,
-		type ToasterProps as SonnerProps,
-	} from "svelte-sonner";
+	import { Toaster as Sonner, type ToasterProps as SonnerProps } from "svelte-sonner";
 	import { mode } from "mode-watcher";
 
 	let { ...restProps }: SonnerProps = $props();
@@ -22,18 +17,18 @@
 	style="--normal-bg: var(--color-popover); --normal-text: var(--color-popover-foreground); --normal-border: var(--color-border);"
 	{...restProps}
 	>{#snippet loadingIcon()}
-		<Loader2 class="size-4 animate-spin" />
+		<Loader2Icon class="size-4 animate-spin" />
 	{/snippet}
 	{#snippet successIcon()}
-		<CircleCheck class="size-4" />
+		<CircleCheckIcon class="size-4" />
 	{/snippet}
 	{#snippet errorIcon()}
-		<OctagonX class="size-4" />
+		<OctagonXIcon class="size-4" />
 	{/snippet}
 	{#snippet infoIcon()}
-		<Info class="size-4" />
+		<InfoIcon class="size-4" />
 	{/snippet}
 	{#snippet warningIcon()}
-		<TriangleAlert class="size-4" />
+		<TriangleAlertIcon class="size-4" />
 	{/snippet}
 </Sonner>
