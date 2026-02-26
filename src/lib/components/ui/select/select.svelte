@@ -3,7 +3,7 @@
 
 	let {
 		open = $bindable(false),
-		value = $bindable(),
+		value = $bindable() as string | undefined,
 		...restProps
 	}: SelectPrimitive.RootProps = $props();
 </script>

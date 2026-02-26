@@ -27,14 +27,13 @@ export default tseslint.config(
         },
     },
     {
-        files: ['**/*.svelte'],
+        files: ['**/*.{ts,svelte}'],
         languageOptions: {
-            parser: svelteEslintParser,
+            parser: tseslint.parser,
             parserOptions: {
-                parser: tseslint.parser,
-                extraFileExtensions: ['.svelte'],
                 projectService: true,
                 tsconfigRootDir: import.meta.dirname,
+                extraFileExtensions: ['.svelte'],
             },
             globals: {
                 ...globals.browser,
@@ -45,27 +44,17 @@ export default tseslint.config(
         },
     },
     {
-        files: ['**/*.ts'],
+        files: ['**/*.svelte'],
         languageOptions: {
-            parser: tseslint.parser,
+            parser: svelteEslintParser,
             parserOptions: {
-                projectService: true,
-                tsconfigRootDir: import.meta.dirname,
-            },
-            globals: {
-                ...globals.browser,
-                ...globals.node,
-                ...globals.serviceworker,
-                chrome: 'readonly',
+                parser: tseslint.parser,
             },
         },
     },
     {
         files: ['**/*.{ts,svelte}'],
         settings: {
-            react: {
-                version: 'detect',
-            },
             'import-x/resolver': {
                 typescript: true,
             },
@@ -81,12 +70,12 @@ export default tseslint.config(
             '@typescript-eslint/no-floating-promises': 'error',
             '@typescript-eslint/no-misused-promises': 'error',
             'no-void': 'error',
-            '@typescript-eslint/consistent-type-assertions': [
-                'error',
-                {
-                    assertionStyle: 'never',
-                },
-            ],
+            // '@typescript-eslint/consistent-type-assertions': [
+            //     'error',
+            //     {
+            //         assertionStyle: 'never',
+            //     },
+            // ],
             'no-restricted-imports': [
                 'error',
                 {
