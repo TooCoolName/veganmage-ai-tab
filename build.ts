@@ -15,173 +15,147 @@ const bgTasks = [
     { entry: "./src/content-scripts/visibility-inject.ts", out: "content-scripts" },
 ];
 
-async function runBuild(signal?: AbortSignal) {
-    if (signal?.aborted) throw new Error("Aborted");
-    console.log(`[${new Date().toLocaleTimeString()}] Starting build...`);
-    const start = performance.now();
-
-    try {
-        // 1. Build Background and Content Scripts using Bun
-        for (const task of bgTasks) {
-            if (signal?.aborted) throw new Error("Aborted");
-            const result = await build({
-                entrypoints: [task.entry],
-                outdir: `./dist/${task.out}`,
-                naming: "[name].js", // Ensures names stay clean
-                target: "browser",
-                minify: !isWatch,
-                define: {
-                    "Bun.env.NODE_ENV": JSON.stringify(isWatch ? "development" : "production")
-                },
-                plugins: [],
-            });
-
-            if (!result.success) {
-                console.error(`❌ Build failed for entrypoint: ${task.entry}`);
-                for (const log of result.logs) {
-                    console.error(log);
-                }
-                // Stop the entire build process here
-                return;
-            }
-        }
-
-        // 2. Sync Public Assets first
-        if (signal?.aborted) throw new Error("Aborted");
-        if (await exists("./public")) {
-            await cp("./public", "./dist", { recursive: true });
-
-            // Copy the correct manifest based on environment
-            const manifestSource = isWatch ? "manifest.dev.json" : "manifest.prod.json";
-            if (await exists(`./public/${manifestSource}`)) {
-                await cp(`./public/${manifestSource}`, "./dist/manifest.json");
-                console.log(`📄 Using ${manifestSource}`);
-            }
-
-            // Cleanup extra manifest files from dist
-            const extraManifests = ["manifest.dev.json", "manifest.prod.json"];
-            for (const manifest of extraManifests) {
-                const path = `./dist/${manifest}`;
-                if (await exists(path)) {
-                    await rm(path);
-                }
-            }
-        } else {
-            console.warn("⚠️  Warning: ./public folder not found.");
-        }
-
-        // 3. Build UI using Vite
-        if (signal?.aborted) throw new Error("Aborted");
-        const viteProc = spawn([
-            "bun", "run", "vite-build", ...(isWatch ? ["--watch"] : [])
-        ], {
-            stdout: "inherit",
-            stderr: "inherit",
+async function buildBackground(signal?: AbortSignal) {
+    console.log(`[${new Date().toLocaleTimeString()}] Building background scripts...`);
+    const results = await Promise.all(bgTasks.map(task => {
+        if (signal?.aborted) return Promise.reject(new Error("Aborted"));
+        return build({
+            entrypoints: [task.entry],
+            outdir: `./dist/${task.out}`,
+            naming: "[name].js",
+            target: "browser",
+            minify: !isWatch,
+            define: {
+                "Bun.env.NODE_ENV": JSON.stringify(isWatch ? "development" : "production")
+            },
         });
+    }));
 
-        const abortHandler = () => viteProc.kill();
-        signal?.addEventListener("abort", abortHandler);
-
-        try {
-            await viteProc.exited;
-        } finally {
-            signal?.removeEventListener("abort", abortHandler);
+    for (let i = 0; i < results.length; i++) {
+        if (!results[i].success) {
+            console.error(`❌ Build failed for entrypoint: ${bgTasks[i].entry}`);
+            for (const log of results[i].logs) console.error(log);
+            return false;
         }
-
-        if (signal?.aborted) throw new Error("Aborted");
-
-        if (process.argv.includes("--zip")) {
-            console.log("📦 Zipping dist folder...");
-            const zipProc = spawn(["zip", "-r", "veganmageaitab.zip", "."], {
-                cwd: "./dist",
-                stdout: "inherit",
-                stderr: "inherit",
-            });
-            const exitCode = await zipProc.exited;
-            if (exitCode !== 0) {
-                console.error("❌ Zip failed");
-            } else {
-                console.log("✅ Zip created: dist/veganmageaitab.zip");
-            }
-        }
-
-        console.log(`✅ Build complete in ${(performance.now() - start).toFixed(2)}ms`);
-
-    } catch (err) {
-        if (signal?.aborted || isErrorMessageAborted(err)) {
-            throw err;
-        }
-        console.error("🚨 Build error:", err);
     }
+    return true;
+}
+
+async function syncAssets() {
+    if (!(await exists("./public"))) {
+        console.warn("⚠️  Warning: ./public folder not found.");
+        return;
+    }
+    await cp("./public", "./dist", { recursive: true });
+
+    const manifestSource = isWatch ? "manifest.dev.json" : "manifest.prod.json";
+    if (await exists(`./public/${manifestSource}`)) {
+        await cp(`./public/${manifestSource}`, "./dist/manifest.json");
+        console.log(`📄 Using ${manifestSource}`);
+    }
+
+    const extraManifests = ["manifest.dev.json", "manifest.prod.json"];
+    for (const manifest of extraManifests) {
+        const path = `./dist/${manifest}`;
+        if (await exists(path)) await rm(path);
+    }
+}
+
+async function runViteBuild() {
+    console.log(`[${new Date().toLocaleTimeString()}] Starting Vite build...`);
+    const viteProc = spawn(["bun", "run", "vite-build"], { stdout: "inherit", stderr: "inherit" });
+    const exitCode = await viteProc.exited;
+    if (exitCode !== 0) console.error("❌ Vite build failed");
+    return exitCode === 0;
+}
+
+function startViteWatch() {
+    console.log(`[${new Date().toLocaleTimeString()}] Starting Vite watch mode...`);
+    return spawn(["bun", "run", "vite-build", "--watch"], { stdout: "inherit", stderr: "inherit" });
+}
+
+async function runFullBuild() {
+    const start = performance.now();
+    await rm("./dist", { recursive: true, force: true });
+    await mkdir("./dist", { recursive: true });
+
+    const [bgSuccess] = await Promise.all([
+        buildBackground(),
+        syncAssets()
+    ]);
+
+    if (!bgSuccess) return;
+
+    const viteSuccess = await runViteBuild();
+    if (!viteSuccess) return;
+
+    if (process.argv.includes("--zip")) {
+        console.log("📦 Zipping dist folder...");
+        const zipProc = spawn(["zip", "-r", "veganmageaitab.zip", "."], { cwd: "./dist", stdout: "inherit", stderr: "inherit" });
+        await zipProc.exited;
+    }
+
+    console.log(`✅ Build complete in ${(performance.now() - start).toFixed(2)}ms`);
 }
 
 function isErrorMessageAborted(err: unknown): boolean {
-    if (err instanceof Error) {
-        return err.message === 'Aborted'
-    } else {
-        return false
-    }
+    return err instanceof Error && err.message === 'Aborted';
 }
 
-// Initial Setup: Wipe and recreate dist
-await rm("./dist", { recursive: true, force: true });
-await mkdir("./dist", { recursive: true });
+if (!isWatch) {
+    await runFullBuild();
+} else {
+    // Initial setup for watch mode
+    await rm("./dist", { recursive: true, force: true });
+    await mkdir("./dist", { recursive: true });
 
-// Initial Build
-await runBuild();
+    await Promise.all([
+        buildBackground(),
+        syncAssets()
+    ]);
 
-if (isWatch) {
+    const viteProc = startViteWatch();
+
     console.log("👀 Watching for changes in ./src and ./public...");
-
-    let currentAbortController: AbortController | undefined;
-
-    const triggerBuild = async () => {
-        if (currentAbortController) {
-            currentAbortController.abort();
-        }
-
-        currentAbortController = new AbortController();
-        const signal = currentAbortController.signal;
-
-        try {
-            await runBuild(signal);
-        } catch (err: unknown) {
-            if (isErrorMessageAborted(err)) {
-                console.log(`[${new Date().toLocaleTimeString()}] ⏹️ Build cancelled for new change.`);
-            } else {
-                console.error("🚨 Watcher encountered an unexpected error during build execution:", err);
-            }
-        } finally {
-            if (currentAbortController?.signal === signal) {
-                currentAbortController = undefined;
-            }
-        }
-    };
-
+    let bgAbortController: AbortController | undefined;
     let timeout: Timer | undefined;
+
     const watcher = (event: string, filename: string | Buffer | null | undefined) => {
         if (!filename) return;
         const sFilename = String(filename);
-
-        // Ignore common temporary/hidden files
-        if (sFilename.includes("node_modules") ||
-            sFilename.includes(".git") ||
-            sFilename.includes("dist") ||
-            sFilename.endsWith("~") || // vim backup
-            sFilename.endsWith(".tmp") ||
-            sFilename.startsWith(".")) { // hidden files
-            return;
-        }
+        if (sFilename.includes("node_modules") || sFilename.includes(".git") || sFilename.includes("dist") ||
+            sFilename.endsWith("~") || sFilename.endsWith(".tmp") || sFilename.startsWith(".")) return;
 
         console.log(`[WATCH] Change detected: ${event} on ${sFilename}`);
 
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            triggerBuild().catch(err => console.error("Trigger build failed:", err));
+            (async () => {
+                if (sFilename.startsWith("public")) {
+                    await syncAssets();
+                } else if (sFilename.startsWith("src/sidepanel") || sFilename.endsWith(".svelte") || sFilename.endsWith(".css")) {
+                    // Vite handles these automatically
+                    console.log("⚡ Vite is handling the change...");
+                } else {
+                    // Background or common src files
+                    if (bgAbortController) bgAbortController.abort();
+                    bgAbortController = new AbortController();
+                    try {
+                        await buildBackground(bgAbortController.signal);
+                        console.log(`✅ Background build complete`);
+                    } catch (err) {
+                        if (!isErrorMessageAborted(err)) console.error("🚨 Background build error:", err);
+                    }
+                }
+            })().catch(err => console.error("Watcher error:", err));
         }, 200);
     };
 
-    // Watch both source code and public assets
     watch("./src", { recursive: true }, watcher);
     watch("./public", { recursive: true }, watcher);
+
+    process.on("SIGINT", () => {
+        viteProc.kill();
+        process.exit();
+    });
 }
