@@ -8,7 +8,7 @@
     "watch": "bun run build.ts --watch",
     "vite-build": "vite build",
     "lint": "bun eslint . --cache",
-    "tc": "svelte-check"
+    "tc": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "@toocoolname/chrome-proxy": "^1.0.8",

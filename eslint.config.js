@@ -102,7 +102,10 @@ export default tseslint.config(
     },
     {
         //shadcn comopnents enable ignore comment 
-        'eslint-comments/no-use': 'off',
+        files: ['**/lib/components/ui/*.(ts,svelte)'],
+        rules: {
+            'eslint-comments/no-use': 'off',
+        }
     },
     {
         files: ['**/*.{js,mjs,cjs}'],
