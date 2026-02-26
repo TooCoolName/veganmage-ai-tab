@@ -33,11 +33,11 @@
       "bun-types",
       "chrome",
       "svelte"
-    ]
+    ],
+    "baseUrl": "."
   },
   "include": [
     "src/**/*",
-    "vite.config.ts",
-    "build.ts"
+    ".wxt/types/**/*.d.ts"
   ]
 }
