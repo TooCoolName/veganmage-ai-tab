@@ -11,8 +11,7 @@ body,
     margin: 0;
 }
 
-:root,
-[data-theme="custom-light"] {
+:root {
     color-scheme: light;
     /* Base Colors - Keeping these clean and airy */
     --color-base-100: oklch(0.99 0.001 150);
@@ -78,7 +77,7 @@ body,
     --radius: 0.5rem;
 }
 
-[data-theme="custom-dark"] {
+.dark {
     color-scheme: dark;
     /* Clean Dark mode */
     --color-base-100: oklch(18% 0.01 150);

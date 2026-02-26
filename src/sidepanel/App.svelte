@@ -6,33 +6,15 @@
     import MessagingView from "./MessagingView.svelte";
     import { DEFAULT_PROVIDERS, type Provider } from "./types";
     import { Button } from "$lib/components/ui/button";
+    import { ModeWatcher, mode, toggleMode } from "mode-watcher";
     import * as Tabs from "$lib/components/ui/tabs";
     import { Toaster } from "$lib/components/ui/sonner";
     import { toast } from "svelte-sonner";
 
     const PROVIDERS_KEY = "providerSettings";
-    const THEME_KEY = "theme";
-
-    let theme = $state("custom-light");
     let activeView = $state<"providers" | "messaging">("providers");
 
     let providers = $state(DEFAULT_PROVIDERS);
-
-    // Apply theme instantly
-    $effect(() => {
-        document.body.setAttribute("data-theme", theme);
-    });
-
-    const loadTheme = async () => {
-        try {
-            const result =
-                (await chromeStorage.local.get<string>(THEME_KEY)) ??
-                "custom-light";
-            theme = result;
-        } catch (error) {
-            console.error("Error loading theme:", error);
-        }
-    };
 
     const loadProviders = async () => {
         try {
@@ -73,33 +55,29 @@
     });
 
     function toggleTheme() {
-        theme = theme === "custom-dark" ? "custom-light" : "custom-dark";
-        fireAndForget(chromeStorage.local.set(THEME_KEY, theme), "toggleTheme");
+        toggleMode();
     }
 
     onMount(() => {
         fireAndForget(loadProviders(), "loadProviders");
-        fireAndForget(loadTheme(), "loadTheme");
     });
 </script>
 
-<div class="h-screen bg-base-100 p-4 relative flex flex-col overflow-hidden">
-    <Toaster
-        position="top-center"
-        theme={theme === "custom-dark" ? "dark" : "light"}
-    />
+<div class="h-screen bg-background p-4 relative flex flex-col overflow-hidden">
+    <ModeWatcher />
+    <Toaster position="top-center" theme={mode.current} />
 
     <div class="max-w-4xl mx-auto w-full flex flex-col h-full">
         <header class="mb-4">
             <div class="flex justify-between items-start">
                 <div>
-                    <h1 class="text-xl font-bold text-base-content mb-1">
+                    <h1 class="text-xl font-bold text-foreground mb-1">
                         Vegan Mage AI tabs
                     </h1>
                 </div>
                 <Button onclick={toggleTheme} variant="ghost" size="sm">
                     <span
-                        >{theme === "custom-dark" ? "Light" : "Dark"} Mode</span
+                        >{mode.current === "dark" ? "Light" : "Dark"} Mode</span
                     >
                 </Button>
             </div>
