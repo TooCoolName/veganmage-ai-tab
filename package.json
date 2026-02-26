@@ -24,6 +24,7 @@
     "@tailwindcss/cli": "^4.1.18",
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/typography": "^0.5.19",
+    "@tsconfig/svelte": "^5.0.8",
     "@types/babel__core": "^7.20.5",
     "@types/bun": "latest",
     "@types/chrome": "^0.0.244",
