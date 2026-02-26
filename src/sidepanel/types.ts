@@ -6,6 +6,12 @@ export interface Provider {
     icon?: string;
 }
 
+export interface AppContext {
+    showStatus: (message: string, type: "success" | "error" | "info") => void;
+    getProviders: () => Provider[];
+    setProviders: (newProviders: Provider[]) => void;
+}
+
 export const DEFAULT_PROVIDERS: Provider[] = [
     { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com", enabled: true },
     { id: "gemini", name: "Gemini", url: "https://gemini.google.com", enabled: true },

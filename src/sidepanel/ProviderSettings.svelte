@@ -1,8 +1,10 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import { chromeStorage } from "@toocoolname/chrome-proxy";
+    import { DEFAULT_PROVIDERS, type AppContext } from "./types";
 
-    const { showStatus, getProviders, setProviders } = getContext<any>("app");
+    const { showStatus, getProviders, setProviders } =
+        getContext<AppContext>("app");
 
     let draggedIndex = $state<number | undefined>(undefined);
 
@@ -18,9 +20,7 @@
 
     function handleToggle(index: number, enabled: boolean) {
         const currentProviders = getProviders();
-        const enabledCount = currentProviders.filter(
-            (p: any) => p.enabled,
-        ).length;
+        const enabledCount = currentProviders.filter((p) => p.enabled).length;
         if (!enabled && enabledCount === 1) {
             showStatus("At least one provider must remain enabled", "error");
             return;

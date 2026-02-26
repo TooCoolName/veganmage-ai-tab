@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
     import { chromeStorage } from "@toocoolname/chrome-proxy";
+    import { fireAndForget } from "@/utils";
     import ProviderSettings from "./ProviderSettings.svelte";
     import MessagingView from "./MessagingView.svelte";
     import { DEFAULT_PROVIDERS, type Provider } from "./types";
@@ -10,7 +11,11 @@
 
     let theme = $state("custom-light");
     let activeView = $state<"providers" | "messaging">("providers");
-    let statusMessage = $state({ message: "", type: "info" });
+    type StatusMessage = {
+        message: string;
+        type: "success" | "error" | "info";
+    };
+    let statusMessage = $state<StatusMessage>({ message: "", type: "info" });
     let showStatusMessage = $state(false);
 
     let providers = $state(DEFAULT_PROVIDERS);
@@ -67,12 +72,12 @@
 
     function toggleTheme() {
         theme = theme === "custom-light" ? "custom-dark" : "custom-light";
-        chromeStorage.local.set(THEME_KEY, theme).catch(console.error);
+        fireAndForget(chromeStorage.local.set(THEME_KEY, theme), "toggleTheme");
     }
 
     onMount(() => {
-        loadProviders();
-        loadTheme();
+        fireAndForget(loadProviders(), "loadProviders");
+        fireAndForget(loadTheme(), "loadTheme");
     });
 </script>
 
@@ -92,7 +97,6 @@
     {/if}
 
     <div class="max-w-4xl mx-auto w-full flex flex-col h-full">
-        <!-- Header -->
         <header class="mb-4">
             <div class="flex justify-between items-start">
                 <div>
@@ -100,7 +104,6 @@
                         Vegan Mage AI tabs
                     </h1>
                 </div>
-                <!-- DaisyUI ghost button style replaced with standard styling or shadcn button -->
                 <button
                     onclick={toggleTheme}
                     class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
@@ -112,7 +115,6 @@
             </div>
         </header>
 
-        <!-- View Tabs -->
         <div
             class="flex select-none space-x-1 rounded-lg bg-base-200 p-1 mb-4 h-10 w-fit items-center justify-center text-muted-foreground"
         >
@@ -136,7 +138,6 @@
             </button>
         </div>
 
-        <!-- Dynamic Content Area -->
         {#if activeView === "providers"}
             <div class="flex-1 overflow-y-auto min-h-0 p-1">
                 <ProviderSettings />

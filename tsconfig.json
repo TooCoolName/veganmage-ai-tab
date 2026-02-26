@@ -29,6 +29,8 @@
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "vite.config.ts",
+    "build.ts"
   ]
 }

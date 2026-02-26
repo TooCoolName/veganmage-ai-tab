@@ -1,5 +1,5 @@
-import { build, spawn, type BunPlugin } from "bun";
-import { cp, rm, mkdir, exists, readFile } from "node:fs/promises";
+import { build, spawn } from "bun";
+import { cp, rm, mkdir, exists } from "node:fs/promises";
 import { watch } from "node:fs";
 
 const isWatch = process.argv.includes("--watch");
