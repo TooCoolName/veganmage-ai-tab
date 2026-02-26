@@ -28,12 +28,12 @@
     }
 
     let activeTabs = $state<AiTab[]>([]);
-    let selectedTab = $state<AiTab | undefined>(undefined);
+    let selectedTab = $state<AiTab>();
     let messageText = $state<string>("");
     let messages = $state<Message[]>([]);
     let isSending = $state<boolean>(false);
 
-    let scrollRef = $state<HTMLDivElement | undefined>(undefined);
+    let scrollRef = $state<HTMLDivElement>();
 
     const filteredMessages = $derived(
         messages.filter((m) => m.tabId === selectedTab?.id).slice(-2),

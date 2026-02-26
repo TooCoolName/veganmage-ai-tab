@@ -6,7 +6,7 @@
     const { showStatus, getProviders, setProviders } =
         getContext<AppContext>("app");
 
-    let draggedIndex = $state<number | undefined>(undefined);
+    let draggedIndex = $state<number>();
 
     async function saveProviders() {
         try {
