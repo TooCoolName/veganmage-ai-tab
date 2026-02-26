@@ -60,13 +60,13 @@
 @layer base {
   :root {
     /* Base Colors - Clean and airy */
-    --background: oklch(0.99 0.001 150);
+    --background: oklch(0.92 0.001 150);
     --foreground: oklch(25% 0.01 150);
 
-    --card: oklch(0.97 0.001 150);
+    --card: oklch(0.95 0.001 150);
     --card-foreground: oklch(25% 0.01 150);
 
-    --popover: oklch(0.95 0.001 150);
+    --popover: oklch(0.99 0.001 150);
     --popover-foreground: oklch(25% 0.01 150);
 
     /* Primary - Vibrant Emerald */
