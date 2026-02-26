@@ -71,7 +71,11 @@ async function runViteBuild() {
 
 function startViteWatch() {
     console.log(`[${new Date().toLocaleTimeString()}] Starting Vite watch mode...`);
-    return spawn(["bun", "run", "vite-build", "--watch"], { stdout: "inherit", stderr: "inherit" });
+    return spawn(["bun", "run", "vite-build", "--watch"], {
+        stdout: "inherit",
+        stderr: "inherit",
+        env: { ...process.env, VITE_WATCH: "true" }
+    });
 }
 
 async function runFullBuild() {
