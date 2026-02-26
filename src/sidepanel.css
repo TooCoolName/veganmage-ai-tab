@@ -34,19 +34,23 @@
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
   @keyframes accordion-down {
     from {
       height: 0;
     }
+
     to {
       height: var(--radix-accordion-content-height);
     }
   }
+
   @keyframes accordion-up {
     from {
       height: var(--radix-accordion-content-height);
     }
+
     to {
       height: 0;
     }
@@ -55,65 +59,71 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base Colors - Clean and airy */
+    --background: oklch(0.99 0.001 150);
+    --foreground: oklch(25% 0.01 150);
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: oklch(0.97 0.001 150);
+    --card-foreground: oklch(25% 0.01 150);
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: oklch(0.95 0.001 150);
+    --popover-foreground: oklch(25% 0.01 150);
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Vibrant Emerald */
+    --primary: oklch(62% 0.17 148.958);
+    --primary-foreground: oklch(100% 0 0);
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Bright Sunshine Gold */
+    --secondary: oklch(75% 0.15 85);
+    --secondary-foreground: oklch(20% 0.05 85);
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: oklch(70% 0.12 185.713);
+    --accent-foreground: oklch(100% 0 0);
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --muted: oklch(0.95 0.001 150);
+    --muted-foreground: oklch(25% 0.01 150);
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: oklch(62% 0.20 25);
+    --destructive-foreground: oklch(100% 0 0);
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: oklch(0.95 0.001 150);
+    --input: oklch(0.95 0.001 150);
+    --ring: oklch(62% 0.17 148.958);
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Clean Dark mode */
+    --background: oklch(18% 0.01 150);
+    --foreground: oklch(90% 0.01 150);
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: oklch(22% 0.01 150);
+    --card-foreground: oklch(90% 0.01 150);
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: oklch(25% 0.01 150);
+    --popover-foreground: oklch(90% 0.01 150);
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Primary */
+    --primary: oklch(62% 0.17 148.958);
+    --primary-foreground: oklch(10% 0.05 150);
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary */
+    --secondary: oklch(75% 0.15 85);
+    --secondary-foreground: oklch(10% 0.05 85);
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --accent: oklch(70% 0.12 185.713);
+    --accent-foreground: oklch(10% 0.03 185);
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --muted: oklch(25% 0.01 150);
+    --muted-foreground: oklch(90% 0.01 150);
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: oklch(65% 0.18 25);
+    --destructive-foreground: oklch(10% 0.04 22);
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: oklch(25% 0.01 150);
+    --input: oklch(25% 0.01 150);
+    --ring: oklch(62% 0.17 148.958);
   }
 }
 
@@ -121,7 +131,28 @@
   * {
     @apply border-border;
   }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+select:focus,
+select:focus-visible,
+select:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.bg-grid-pattern {
+  background-image: linear-gradient(to right, currentColor 1px, transparent 1px),
+    linear-gradient(to bottom, currentColor 1px, transparent 1px);
+  background-size: 40px 40px;
 }
