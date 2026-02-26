@@ -3,6 +3,7 @@ import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
 export default defineConfig({
+    base: './',
     plugins: [svelte({
         preprocess: [vitePreprocess()]
     })],
@@ -16,7 +17,7 @@ export default defineConfig({
         emptyOutDir: false, // Don't wipe dist because Bun builds background/content scripts there
         rollupOptions: {
             input: {
-                sidepanel: path.resolve(__dirname, 'public/sidepanel.html'),
+                sidepanel: path.resolve(__dirname, 'sidepanel.html'),
             },
             output: {
                 entryFileNames: `[name].js`,
