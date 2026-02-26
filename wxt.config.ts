@@ -25,6 +25,11 @@ export default defineConfig({
         },
         externally_connectable: {
             ids: ["*"]
+        },
+        icons: {
+            "16": "images/icon16.png",
+            "48": "images/icon48.png",
+            "128": "images/icon128.png"
         }
     },
     vite: () => ({

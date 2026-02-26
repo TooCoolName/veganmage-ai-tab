@@ -12,6 +12,8 @@ export default tseslint.config(
             '**/node_modules/**',
             '**/dist/**',
             '**/build/**',
+            '**/.output/**',
+            '**/.wxt/**',
             '**/coverage/**',
             '*.min.js',
             '.svelte-kit'
