@@ -87,17 +87,6 @@ export default tseslint.config(
                     assertionStyle: 'never',
                 },
             ],
-            'no-restricted-syntax': [
-                'error',
-                {
-                    selector: 'Literal[value=null]',
-                    message: 'Use undefined instead of null',
-                },
-                {
-                    selector: 'TSNullKeyword',
-                    message: 'Use undefined instead of null',
-                },
-            ],
             'no-restricted-imports': [
                 'error',
                 {

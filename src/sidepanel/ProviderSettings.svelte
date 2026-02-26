@@ -110,7 +110,7 @@
                 >
                     <Switch
                         checked={provider.enabled}
-                        onCheckedChange={(v) => handleToggle(index, v)}
+                        onCheckedChange={(v: boolean) => handleToggle(index, v)}
                         aria-label="Toggle {provider.name}"
                     />
                 </div>

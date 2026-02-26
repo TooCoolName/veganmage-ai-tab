@@ -320,7 +320,7 @@
                             placeholder="Enter message..."
                             bind:value={messageText}
                             disabled={isSending}
-                            onkeydown={(e) => {
+                            onkeydown={(e: KeyboardEvent) => {
                                 if (
                                     e.key === "Enter" &&
                                     (e.ctrlKey || e.metaKey)

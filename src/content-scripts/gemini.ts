@@ -1,7 +1,6 @@
 import { TabInternalMessageSchema } from "@/schema";
 import { chromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
 import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut, logger } from './utils';
-import { isNotNull } from "@/null.utils";
 
 // Gemini Content Script
 // Handles prompt injection, sending, and response extraction
@@ -75,7 +74,7 @@ chromeMessage.createLocalListener(TabInternalMessageSchema, {
 function waitForResponse(initialCount?: number) {
     return genericWaitForResponse({
         getMessages: () => document.querySelectorAll<HTMLElement>('.response-container'),
-        isGenerating: (el: Element) => isNotNull(el.querySelector('[data-mat-icon-name="stop"]')),
+        isGenerating: (el: Element) => el.querySelector('[data-mat-icon-name="stop"]') !== null,
         extractText: (el: HTMLElement) => getMessageText(el.querySelector<HTMLElement>('.model-response-text') ?? undefined),
         initialCount,
         isGeneratingCheckArea: () => document.querySelector("input-container") ?? undefined
