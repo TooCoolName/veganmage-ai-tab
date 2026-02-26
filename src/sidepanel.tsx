@@ -527,9 +527,9 @@ function MessagingView({
     useEffect(() => {
         const element = scrollRef.current;
         if (element) {
-            element.scrollTop = element.scrollHeight;
+            element.scrollTo({ top: element.scrollHeight, behavior: 'auto' });
         }
-    }, [filteredMessages, isSending]);
+    }, [filteredMessages, isSending, scrollRef]);
 
     return (
         <div className="flex flex-col h-full gap-4">
