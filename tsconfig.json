@@ -15,20 +15,6 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "useUnknownInCatchVariables": true,
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@": [
-        "./src"
-      ],
-      "$lib/*": [
-        "../ui/src/lib/*"
-      ],
-      "$lib": [
-        "../ui/src/lib"
-      ]
-    },
     "types": [
       "bun-types",
       "chrome",

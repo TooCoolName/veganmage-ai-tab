@@ -16,7 +16,8 @@
             "types": "./src/lib/utils/chrome-utils.ts",
             "default": "./src/lib/utils/chrome-utils.ts"
         },
-        "./components/*": "./src/lib/components/*"
+        "./components/*": "./src/lib/components/*",
+        "./sidepanel.css": "./src/lib/sidepanel.css"
     },
     "dependencies": {
         "tailwind-variants": "^3.2.2",
