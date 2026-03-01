@@ -3,8 +3,8 @@
     "style": "default",
     "tailwind": {
         "config": "",
-        "css": "src/sidepanel.css",
-        "baseColor": "slate",
+        "css": "src/lib/global.css",
+        "baseColor": "zinc",
         "cssVariables": true
     },
     "aliases": {
