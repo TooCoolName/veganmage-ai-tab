@@ -30,7 +30,10 @@ export default defineConfig({
             "16": "images/icon16.png",
             "48": "images/icon48.png",
             "128": "images/icon128.png"
-        }
+        },
+        side_panel: {
+            default_path: 'sidepanel.html',
+        },
     },
     vite: () => ({
         plugins: [

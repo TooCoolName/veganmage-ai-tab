@@ -113,8 +113,20 @@ export default defineBackground(() => {
     await saveRegistry(registry);
   }
 
-  chromeRuntime.onInstalled.addListener(() => { fireAndForget(rebuildRegistry()); });
-  chromeRuntime.onStartup.addListener(() => { fireAndForget(rebuildRegistry()); });
+  function setupSidePanel() {
+    chromeSidePanel
+      .setPanelBehavior({ openPanelOnActionClick: true })
+      .catch((error: unknown) => console.error(error));
+  }
+
+  chromeRuntime.onInstalled.addListener(() => {
+    fireAndForget(rebuildRegistry());
+    setupSidePanel();
+  });
+  chromeRuntime.onStartup.addListener(() => {
+    fireAndForget(rebuildRegistry());
+    setupSidePanel();
+  });
 
   chromeTabs.onUpdated.addListener((tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
     if (changeInfo.url || changeInfo.status === 'complete') {
