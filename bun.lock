@@ -4,7 +4,7 @@
   "workspaces": {
     "": {
       "name": "veganmageaitab",
-      "dependencies": {
+      "devDependencies": {
         "bun-types": "latest",
         "typescript": "^5.9.3",
       },

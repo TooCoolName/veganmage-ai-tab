@@ -9,7 +9,7 @@
     "lint": "bun eslint . --cache",
     "tc": "bun --filter '*' tc"
   },
-  "dependencies": {
+  "devDependencies": {
     "typescript": "^5.9.3",
     "bun-types": "latest"
   }
