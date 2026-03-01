@@ -4,8 +4,7 @@
     "tailwind": {
         "config": "",
         "css": "src/lib/global.css",
-        "baseColor": "zinc",
-        "cssVariables": true
+        "baseColor": "zinc"
     },
     "aliases": {
         "components": "$lib/components",
