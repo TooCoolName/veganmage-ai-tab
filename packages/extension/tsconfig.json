@@ -31,7 +31,7 @@
       ]
     },
     "types": [
-      "bun-types",
+      "bun",
       "chrome",
       "svelte"
     ],

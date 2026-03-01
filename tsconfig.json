@@ -16,7 +16,7 @@
     "skipLibCheck": true,
     "useUnknownInCatchVariables": true,
     "types": [
-      "bun-types",
+      "bun",
       "chrome",
       "svelte"
     ],
