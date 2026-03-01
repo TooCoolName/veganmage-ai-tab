@@ -1,0 +1,23 @@
+{
+    "name": "@veganmage/ui",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "tailwind-variants": "^3.2.2",
+        "bits-ui": "^2.16.2",
+        "clsx": "^2.1.1",
+        "lucide-svelte": "^0.575.0",
+        "mode-watcher": "^1.1.0",
+        "svelte-sonner": "^1.0.7",
+        "tailwind-merge": "^3.5.0",
+        "svelte": "^5.53.5"
+    },
+    "scripts": {
+        "tc": "svelte-check --tsconfig ./tsconfig.json"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "typescript": "^5.9.3"
+    }
+}

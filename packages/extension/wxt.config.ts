@@ -42,7 +42,7 @@ export default defineConfig({
         resolve: {
             alias: {
                 '@': '/src',
-                '$lib': '/src/lib',
+                '$lib': '@veganmage/ui/src/lib',
             },
         },
     })

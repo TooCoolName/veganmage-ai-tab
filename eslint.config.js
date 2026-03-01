@@ -33,7 +33,10 @@ export default tseslint.config(
         languageOptions: {
             parser: tseslint.parser,
             parserOptions: {
-                projectService: true,
+                projectService: {
+                    allowDefaultProject: ['eslint.config.js'],
+                    defaultProject: 'tsconfig.json',
+                },
                 tsconfigRootDir: import.meta.dirname,
                 extraFileExtensions: ['.svelte'],
             },

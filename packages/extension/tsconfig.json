@@ -37,8 +37,7 @@
     "baseUrl": "."
   },
   "include": [
-    "packages/*/src/**/*",
-    "packages/*/wxt.config.ts",
+    "src/**/*",
     ".wxt/types/**/*.d.ts"
   ]
 }
