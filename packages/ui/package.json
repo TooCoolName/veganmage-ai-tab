@@ -12,10 +12,6 @@
             "types": "./src/schema/index.ts",
             "default": "./src/schema/index.ts"
         },
-        "./utils/chrome-utils": {
-            "types": "./src/lib/utils/chrome-utils.ts",
-            "default": "./src/lib/utils/chrome-utils.ts"
-        },
         "./components/*": "./src/lib/components/*",
         "./global.css": "./src/lib/global.css"
     },
