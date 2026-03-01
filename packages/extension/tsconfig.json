@@ -23,9 +23,6 @@
       "@": [
         "./src"
       ],
-      "@/schema": [
-        "../ui/src/schema/index.ts"
-      ],
       "$lib/*": [
         "../ui/src/lib/*"
       ],
