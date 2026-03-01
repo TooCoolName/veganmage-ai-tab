@@ -6,7 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "bun eslint . --cache"
+    "lint": "bun eslint . --cache",
+    "tc": "bun --filter '*' tc"
   },
   "dependencies": {
     "typescript": "^5.9.3",
