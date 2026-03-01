@@ -9,9 +9,17 @@
         "typescript": "^5.9.3",
       },
     },
+    "packages/core": {
+      "name": "@veganmage/core",
+      "version": "1.0.0",
+      "dependencies": {
+        "valibot": "^1.2.0",
+      },
+    },
     "packages/extension": {
       "name": "veganmageaitab",
       "dependencies": {
+        "@veganmage/core": "workspace:*",
         "@veganmage/ui": "workspace:*",
         "pino": "^10.3.1",
       },
@@ -61,6 +69,7 @@
       "version": "1.0.0",
       "dependencies": {
         "@toocoolname/chrome-proxy": "^1.0.8",
+        "@veganmage/core": "workspace:*",
         "bits-ui": "^2.16.2",
         "clsx": "^2.1.1",
         "lucide-svelte": "^0.575.0",
@@ -489,6 +498,8 @@
     "@unrs/resolver-binding-win32-ia32-msvc": ["@unrs/resolver-binding-win32-ia32-msvc@1.11.1", "", { "os": "win32", "cpu": "ia32" }, "sha512-DCEI6t5i1NmAZp6pFonpD5m7i6aFrpofcp4LA2i8IIq60Jyo28hamKBxNrZcyOwVOZkgsRp9O2sXWBWP8MnvIQ=="],
 
     "@unrs/resolver-binding-win32-x64-msvc": ["@unrs/resolver-binding-win32-x64-msvc@1.11.1", "", { "os": "win32", "cpu": "x64" }, "sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g=="],
+
+    "@veganmage/core": ["@veganmage/core@workspace:packages/core"],
 
     "@veganmage/ui": ["@veganmage/ui@workspace:packages/ui"],
 

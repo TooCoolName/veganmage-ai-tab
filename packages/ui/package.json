@@ -24,6 +24,7 @@
         "svelte-sonner": "^1.0.7",
         "tailwind-merge": "^3.5.0",
         "svelte": "^5.53.5",
+        "@veganmage/core": "workspace:*",
         "@toocoolname/chrome-proxy": "^1.0.8",
         "valibot": "^1.2.0"
     },

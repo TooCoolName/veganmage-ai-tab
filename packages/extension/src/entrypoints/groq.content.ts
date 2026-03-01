@@ -1,4 +1,4 @@
-import { TabInternalMessageSchema } from "@veganmage/ui/schema";
+import { TabInternalMessageSchema } from "@veganmage/core";
 import { chromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
 import { waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText } from '@/lib/wxt-utils';
 
