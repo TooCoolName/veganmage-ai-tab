@@ -1,6 +1,6 @@
 import { mount } from 'svelte';
 import App from './lib/components/sidepanel/App.svelte';
-import './lib/sidepanel.css';
+import './lib/global.css';
 
 const container = document.getElementById('root');
 if (container) {

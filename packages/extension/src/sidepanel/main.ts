@@ -1,6 +1,6 @@
 import { mount } from 'svelte';
 import { App } from '@veganmage/ui';
-import '@veganmage/ui/sidepanel.css';
+import '@veganmage/ui/global.css';
 
 const container = document.getElementById('root');
 if (container) {
