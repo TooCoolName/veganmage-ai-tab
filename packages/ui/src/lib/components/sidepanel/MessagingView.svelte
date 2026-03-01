@@ -5,8 +5,8 @@
         chromeTabs,
         type Tab,
     } from "@toocoolname/chrome-proxy";
-    import { TabInternalMessageSchema } from "@/schema";
-    import { fireAndForget } from "@/utils";
+    import { TabInternalMessageSchema } from "../../../schema";
+    import { fireAndForget } from "../../utils/chrome-utils";
     import type { AppContext } from "./types";
     import * as Card from "$lib/components/ui/card";
     import { Button } from "$lib/components/ui/button";

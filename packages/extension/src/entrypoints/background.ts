@@ -9,7 +9,7 @@ import {
   type Registry,
   type GenerateText,
   type BgInternalLogRequest
-} from '@/schema';
+} from '@veganmage/ui/schema';
 import { chromeMessage, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, type ChromeResult, type Tab, type TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 export default defineBackground(() => {

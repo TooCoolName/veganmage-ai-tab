@@ -3,6 +3,21 @@
     "version": "1.0.0",
     "private": true,
     "type": "module",
+    "exports": {
+        ".": {
+            "types": "./src/lib/index.ts",
+            "default": "./src/lib/index.ts"
+        },
+        "./schema": {
+            "types": "./src/schema/index.ts",
+            "default": "./src/schema/index.ts"
+        },
+        "./utils/chrome-utils": {
+            "types": "./src/lib/utils/chrome-utils.ts",
+            "default": "./src/lib/utils/chrome-utils.ts"
+        },
+        "./components/*": "./src/lib/components/*"
+    },
     "dependencies": {
         "tailwind-variants": "^3.2.2",
         "bits-ui": "^2.16.2",
@@ -11,7 +26,9 @@
         "mode-watcher": "^1.1.0",
         "svelte-sonner": "^1.0.7",
         "tailwind-merge": "^3.5.0",
-        "svelte": "^5.53.5"
+        "svelte": "^5.53.5",
+        "@toocoolname/chrome-proxy": "^1.0.8",
+        "valibot": "^1.2.0"
     },
     "scripts": {
         "tc": "svelte-check --tsconfig ./tsconfig.json"

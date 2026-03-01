@@ -1,5 +1,5 @@
 import { mount } from 'svelte';
-import App from './App.svelte';
+import { App } from '@veganmage/ui';
 
 const container = document.getElementById('root');
 if (container) {

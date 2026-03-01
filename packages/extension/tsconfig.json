@@ -15,12 +15,16 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "useUnknownInCatchVariables": true,
+    "allowArbitraryExtensions": true,
     "paths": {
       "@/*": [
         "./src/*"
       ],
       "@": [
         "./src"
+      ],
+      "@/schema": [
+        "../ui/src/schema/index.ts"
       ],
       "$lib/*": [
         "../ui/src/lib/*"

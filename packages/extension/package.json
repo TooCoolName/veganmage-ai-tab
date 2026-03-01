@@ -12,9 +12,7 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
-    "@toocoolname/chrome-proxy": "^1.0.8",
     "pino": "^10.3.1",
-    "valibot": "^1.2.0",
     "@veganmage/ui": "workspace:*"
   },
   "devDependencies": {

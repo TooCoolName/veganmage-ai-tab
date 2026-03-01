@@ -1,4 +1,5 @@
 import { defineConfig } from 'wxt';
+import path from 'node:path';
 
 import tailwindcss from '@tailwindcss/vite';
 
@@ -42,7 +43,8 @@ export default defineConfig({
         resolve: {
             alias: {
                 '@': '/src',
-                '$lib': '@veganmage/ui/src/lib',
+                '$lib': path.resolve(__dirname, '../ui/src/lib'),
+                '$schema': path.resolve(__dirname, '../ui/src/schema'),
             },
         },
     })
