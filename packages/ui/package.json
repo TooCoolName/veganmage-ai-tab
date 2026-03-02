@@ -18,7 +18,7 @@
         "@veganmage-ai-tab/shadui": "workspace:*",
         "tailwind-variants": "^3.2.2",
         "@veganmage-ai-tab/core": "workspace:*",
-        "@toocoolname/chrome-proxy": "^1.0.8",
+        "@toocoolname/chrome-proxy": "^1.0.10",
         "valibot": "^1.2.0",
         "svelte": "^5.53.5"
     },
