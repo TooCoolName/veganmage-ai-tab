@@ -19,6 +19,12 @@
     "paths": {
       "@veganmage-ai-tab/shadui/*": [
         "../shadui/src/*"
+      ],
+      "@veganmage-ai-tab/core/*": [
+        "../core/src/*"
+      ],
+      "@veganmage-ai-tab/ui/*": [
+        "../ui/src/*"
       ]
     },
     "types": [

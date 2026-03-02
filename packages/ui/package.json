@@ -5,14 +5,14 @@
     "type": "module",
     "exports": {
         ".": {
-            "types": "./src/lib/index.ts",
-            "default": "./src/lib/index.ts"
+            "types": "./src/index.ts",
+            "default": "./src/index.ts"
         },
         "./schema": {
             "types": "./src/schema/index.ts",
             "default": "./src/schema/index.ts"
         },
-        "./components/*": "./src/lib/components/*"
+        "./components/*": "./src/components/*"
     },
     "dependencies": {
         "@veganmage-ai-tab/shadui": "workspace:*",
