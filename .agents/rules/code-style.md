@@ -50,3 +50,4 @@ This document outlines the coding standards and best practices for this project,
 
 ---
 *Note: These rules are enforced via ESLint and manual code review. Build errors or warnings will occur if these guidelines are not followed.*
+

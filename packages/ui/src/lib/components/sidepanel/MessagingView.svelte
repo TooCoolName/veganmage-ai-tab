@@ -6,7 +6,7 @@
         type Tab,
     } from "@toocoolname/chrome-proxy";
     import { TabInternalMessageSchema } from "@veganmage/core";
-    import { fireAndForget } from "@shadui/utils/chrome-utils";
+    import { fireAndForget } from "$lib/utils/chrome-utils";
     import type { AppContext } from "./types";
     import * as Card from "@shadui/components/card";
     import { Button } from "@shadui/components/button";
