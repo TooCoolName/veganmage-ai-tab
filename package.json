@@ -7,9 +7,9 @@
   ],
   "packageManager": "bun@1.3.9",
   "scripts": {
-    "build:all": "turbo build",
-    "lint:all": "turbo lint",
-    "tc:all": "turbo tc"
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "tc": "turbo tc"
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.7.1",
