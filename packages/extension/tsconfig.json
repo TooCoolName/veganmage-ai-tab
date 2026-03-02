@@ -17,6 +17,9 @@
     "useUnknownInCatchVariables": true,
     "allowArbitraryExtensions": true,
     "paths": {
+      "@veganmage-ai-tab/extension/*": [
+        "./src/*"
+      ],
       "@veganmage-ai-tab/shadui/*": [
         "../shadui/src/*"
       ],

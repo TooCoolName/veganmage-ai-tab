@@ -42,9 +42,9 @@ export default defineConfig({
         ],
         resolve: {
             alias: {
-                '@': '/src',
-                '$lib': path.resolve(__dirname, '../ui/src/lib'),
-                '$schema': path.resolve(__dirname, '../ui/src/schema'),
+                '@veganmage-ai-tab/extension': '/src',
+                '@veganmage-ai-tab/ui': path.resolve(__dirname, '../ui/src'),
+                '@veganmage-ai-tab/core': path.resolve(__dirname, '../core/src'),
             },
         },
     })

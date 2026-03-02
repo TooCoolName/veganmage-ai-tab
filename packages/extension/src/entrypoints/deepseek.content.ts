@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@veganmage/core";
 import { chromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut } from '@/lib/wxt-utils';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut } from '@veganmage-ai-tab/extension/lib/wxt-utils';
 
 export default defineContentScript({
     matches: ["https://chat.deepseek.com/*"],

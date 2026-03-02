@@ -8,6 +8,9 @@
             ],
             "@veganmage-ai-tab/ui/*": [
                 "./src/*"
+            ],
+            "@veganmage-ai-tab/core/*": [
+                "../core/src/*"
             ]
         }
     },
