@@ -5,6 +5,9 @@
         "paths": {
             "@veganmage-ai-tab/shadui/*": [
                 "../shadui/src/*"
+            ],
+            "@veganmage-ai-tab/ui/*": [
+                "./src/*"
             ]
         }
     },
