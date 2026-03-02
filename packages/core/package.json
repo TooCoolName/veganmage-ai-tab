@@ -14,6 +14,7 @@
     },
     "scripts": {
         "build": "echo 'Nothing to build for core'",
-        "tc": "tsc --noEmit"
+        "tc": "tsc --noEmit",
+        "lint": "eslint . --cache"
     }
 }

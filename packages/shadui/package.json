@@ -16,7 +16,8 @@
     },
     "scripts": {
         "dev": "vite",
-        "tc": "svelte-check --tsconfig ./tsconfig.json"
+        "tc": "svelte-check --tsconfig ./tsconfig.json",
+        "lint": "eslint . --cache"
     },
     "dependencies": {
         "tailwind-variants": "^3.2.2",

@@ -12,9 +12,12 @@
     "tc:all": "turbo tc"
   },
   "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.7.1",
     "@eslint/js": "^10.0.1",
     "@types/bun": "latest",
     "eslint": "^10.0.2",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import-x": "^4.16.1",
     "eslint-plugin-svelte": "^3.15.0",
     "globals": "^17.4.0",
     "svelte-eslint-parser": "^1.5.1",

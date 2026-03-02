@@ -24,7 +24,8 @@
     },
     "scripts": {
         "dev": "vite",
-        "tc": "svelte-check --tsconfig ./tsconfig.json"
+        "tc": "svelte-check --tsconfig ./tsconfig.json",
+        "lint": "eslint . --cache"
     },
     "devDependencies": {
         "@types/bun": "latest",
