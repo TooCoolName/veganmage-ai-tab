@@ -15,9 +15,9 @@
         "./components/*": "./src/lib/components/*"
     },
     "dependencies": {
-        "@veganmage/shadui": "workspace:*",
+        "@veganmage-ai-tab/shadui": "workspace:*",
         "tailwind-variants": "^3.2.2",
-        "@veganmage/core": "workspace:*",
+        "@veganmage-ai-tab/core": "workspace:*",
         "@toocoolname/chrome-proxy": "^1.0.8",
         "valibot": "^1.2.0",
         "svelte": "^5.53.5"

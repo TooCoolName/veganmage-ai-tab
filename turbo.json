@@ -3,7 +3,6 @@
     "globalDependencies": [
         "eslint.config.js",
         "package.json",
-        "biome.json"
     ],
     "tasks": {
         "build": {

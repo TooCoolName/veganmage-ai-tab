@@ -2,7 +2,7 @@
  * Common utilities for content scripts
  */
 import { chromeMessage } from '@toocoolname/chrome-proxy';
-import { BgInternalMessageSchema } from '@veganmage/core';
+import { BgInternalMessageSchema } from '@veganmage-ai-tab/core';
 
 const bgMessenger = chromeMessage.createLocalMessenger(BgInternalMessageSchema);
 
