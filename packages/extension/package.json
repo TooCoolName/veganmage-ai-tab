@@ -1,5 +1,5 @@
 {
-  "name": "veganmageaitab",
+  "name": "@veganmage-ai-tab/extension",
   "license": "UNLICENSED",
   "private": true,
   "type": "module",

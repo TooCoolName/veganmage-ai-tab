@@ -1,5 +1,5 @@
 {
-  "name": "veganmage-ai-tab-monorepo",
+  "name": "@veganmage-ai-tab/workspace",
   "private": true,
   "type": "module",
   "workspaces": [
