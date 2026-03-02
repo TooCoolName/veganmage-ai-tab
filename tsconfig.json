@@ -21,7 +21,7 @@
       "svelte"
     ],
     "paths": {
-      "@shadui/*": [
+      "@veganmage-ai-tab/shadui/lib/*": [
         "packages/shadui/src/lib/*"
       ]
     },

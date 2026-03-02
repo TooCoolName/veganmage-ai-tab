@@ -1,0 +1,15 @@
+{
+    "$schema": "https://shadcn-svelte.com/schema.json",
+    "style": "default",
+    "tailwind": {
+        "config": "",
+        "css": "src/lib/global.css",
+        "baseColor": "zinc"
+    },
+    "aliases": {
+        "components": "@veganmage-ai-tab/shadui/lib/components",
+        "utils": "@veganmage-ai-tab/shadui/lib/utils",
+        "ui": "@veganmage-ai-tab/shadui/lib/components/ui",
+        "lib": "@veganmage-ai-tab/shadui/lib"
+    }
+}

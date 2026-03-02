@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { cn, type WithElementRef } from "@shadui/utils/cn.js";
+	import {
+		cn,
+		type WithElementRef,
+	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
@@ -13,7 +16,10 @@
 <div
 	bind:this={ref}
 	data-slot="card-action"
-	class={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
+	class={cn(
+		"col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+		className,
+	)}
 	{...restProps}
 >
 	{@render children?.()}

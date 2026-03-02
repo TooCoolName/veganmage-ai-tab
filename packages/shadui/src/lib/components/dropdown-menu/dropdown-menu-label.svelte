@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { cn, type WithElementRef } from "@shadui/utils/cn.js";
+	import {
+		cn,
+		type WithElementRef,
+	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 	import type { HTMLAttributes } from "svelte/elements";
 
 	let {

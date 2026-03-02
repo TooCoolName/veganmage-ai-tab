@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Tabs as TabsPrimitive } from "bits-ui";
-	import { cn } from "@shadui/utils/cn.js";
+	import { cn } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),
@@ -14,7 +14,7 @@
 	data-slot="tabs-list"
 	class={cn(
 		"bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
-		className
+		className,
 	)}
 	{...restProps}
 />

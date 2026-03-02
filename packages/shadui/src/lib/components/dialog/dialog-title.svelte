@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Dialog as DialogPrimitive } from "bits-ui";
-	import { cn } from "@shadui/utils/cn.js";
+	import { cn } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),

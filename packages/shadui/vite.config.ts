@@ -10,7 +10,7 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '$lib': path.resolve(__dirname, './src/lib')
+            '@veganmage-ai-tab/shadui': path.resolve(__dirname, './src')
         }
     }
 });

@@ -2,9 +2,9 @@
     import { getContext } from "svelte";
     import { chromeStorage } from "@toocoolname/chrome-proxy";
     import { DEFAULT_PROVIDERS, type AppContext } from "./types";
-    import * as Card from "@shadui/components/card";
-    import { Switch } from "@shadui/components/switch";
-    import { Button } from "@shadui/components/button";
+    import * as Card from "@veganmage-ai-tab/shadui/lib/components/card";
+    import { Switch } from "@veganmage-ai-tab/shadui/lib/components/switch";
+    import { Button } from "@veganmage-ai-tab/shadui/lib/components/button";
     import { GripVertical } from "lucide-svelte";
 
     const { showStatus, getProviders, setProviders } =

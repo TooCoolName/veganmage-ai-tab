@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
-	import { cn, type WithElementRef } from "@shadui/utils/cn.js";
+	import {
+		cn,
+		type WithElementRef,
+	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),
@@ -15,7 +18,7 @@
 	data-slot="card"
 	class={cn(
 		"bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-		className
+		className,
 	)}
 	{...restProps}
 >

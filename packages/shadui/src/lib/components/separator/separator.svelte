@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Separator as SeparatorPrimitive } from "bits-ui";
-	import { cn } from "@shadui/utils/cn.js";
+	import { cn } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),
@@ -15,7 +15,7 @@
 	data-slot={dataSlot}
 	class={cn(
 		"bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:min-h-full data-[orientation=vertical]:w-px",
-		className
+		className,
 	)}
 	{...restProps}
 />

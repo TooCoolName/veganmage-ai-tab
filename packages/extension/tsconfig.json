@@ -17,20 +17,8 @@
     "useUnknownInCatchVariables": true,
     "allowArbitraryExtensions": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@": [
-        "./src"
-      ],
-      "$lib/*": [
-        "../ui/src/lib/*"
-      ],
-      "$lib": [
-        "../ui/src/lib"
-      ],
-      "@shadui/*": [
-        "../shadui/src/lib/*"
+      "@veganmage-ai-tab/shadui/*": [
+        "../shadui/src/*"
       ]
     },
     "types": [

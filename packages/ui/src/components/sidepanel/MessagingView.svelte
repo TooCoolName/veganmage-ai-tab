@@ -6,12 +6,12 @@
         type Tab,
     } from "@toocoolname/chrome-proxy";
     import { TabInternalMessageSchema } from "@veganmage/core";
-    import { fireAndForget } from "$lib/utils/chrome-utils";
+    import { fireAndForget } from "@veganmage-ai-tab/ui/utils/chrome-utils";
     import type { AppContext } from "./types";
-    import * as Card from "@shadui/components/card";
-    import { Button } from "@shadui/components/button";
-    import { Textarea } from "@shadui/components/textarea";
-    import { ScrollArea } from "@shadui/components/scroll-area";
+    import * as Card from "@veganmage-ai-tab/shadui/lib/components/card";
+    import { Button } from "@veganmage-ai-tab/shadui/lib/components/button";
+    import { Textarea } from "@veganmage-ai-tab/shadui/lib/components/textarea";
+    import { ScrollArea } from "@veganmage-ai-tab/shadui/lib/components/scroll-area";
     import {
         MessageSquare,
         Bot,

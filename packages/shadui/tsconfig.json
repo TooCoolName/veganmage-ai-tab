@@ -3,19 +3,14 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "$lib/*": [
-                "./src/lib/*"
-            ],
-            "$lib": [
-                "./src/lib"
-            ],
-            "@shadui/*": [
-                "./src/lib/*"
+            "@veganmage-ai-tab/shadui/*": [
+                "./src/*"
             ]
         }
-    },
+    },  
     "include": [
         "src/**/*",
-        "../../tsconfig.json"
+        "../../tsconfig.json",
+        "components.json"
     ]
 }

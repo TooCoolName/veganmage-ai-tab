@@ -11,7 +11,7 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '$lib': path.resolve(__dirname, './src/lib')
+            '@veganmage-ai-tab/ui': path.resolve(__dirname, './src')
         }
     },
     server: {

@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
-	import { cn, type WithElementRef } from "@shadui/utils/cn.js";
+	import {
+		cn,
+		type WithElementRef,
+	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),
@@ -13,7 +16,10 @@
 <span
 	bind:this={ref}
 	data-slot="dropdown-menu-shortcut"
-	class={cn("text-muted-foreground ms-auto text-xs tracking-widest", className)}
+	class={cn(
+		"text-muted-foreground ms-auto text-xs tracking-widest",
+		className,
+	)}
 	{...restProps}
 >
 	{@render children?.()}

@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { cn, type WithElementRef } from "@shadui/utils/cn.js";
+	import {
+		cn,
+		type WithElementRef,
+	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
@@ -13,7 +16,10 @@
 <div
 	bind:this={ref}
 	data-slot="dialog-footer"
-	class={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+	class={cn(
+		"flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+		className,
+	)}
 	{...restProps}
 >
 	{@render children?.()}

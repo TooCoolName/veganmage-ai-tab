@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
-	import { cn, type WithElementRef } from "@shadui/utils/cn.js";
+	import {
+		cn,
+		type WithElementRef,
+	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),
@@ -10,6 +13,11 @@
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
-<div bind:this={ref} data-slot="card-content" class={cn("px-6", className)} {...restProps}>
+<div
+	bind:this={ref}
+	data-slot="card-content"
+	class={cn("px-6", className)}
+	{...restProps}
+>
 	{@render children?.()}
 </div>

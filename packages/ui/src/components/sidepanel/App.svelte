@@ -1,14 +1,14 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
     import { chromeStorage } from "@toocoolname/chrome-proxy";
-    import { fireAndForget } from "$lib/utils/chrome-utils";
+    import { fireAndForget } from "@veganmage-ai-tab/ui/utils/chrome-utils";
     import ProviderSettings from "./ProviderSettings.svelte";
     import MessagingView from "./MessagingView.svelte";
     import { DEFAULT_PROVIDERS, type Provider } from "./types";
-    import { Button } from "@shadui/components/button";
+    import { Button } from "@veganmage-ai-tab/shadui/lib/components/button";
     import { ModeWatcher, mode, toggleMode } from "mode-watcher";
-    import * as Tabs from "@shadui/components/tabs";
-    import { Toaster } from "@shadui/components/sonner";
+    import * as Tabs from "@veganmage-ai-tab/shadui/lib/components/tabs";
+    import { Toaster } from "@veganmage-ai-tab/shadui/lib/components/sonner";
     import { toast } from "svelte-sonner";
 
     const PROVIDERS_KEY = "providerSettings";
