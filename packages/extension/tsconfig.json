@@ -28,6 +28,9 @@
       ],
       "$lib": [
         "../ui/src/lib"
+      ],
+      "@shadui/*": [
+        "../shadui/src/lib/*"
       ]
     },
     "types": [
