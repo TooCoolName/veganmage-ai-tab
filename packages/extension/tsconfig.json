@@ -20,14 +20,29 @@
       "@veganmage-ai-tab/extension/*": [
         "./src/*"
       ],
+      "@veganmage-ai-tab/shadui": [
+        "../shadui/src/index.ts"
+      ],
       "@veganmage-ai-tab/shadui/*": [
         "../shadui/src/*"
+      ],
+      "@veganmage-ai-tab/core": [
+        "../core/src/index.ts"
       ],
       "@veganmage-ai-tab/core/*": [
         "../core/src/*"
       ],
+      "@veganmage-ai-tab/ui": [
+        "../ui/src/index.ts"
+      ],
       "@veganmage-ai-tab/ui/*": [
         "../ui/src/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/*": [
+        "./src/*"
       ]
     },
     "types": [
@@ -38,7 +53,8 @@
     "baseUrl": "."
   },
   "include": [
-    "src/**/*",
+    "src/**/*.ts",
+    "src/**/*.svelte",
     ".wxt/types/**/*.d.ts"
   ]
 }

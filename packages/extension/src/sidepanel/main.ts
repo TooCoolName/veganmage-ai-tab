@@ -1,6 +1,5 @@
 import { mount } from 'svelte';
-import { App } from '@veganmage-ai-tab/ui/components/index';
-import '@veganmage-ai-tab/ui/global.css';
+import App from '@veganmage-ai-tab/ui/components/sidepanel/App.svelte';
 
 const container = document.getElementById('root');
 if (container) {

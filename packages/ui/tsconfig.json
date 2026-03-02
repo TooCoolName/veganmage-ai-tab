@@ -9,6 +9,9 @@
             "@veganmage-ai-tab/ui/*": [
                 "./src/*"
             ],
+            "@veganmage-ai-tab/core": [
+                "../core/src/index.ts"
+            ],
             "@veganmage-ai-tab/core/*": [
                 "../core/src/*"
             ]

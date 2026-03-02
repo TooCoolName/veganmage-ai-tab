@@ -1,0 +1,33 @@
+$ turbo tc
+• turbo 2.8.12
+• Packages in scope: @veganmage-ai-tab/core, @veganmage-ai-tab/extension, @veganmage-ai-tab/shadui, @veganmage-ai-tab/ui
+• Running tc in 4 packages
+• Remote caching disabled
+@veganmage-ai-tab/extension:tc: cache miss, executing 6ccbb3dab836dedc
+@veganmage-ai-tab/core:tc: cache hit, replaying logs 1b5f606188654b37
+@veganmage-ai-tab/core:tc: 
+@veganmage-ai-tab/core:tc: [0m[2m[35m$[0m [2m[1mtsc --noEmit[0m
+@veganmage-ai-tab/shadui:tc: cache hit, replaying logs c9063834f4b26a23
+@veganmage-ai-tab/shadui:tc: 
+@veganmage-ai-tab/shadui:tc: [0m[2m[35m$[0m [2m[1msvelte-check --tsconfig ./tsconfig.json[0m
+@veganmage-ai-tab/shadui:tc: Loading svelte-check in workspace: /home/marti/code/veganmage-ai-tab/packages/shadui
+@veganmage-ai-tab/shadui:tc: Getting Svelte diagnostics...
+@veganmage-ai-tab/shadui:tc: 
+@veganmage-ai-tab/shadui:tc: [32msvelte-check found 0 errors and 0 warnings
+@veganmage-ai-tab/shadui:tc: [39m
+@veganmage-ai-tab/ui:tc: cache hit, replaying logs bb76f540b5d39b8f
+@veganmage-ai-tab/ui:tc: $ svelte-check --tsconfig ./tsconfig.json
+@veganmage-ai-tab/ui:tc: Loading svelte-check in workspace: /home/marti/code/veganmage-ai-tab/packages/ui
+@veganmage-ai-tab/ui:tc: Getting Svelte diagnostics...
+@veganmage-ai-tab/ui:tc: 
+@veganmage-ai-tab/ui:tc: svelte-check found 0 errors and 0 warnings
+@veganmage-ai-tab/extension:tc: $ svelte-check --tsconfig ./tsconfig.json
+@veganmage-ai-tab/extension:tc: Loading svelte-check in workspace: /home/marti/code/veganmage-ai-tab/packages/extension
+@veganmage-ai-tab/extension:tc: Getting Svelte diagnostics...
+@veganmage-ai-tab/extension:tc: 
+@veganmage-ai-tab/extension:tc: svelte-check found 0 errors and 0 warnings
+
+ Tasks:    4 successful, 4 total
+Cached:    3 cached, 4 total
+  Time:    8.65s 
+

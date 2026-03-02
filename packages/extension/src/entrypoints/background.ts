@@ -67,7 +67,8 @@ export default defineBackground(() => {
 
   async function getProviderSettings(): Promise<ProviderSetting[] | undefined> {
     const result = await chromeStorage.local.get('providerSettings');
-    return parseProviderSettings(result);
+    const parsed = parseProviderSettings(result);
+    return parsed;
   }
 
   async function updateTabRegistry(tabId: number, url: string | undefined, remove: boolean = false) {
@@ -208,7 +209,7 @@ export default defineBackground(() => {
         : DEFAULT_PROVIDER_ORDER;
 
       for (const provider of providerOrder) {
-        const tabIds = registry[provider] || [];
+        const tabIds = registry[provider] ?? [];
         const activeTabs: number[] = [];
 
         for (const tabId of tabIds) {

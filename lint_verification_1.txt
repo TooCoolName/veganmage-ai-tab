@@ -1,0 +1,35 @@
+$ turbo lint
+• turbo 2.8.12
+• Packages in scope: @veganmage-ai-tab/core, @veganmage-ai-tab/extension, @veganmage-ai-tab/shadui, @veganmage-ai-tab/ui
+• Running lint in 4 packages
+• Remote caching disabled
+@veganmage-ai-tab/shadui:lint: cache miss, executing 8227d066a7250c2d
+@veganmage-ai-tab/extension:lint: cache miss, executing 4cd30333f3b7d441
+@veganmage-ai-tab/ui:lint: cache miss, executing 53e42975d8f28c40
+@veganmage-ai-tab/core:lint: cache hit, replaying logs 3744674abfc60278
+@veganmage-ai-tab/core:lint: 
+@veganmage-ai-tab/core:lint: [0m[2m[35m$[0m [2m[1meslint . --cache[0m
+@veganmage-ai-tab/extension:lint: $ bun eslint . --cache
+@veganmage-ai-tab/shadui:lint: $ eslint . --cache
+@veganmage-ai-tab/ui:lint: $ eslint . --cache
+@veganmage-ai-tab/extension:lint: 
+@veganmage-ai-tab/extension:lint: /home/marti/code/veganmage-ai-tab/packages/extension/src/entrypoints/background.ts
+@veganmage-ai-tab/extension:lint:    70:5   error  Unsafe return of a value of type error                                                                     @typescript-eslint/no-unsafe-return
+@veganmage-ai-tab/extension:lint:   207:40  error  Unsafe return of a value of type error                                                                     @typescript-eslint/no-unsafe-return
+@veganmage-ai-tab/extension:lint:   211:43  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@veganmage-ai-tab/extension:lint:   292:5   error  Unsafe return of a value of type error                                                                     @typescript-eslint/no-unsafe-return
+@veganmage-ai-tab/extension:lint: 
+@veganmage-ai-tab/extension:lint: ✖ 4 problems (4 errors, 0 warnings)
+@veganmage-ai-tab/extension:lint: 
+@veganmage-ai-tab/extension:lint: error: "eslint" exited with code 1
+@veganmage-ai-tab/extension:lint: error: script "lint" exited with code 1
+@veganmage-ai-tab/extension:lint: ERROR: command finished with error: command (/home/marti/code/veganmage-ai-tab/packages/extension) /home/marti/.bun/bin/bun run lint exited (1)
+@veganmage-ai-tab/extension#lint: command (/home/marti/code/veganmage-ai-tab/packages/extension) /home/marti/.bun/bin/bun run lint exited (1)
+
+ Tasks:    1 successful, 4 total
+Cached:    1 cached, 4 total
+  Time:    6.526s 
+Failed:    @veganmage-ai-tab/extension#lint
+
+ ERROR  run failed: command  exited (1)
+error: script "lint" exited with code 1
