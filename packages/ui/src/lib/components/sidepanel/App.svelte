@@ -1,14 +1,14 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
     import { chromeStorage } from "@toocoolname/chrome-proxy";
-    import { fireAndForget } from "$lib/utils/chrome-utils";
+    import { fireAndForget } from "@shadui/utils/chrome-utils";
     import ProviderSettings from "./ProviderSettings.svelte";
     import MessagingView from "./MessagingView.svelte";
     import { DEFAULT_PROVIDERS, type Provider } from "./types";
-    import { Button } from "$lib/components/ui/button";
+    import { Button } from "@shadui/components/button";
     import { ModeWatcher, mode, toggleMode } from "mode-watcher";
-    import * as Tabs from "$lib/components/ui/tabs";
-    import { Toaster } from "$lib/components/ui/sonner";
+    import * as Tabs from "@shadui/components/tabs";
+    import { Toaster } from "@shadui/components/sonner";
     import { toast } from "svelte-sonner";
 
     const PROVIDERS_KEY = "providerSettings";

@@ -1,5 +1,5 @@
 {
-    "name": "@veganmage/ui",
+    "name": "@veganmage/shadui",
     "version": "1.0.0",
     "private": true,
     "type": "module",
@@ -8,28 +8,31 @@
             "types": "./src/lib/index.ts",
             "default": "./src/lib/index.ts"
         },
-        "./schema": {
-            "types": "./src/schema/index.ts",
-            "default": "./src/schema/index.ts"
+        "./utils/*": {
+            "types": "./src/lib/utils/*.ts",
+            "default": "./src/lib/utils/*.ts"
         },
         "./components/*": "./src/lib/components/*"
-    },
-    "dependencies": {
-        "@veganmage/shadui": "workspace:*",
-        "tailwind-variants": "^3.2.2",
-        "@veganmage/core": "workspace:*",
-        "@toocoolname/chrome-proxy": "^1.0.8",
-        "valibot": "^1.2.0",
-        "svelte": "^5.53.5"
     },
     "scripts": {
         "dev": "vite",
         "tc": "svelte-check --tsconfig ./tsconfig.json"
     },
+    "dependencies": {
+        "tailwind-variants": "^3.2.2",
+        "bits-ui": "^2.16.2",
+        "clsx": "^2.1.1",
+        "lucide-svelte": "^0.575.0",
+        "mode-watcher": "^1.1.0",
+        "svelte-sonner": "^1.0.7",
+        "tailwind-merge": "^3.5.0",
+        "svelte": "^5.53.5"
+    },
     "devDependencies": {
         "@types/bun": "latest",
         "typescript": "^5.9.3",
         "vite": "^7.3.1",
+        "svelte-check": "^4.1.1",
         "@sveltejs/vite-plugin-svelte": "^6.2.4",
         "@tailwindcss/vite": "^4.2.1",
         "tailwindcss": "^4.1.17"

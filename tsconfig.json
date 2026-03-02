@@ -20,6 +20,11 @@
       "chrome",
       "svelte"
     ],
+    "paths": {
+      "@shadui/*": [
+        "packages/shadui/src/lib/*"
+      ]
+    },
     "baseUrl": "."
   },
   "include": [

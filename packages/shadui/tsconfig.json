@@ -10,7 +10,7 @@
                 "./src/lib"
             ],
             "@shadui/*": [
-                "../shadui/src/lib/*"
+                "./src/lib/*"
             ]
         }
     },

@@ -41,7 +41,9 @@
 	},
 	"overrides": [
 		{
-			"includes": ["**/*.svelte"],
+			"includes": [
+				"**/*.svelte"
+			],
 			"linter": {
 				"rules": {
 					"correctness": {
@@ -52,7 +54,10 @@
 			}
 		},
 		{
-			"includes": ["**/components/ui/**"],
+			"includes": [
+				"**/components/ui/**",
+				"**/packages/shadui/src/lib/components/**"
+			],
 			"linter": {
 				"enabled": false
 			},
