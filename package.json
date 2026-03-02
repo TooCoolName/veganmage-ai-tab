@@ -5,12 +5,21 @@
   "workspaces": [
     "packages/*"
   ],
+  "packageManager": "bun@1.3.9",
   "scripts": {
-    "lint": "bun eslint . --cache",
-    "tc": "bun --filter '*' tc"
+    "build:all": "turbo build",
+    "lint:all": "turbo lint",
+    "tc:all": "turbo tc"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/bun": "latest",
+    "eslint": "^10.0.2",
+    "eslint-plugin-svelte": "^3.15.0",
+    "globals": "^17.4.0",
+    "svelte-eslint-parser": "^1.5.1",
+    "turbo": "^2.8.12",
     "typescript": "^5.9.3",
-    "@types/bun": "latest"
+    "typescript-eslint": "^8.56.1"
   }
 }
