@@ -1,9 +1,10 @@
 /**
  * Common utilities for content scripts
  */
-import { chromeMessage } from '@toocoolname/chrome-proxy';
+import { createChromeMessage } from '@toocoolname/chrome-proxy';
 import { BgInternalMessageSchema } from '@veganmage-ai-tab/core';
 
+const chromeMessage = createChromeMessage('real')
 const bgMessenger = chromeMessage.createLocalMessenger(BgInternalMessageSchema);
 
 
