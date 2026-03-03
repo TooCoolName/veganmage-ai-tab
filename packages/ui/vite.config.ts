@@ -10,12 +10,11 @@ export default defineConfig({
         svelte(),
         tsconfigPaths()
     ],
-    resolve: {
-        alias: {
-            '@veganmage-ai-tab/ui': path.resolve(__dirname, './src')
-        }
-    },
     server: {
+        fs: {
+            // Required: Allows Vite to serve files from outside this folder (the other packages)
+            allow: ['..'],
+        },
         port: 5173
     }
 });
