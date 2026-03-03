@@ -28,7 +28,7 @@
   },
   "include": [
     "src",
-    "src/**/*.svelte",
+    "wxt.config.ts",
     ".wxt/types/**/*.d.ts"
   ]
 }
