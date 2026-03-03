@@ -13,7 +13,6 @@
 
     let { services }: { services: SidepanelServices } = $props();
 
-    const PROVIDERS_KEY = "providerSettings";
     let activeView = $state<"providers" | "messaging">("providers");
 
     let providers = $state<Provider[]>(DEFAULT_PROVIDERS);
@@ -21,8 +20,7 @@
     const loadProviders = async () => {
         try {
             const loadedProviders =
-                (await services.storage.local.get<Provider[]>(PROVIDERS_KEY)) ??
-                DEFAULT_PROVIDERS;
+                (await services.storage.getProviders()) ?? DEFAULT_PROVIDERS;
             providers = loadedProviders.map((p: Provider) => {
                 const defaultP = DEFAULT_PROVIDERS.find((dp) => dp.id === p.id);
                 return {

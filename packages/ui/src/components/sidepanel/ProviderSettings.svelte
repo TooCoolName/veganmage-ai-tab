@@ -14,7 +14,7 @@
 
     async function saveProviders() {
         try {
-            await storage.local.set("providerSettings", getProviders());
+            await storage.setProviders(getProviders());
             showStatus("Settings saved", "success");
         } catch (error) {
             console.error("Error saving providers:", error);
@@ -57,9 +57,7 @@
         if (confirm("Reset to default settings?")) {
             const defaults = JSON.parse(JSON.stringify(DEFAULT_PROVIDERS));
             setProviders(defaults);
-            storage.local
-                .set("providerSettings", defaults)
-                .catch(console.error);
+            storage.setProviders(defaults).catch(console.error);
         }
     }
 </script>
