@@ -20,17 +20,6 @@
       "chrome",
       "svelte"
     ],
-    "paths": {
-      "@veganmage-ai-tab/shadui/lib/*": [
-        "packages/shadui/src/lib/*"
-      ]
-    },
     "baseUrl": "."
-  },
-  "include": [
-    "packages/*/src/**/*",
-    "packages/*/wxt.config.ts",
-    "packages/*/vite.config.ts",
-    ".wxt/types/**/*.d.ts"
-  ]
+  }
 }

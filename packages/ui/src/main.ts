@@ -1,6 +1,6 @@
 import { mount } from 'svelte';
 import App from './components/sidepanel/App.svelte';
-import './lib/global.css';
+import '@veganmage-ai-tab/shadui/lib/global.css';
 
 const container = document.getElementById('root');
 if (container) {

@@ -3,16 +3,19 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
+            "@ui/*": [
+                "./src/*"
+            ],
             "@veganmage-ai-tab/shadui/*": [
                 "../shadui/src/*"
             ],
-            "@veganmage-ai-tab/ui/*": [
-                "./src/*"
-            ],
-            "@veganmage-ai-tab/core": [
-                "../core/src/index.ts"
+            "@shadui/*": [
+                "../shadui/src/*"
             ],
             "@veganmage-ai-tab/core/*": [
+                "../core/src/*"
+            ],
+            "@core/*": [
                 "../core/src/*"
             ]
         }
