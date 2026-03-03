@@ -9,9 +9,7 @@
             "default": "./src/index.ts"
         }
     },
-    "dependencies": {
-        "valibot": "^1.2.0"
-    },
+    "dependencies": {},
     "scripts": {
         "build": "echo 'Nothing to build for core'",
         "tc": "tsc --noEmit",

@@ -16,23 +16,11 @@
     },
     "dependencies": {
         "@veganmage-ai-tab/shadui": "workspace:*",
-        "tailwind-variants": "^3.2.2",
-        "@veganmage-ai-tab/core": "workspace:*",
-        "@toocoolname/chrome-proxy": "^1.0.10",
-        "valibot": "^1.2.0",
-        "svelte": "^5.53.5"
+        "@veganmage-ai-tab/core": "workspace:*"
     },
     "scripts": {
         "dev": "vite",
         "tc": "svelte-check --tsconfig ./tsconfig.json",
         "lint": "eslint . --cache"
-    },
-    "devDependencies": {
-        "@types/bun": "latest",
-        "typescript": "^5.9.3",
-        "vite": "^7.3.1",
-        "@sveltejs/vite-plugin-svelte": "^6.2.4",
-        "@tailwindcss/vite": "^4.2.1",
-        "tailwindcss": "^4.1.17"
     }
 }
