@@ -7,7 +7,7 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         svelte(),
-        tsconfigPaths()
+        tsconfigPaths({ loose: true })
     ],
     server: {
         fs: {

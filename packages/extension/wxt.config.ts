@@ -8,7 +8,7 @@ export default defineConfig({
     modules: ['@wxt-dev/module-svelte'],
     vite: () => ({
         plugins: [
-            tailwindcss(), tsconfigPaths()
+            tailwindcss(), tsconfigPaths({ loose: true })
         ],
         fs: {
             // Required: Allows Vite to serve files from outside this folder (the other packages)
