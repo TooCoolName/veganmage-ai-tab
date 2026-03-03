@@ -17,33 +17,27 @@
     "useUnknownInCatchVariables": true,
     "allowArbitraryExtensions": true,
     "paths": {
-      "@veganmage-ai-tab/extension/*": [
+      "@extension/*": [
         "./src/*"
-      ],
-      "@veganmage-ai-tab/shadui": [
-        "../shadui/src/index.ts"
       ],
       "@veganmage-ai-tab/shadui/*": [
         "../shadui/src/*"
       ],
-      "@veganmage-ai-tab/core": [
-        "../core/src/index.ts"
+      "@shadui/*": [
+        "../shadui/src/*"
       ],
       "@veganmage-ai-tab/core/*": [
         "../core/src/*"
       ],
-      "@veganmage-ai-tab/ui": [
-        "../ui/src/index.ts"
+      "@core/*": [
+        "../core/src/*"
       ],
       "@veganmage-ai-tab/ui/*": [
         "../ui/src/*"
       ],
-      "@/lib/*": [
-        "./src/lib/*"
+      "@ui/*": [
+        "../ui/src/*"
       ],
-      "@/*": [
-        "./src/*"
-      ]
     },
     "types": [
       "bun",
