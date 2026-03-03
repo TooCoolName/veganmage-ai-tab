@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
-import path from 'path';
+import fs from 'fs';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
@@ -11,8 +11,9 @@ export default defineConfig({
         tsconfigPaths()
     ],
     resolve: {
-        alias: {
-            '@veganmage-ai-tab/shadui': path.resolve(__dirname, './src')
-        }
+        fs: {
+            // Required: Allows Vite to serve files from outside this folder (the other packages)
+            allow: ['..'],
+        },
     }
 });
