@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
-import fs from 'fs';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
@@ -10,7 +9,7 @@ export default defineConfig({
         svelte(),
         tsconfigPaths()
     ],
-    resolve: {
+    server: {
         fs: {
             // Required: Allows Vite to serve files from outside this folder (the other packages)
             allow: ['..'],
