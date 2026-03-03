@@ -10,7 +10,7 @@ import {
   type GenerateText,
   type BgInternalLogRequest
 } from '@veganmage-ai-tab/core';
-import { chromeMessage, chromeRuntime, chromeSidePanel, chromeStorage, chromeTabs, type ChromeResult, type Tab, type TabChangeInfo } from '@toocoolname/chrome-proxy';
+import { createChromeMessage, chromeRuntime, chromeSidePanel, createChromeStorage, chromeTabs, type ChromeResult, type Tab, type TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 export default defineBackground(() => {
 
@@ -25,7 +25,9 @@ export default defineBackground(() => {
     });
   };
 
+  const chromeMessage = createChromeMessage('real')
   const tabMessenger = chromeMessage.createTabMessenger(TabInternalMessageSchema);
+  const chromeStorage = createChromeStorage('real')
 
   const logger = pino({
     browser: {

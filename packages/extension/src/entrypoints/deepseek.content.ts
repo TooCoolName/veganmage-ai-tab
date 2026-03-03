@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@veganmage-ai-tab/core";
-import { chromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut } from '@veganmage-ai-tab/extension/lib/wxt-utils';
+import { createChromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, handleGenerateText, pressShortcut } from '@extension/lib/wxt-utils';
 
 export default defineContentScript({
     matches: ["https://chat.deepseek.com/*"],
@@ -29,7 +29,7 @@ export default defineContentScript({
         }
 
         // Listen for messages from background script
-        chromeMessage.createLocalListener(TabInternalMessageSchema, {
+        createChromeMessage('real').createLocalListener(TabInternalMessageSchema, {
             ping: async (): Promise<ChromeResult<undefined>> => {
                 return { success: true, data: undefined };
             },

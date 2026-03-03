@@ -1,6 +1,6 @@
 import { TabInternalMessageSchema } from "@veganmage-ai-tab/core";
-import { chromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
-import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from '@/lib/wxt-utils';
+import { createChromeMessage, type ChromeResult } from '@toocoolname/chrome-proxy';
+import { getMessageText, waitForResponse as genericWaitForResponse, pressEnter, findSendButton as genericFindSendButton, handleGenerateText } from '@extension/lib/wxt-utils';
 
 export default defineContentScript({
     matches: ["https://copilot.microsoft.com/*", "https://bing.com/chat*"],
@@ -37,7 +37,7 @@ export default defineContentScript({
         }
 
         // Listen for messages from background script
-        chromeMessage.createLocalListener(TabInternalMessageSchema, {
+        createChromeMessage('real').createLocalListener(TabInternalMessageSchema, {
             ping: async (): Promise<ChromeResult<undefined>> => {
                 return { success: true, data: undefined };
             },
