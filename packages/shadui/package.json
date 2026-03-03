@@ -12,7 +12,8 @@
             "types": "./src/lib/utils/*.ts",
             "default": "./src/lib/utils/*.ts"
         },
-        "./components/*": "./src/lib/components/*"
+        "./components/*": "./src/lib/components/*",
+        "./lib/*": "./src/lib/*"
     },
     "scripts": {
         "dev": "vite",
