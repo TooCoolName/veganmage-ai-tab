@@ -2,7 +2,6 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import importX from 'eslint-plugin-import-x';
 import globals from 'globals';
-import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import eslintPluginSvelte from 'eslint-plugin-svelte';
 import svelteEslintParser from 'svelte-eslint-parser';
 
@@ -25,9 +24,11 @@ export const baseConfig = [
     ...tseslint.configs.recommended,
     ...eslintPluginSvelte.configs['flat/recommended'],
     {
+        linterOptions: {
+            noInlineConfig: true,
+        },
         plugins: {
             'import-x': importX,
-            'eslint-comments': eslintComments,
         },
     },
     {
@@ -80,8 +81,6 @@ export const baseConfig = [
             '@typescript-eslint/no-misused-promises': 'error',
             'no-void': 'error',
             'no-restricted-globals': ['error', 'chrome'],
-            'eslint-comments/no-unused-disable': 'error',
-            'eslint-comments/require-description': 'error',
             '@typescript-eslint/consistent-type-assertions': [
                 'error',
                 {
