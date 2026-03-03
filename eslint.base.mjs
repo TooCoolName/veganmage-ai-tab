@@ -80,6 +80,8 @@ export const baseConfig = [
             '@typescript-eslint/no-misused-promises': 'error',
             'no-void': 'error',
             'no-restricted-globals': ['error', 'chrome'],
+            'eslint-comments/no-unused-disable': 'error',
+            'eslint-comments/require-description': 'error',
             '@typescript-eslint/consistent-type-assertions': [
                 'error',
                 {
@@ -117,7 +119,6 @@ export const baseConfig = [
         },
     },
     {
-        // Override: Allow 'chrome' only in the specific folder
         files: ['**/*.test.ts'],
         rules: {
             '@typescript-eslint/consistent-type-assertions': 'off',
