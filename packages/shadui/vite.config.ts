@@ -8,7 +8,7 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         svelte(),
-        tsconfigpaths()
+        tsconfigPaths()
     ],
     resolve: {
         alias: {
