@@ -9,8 +9,8 @@
         }
     },
     "include": [
-        "src/**/*",
-        "../../tsconfig.json",
+        "src",
+        "src/**/*.svelte",
         "components.json"
     ]
 }
