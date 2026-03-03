@@ -3,18 +3,6 @@
     "version": "1.0.0",
     "private": true,
     "type": "module",
-    "exports": {
-        ".": {
-            "types": "./src/lib/index.ts",
-            "default": "./src/lib/index.ts"
-        },
-        "./utils/*": {
-            "types": "./src/lib/utils/*.ts",
-            "default": "./src/lib/utils/*.ts"
-        },
-        "./components/*": "./src/lib/components/*",
-        "./lib/*": "./src/lib/*"
-    },
     "scripts": {
         "dev": "vite",
         "tc": "svelte-check --tsconfig ./tsconfig.json",
