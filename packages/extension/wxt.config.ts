@@ -1,12 +1,20 @@
 import { defineConfig } from 'wxt';
-import path from 'node:path';
-
 import tailwindcss from '@tailwindcss/vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
     srcDir: 'src',
     modules: ['@wxt-dev/module-svelte'],
+    vite: () => ({
+        plugins: [
+            tailwindcss(), tsconfigPaths()
+        ],
+        fs: {
+            // Required: Allows Vite to serve files from outside this folder (the other packages)
+            allow: ['..'],
+        },
+    }),
     manifest: {
         name: 'Vegan Mage AI tab',
         version: '1.1',
@@ -36,16 +44,4 @@ export default defineConfig({
             default_path: 'sidepanel.html',
         },
     },
-    vite: () => ({
-        plugins: [
-            tailwindcss(),
-        ],
-        resolve: {
-            alias: {
-                '@veganmage-ai-tab/extension': '/src',
-                '@veganmage-ai-tab/ui': path.resolve(__dirname, '../ui/src'),
-                '@veganmage-ai-tab/core': path.resolve(__dirname, '../core/src'),
-            },
-        },
-    })
 });

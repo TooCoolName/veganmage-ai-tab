@@ -11,6 +11,7 @@
     "include": [
         "src",
         "src/**/*.svelte",
-        "components.json"
+        "components.json",
+        "vite.config.ts"
     ]
 }
