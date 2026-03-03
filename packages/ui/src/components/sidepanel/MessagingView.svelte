@@ -1,11 +1,7 @@
 <script lang="ts">
     import { getContext, onMount } from "svelte";
-    import {
-        chromeMessage,
-        chromeTabs,
-        type Tab,
-    } from "@toocoolname/chrome-proxy";
-    import { TabInternalMessageSchema } from "@veganmage-ai-tab/core";
+    import { chromeTabs, type Tab } from "@toocoolname/chrome-proxy";
+    import { tabMessenger } from "./shared";
     import { fireAndForget } from "@ui/utils/chrome-utils";
     import type { AppContext } from "./types";
     import * as Card from "@veganmage-ai-tab/shadui/lib/components/card";
@@ -22,10 +18,6 @@
         Monitor,
         ChevronRight,
     } from "lucide-svelte";
-
-    const tabMessenger = chromeMessage.createTabMessenger(
-        TabInternalMessageSchema,
-    );
 
     const { showStatus, getProviders } = getContext<AppContext>("app");
 

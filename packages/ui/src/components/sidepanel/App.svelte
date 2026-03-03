@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
-    import { chromeStorage } from "@toocoolname/chrome-proxy";
+    import { chromeStorage } from "./shared";
     import { fireAndForget } from "@ui/utils/chrome-utils";
     import ProviderSettings from "./ProviderSettings.svelte";
     import MessagingView from "./MessagingView.svelte";

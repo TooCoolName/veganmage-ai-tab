@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import { chromeStorage } from "@toocoolname/chrome-proxy";
+    import { chromeStorage } from "./shared";
     import { DEFAULT_PROVIDERS, type AppContext } from "./types";
     import * as Card from "@veganmage-ai-tab/shadui/lib/components/card";
     import { Switch } from "@veganmage-ai-tab/shadui/lib/components/switch";
