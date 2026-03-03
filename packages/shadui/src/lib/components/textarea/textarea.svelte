@@ -3,7 +3,7 @@
 		cn,
 		type WithElementRef,
 		type WithoutChildren,
-	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	} from "@shadui/lib/utils/cn.js";
 	import type { HTMLTextareaAttributes } from "svelte/elements";
 
 	let {

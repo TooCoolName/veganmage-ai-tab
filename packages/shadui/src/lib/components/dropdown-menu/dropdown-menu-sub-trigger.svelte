@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-	import { cn } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { cn } from "@shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),

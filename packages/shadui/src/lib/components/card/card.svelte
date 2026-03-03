@@ -1,9 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
-	import {
-		cn,
-		type WithElementRef,
-	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { cn, type WithElementRef } from "@shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),

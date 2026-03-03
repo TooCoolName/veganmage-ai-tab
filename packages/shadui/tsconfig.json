@@ -3,11 +3,11 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@veganmage-ai-tab/shadui/*": [
+            "@shadui/*": [
                 "./src/*"
             ]
         }
-    },  
+    },
     "include": [
         "src/**/*",
         "../../tsconfig.json",

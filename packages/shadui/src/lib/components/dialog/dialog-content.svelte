@@ -4,10 +4,7 @@
 	import XIcon from "@lucide/svelte/icons/x";
 	import type { Snippet } from "svelte";
 	import * as Dialog from "./index.js";
-	import {
-		cn,
-		type WithoutChildrenOrChild,
-	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { cn, type WithoutChildrenOrChild } from "@shadui/lib/utils/cn.js";
 	import type { ComponentProps } from "svelte";
 
 	let {

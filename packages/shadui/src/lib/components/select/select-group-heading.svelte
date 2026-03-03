@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Select as SelectPrimitive } from "bits-ui";
-	import { cn } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { cn } from "@shadui/lib/utils/cn.js";
 	import type { ComponentProps } from "svelte";
 
 	let {

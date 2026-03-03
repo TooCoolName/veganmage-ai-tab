@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Tooltip as TooltipPrimitive } from "bits-ui";
-	import { cn } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { cn } from "@shadui/lib/utils/cn.js";
 	import TooltipPortal from "./tooltip-portal.svelte";
 	import type { ComponentProps } from "svelte";
-	import type { WithoutChildrenOrChild } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import type { WithoutChildrenOrChild } from "@shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),

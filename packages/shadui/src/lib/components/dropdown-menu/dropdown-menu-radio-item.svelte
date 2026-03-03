@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 	import CircleIcon from "@lucide/svelte/icons/circle";
-	import {
-		cn,
-		type WithoutChild,
-	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { cn, type WithoutChild } from "@shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),

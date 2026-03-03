@@ -1,8 +1,5 @@
 <script lang="ts" module>
-	import {
-		cn,
-		type WithElementRef,
-	} from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { cn, type WithElementRef } from "@shadui/lib/utils/cn.js";
 	import type {
 		HTMLAnchorAttributes,
 		HTMLButtonAttributes,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { cn } from "@shadui/lib/utils/cn.js";
 	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 
 	let {

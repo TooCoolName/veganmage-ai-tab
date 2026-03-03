@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Separator as SeparatorPrimitive } from "bits-ui";
-	import { Separator } from "@veganmage-ai-tab/shadui/lib/components/separator/index.js";
-	import { cn } from "@veganmage-ai-tab/shadui/lib/utils/cn.js";
+	import { Separator } from "@shadui/lib/components/separator/index.js";
+	import { cn } from "@shadui/lib/utils/cn.js";
 
 	let {
 		ref = $bindable(null),
