@@ -1,20 +1,20 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import { chromeStorage } from "./shared";
     import { DEFAULT_PROVIDERS, type AppContext } from "./types";
     import * as Card from "@veganmage-ai-tab/shadui/lib/components/card";
     import { Switch } from "@veganmage-ai-tab/shadui/lib/components/switch";
     import { Button } from "@veganmage-ai-tab/shadui/lib/components/button";
     import { GripVertical } from "lucide-svelte";
 
-    const { showStatus, getProviders, setProviders } =
+    const { showStatus, getProviders, setProviders, services } =
         getContext<AppContext>("app");
+    const { storage } = services;
 
     let draggedIndex = $state<number>();
 
     async function saveProviders() {
         try {
-            await chromeStorage.local.set("providerSettings", getProviders());
+            await storage.local.set("providerSettings", getProviders());
             showStatus("Settings saved", "success");
         } catch (error) {
             console.error("Error saving providers:", error);
@@ -57,7 +57,7 @@
         if (confirm("Reset to default settings?")) {
             const defaults = JSON.parse(JSON.stringify(DEFAULT_PROVIDERS));
             setProviders(defaults);
-            chromeStorage.local
+            storage.local
                 .set("providerSettings", defaults)
                 .catch(console.error);
         }

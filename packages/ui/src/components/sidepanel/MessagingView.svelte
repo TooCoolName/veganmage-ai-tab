@@ -1,7 +1,6 @@
 <script lang="ts">
     import { getContext, onMount } from "svelte";
     import { chromeTabs, type Tab } from "@toocoolname/chrome-proxy";
-    import { tabMessenger } from "./shared";
     import { fireAndForget } from "@ui/utils/chrome-utils";
     import type { AppContext } from "./types";
     import * as Card from "@veganmage-ai-tab/shadui/lib/components/card";
@@ -19,7 +18,9 @@
         ChevronRight,
     } from "lucide-svelte";
 
-    const { showStatus, getProviders } = getContext<AppContext>("app");
+    const { showStatus, getProviders, services } =
+        getContext<AppContext>("app");
+    const { messenger } = services;
 
     interface AiTab extends Tab {
         provider: string;
@@ -145,7 +146,7 @@
         isSending = true;
 
         try {
-            const result = await tabMessenger.send(
+            const result = await messenger.send(
                 currentTabId,
                 "generate_text",
                 prompt,
@@ -178,7 +179,7 @@
     async function createNewChat() {
         if (!selectedTab?.id) return;
         try {
-            const result = await tabMessenger.send(
+            const result = await messenger.send(
                 selectedTab.id,
                 "create_new_chat",
                 undefined,

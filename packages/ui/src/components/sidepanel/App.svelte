@@ -1,27 +1,29 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
-    import { chromeStorage } from "./shared";
+    import type { SidepanelServices } from "./shared";
     import { fireAndForget } from "@ui/utils/chrome-utils";
     import ProviderSettings from "./ProviderSettings.svelte";
     import MessagingView from "./MessagingView.svelte";
-    import { DEFAULT_PROVIDERS, type Provider } from "./types";
+    import { DEFAULT_PROVIDERS, type Provider, type AppContext } from "./types";
     import { Button } from "@veganmage-ai-tab/shadui/lib/components/button";
     import { ModeWatcher, mode, toggleMode } from "mode-watcher";
     import * as Tabs from "@veganmage-ai-tab/shadui/lib/components/tabs";
     import { Toaster } from "@veganmage-ai-tab/shadui/lib/components/sonner";
     import { toast } from "svelte-sonner";
 
+    let { services }: { services: SidepanelServices } = $props();
+
     const PROVIDERS_KEY = "providerSettings";
     let activeView = $state<"providers" | "messaging">("providers");
 
-    let providers = $state(DEFAULT_PROVIDERS);
+    let providers = $state<Provider[]>(DEFAULT_PROVIDERS);
 
     const loadProviders = async () => {
         try {
             const loadedProviders =
-                (await chromeStorage.local.get<Provider[]>(PROVIDERS_KEY)) ??
+                (await services.storage.local.get<Provider[]>(PROVIDERS_KEY)) ??
                 DEFAULT_PROVIDERS;
-            providers = loadedProviders.map((p) => {
+            providers = loadedProviders.map((p: Provider) => {
                 const defaultP = DEFAULT_PROVIDERS.find((dp) => dp.id === p.id);
                 return {
                     ...p,
@@ -46,11 +48,14 @@
     }
 
     // To allow child components to trigger global events
-    setContext("app", {
+    setContext<AppContext>("app", {
         showStatus,
         getProviders: () => providers,
         setProviders: (newProviders: Provider[]) => {
             providers = newProviders;
+        },
+        get services() {
+            return services;
         },
     });
 

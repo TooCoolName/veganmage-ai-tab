@@ -1,3 +1,5 @@
+import type { SidepanelServices } from "@ui/components/sidepanel/shared";
+
 export interface Provider {
     id: string;
     name: string;
@@ -10,6 +12,7 @@ export interface AppContext {
     showStatus: (message: string, type: "success" | "error" | "info") => void;
     getProviders: () => Provider[];
     setProviders: (newProviders: Provider[]) => void;
+    services: SidepanelServices;
 }
 
 export const DEFAULT_PROVIDERS: Provider[] = [
