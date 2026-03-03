@@ -1,21 +1,7 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "useUnknownInCatchVariables": true,
-    "allowArbitraryExtensions": true,
+    "baseUrl": ".",
     "paths": {
       "@extension/*": [
         "./src/*"
@@ -39,15 +25,9 @@
         "../ui/src/*"
       ],
     },
-    "types": [
-      "bun",
-      "chrome",
-      "svelte"
-    ],
-    "baseUrl": "."
   },
   "include": [
-    "src/**/*.ts",
+    "src",
     "src/**/*.svelte",
     ".wxt/types/**/*.d.ts"
   ]
