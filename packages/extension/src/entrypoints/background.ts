@@ -1,15 +1,12 @@
 import pino from 'pino';
 import {
   parseRegistry,
-  parseProviderSettings,
-  ExternalMessegeSchema,
-  BgInternalMessageSchema,
-  TabInternalMessageSchema,
-  type ProviderSetting,
-  type Registry,
-  type GenerateText,
-  type BgInternalLogRequest
-} from '@veganmage-ai-tab/core/index';
+  parseProviderSettings
+} from '@core/guards';
+import { ExternalMessegeSchema, type GenerateText } from '@core/external.schemas';
+import { BgInternalMessageSchema, type BgInternalLogRequest } from '@core/bg.internal.schemas';
+import { TabInternalMessageSchema } from '@core/tab.internal.schemas';
+import { type ProviderSetting, type Registry } from '@core/settings.schemas';
 import { createChromeMessage, chromeRuntime, chromeSidePanel, createChromeStorage, chromeTabs, type ChromeResult, type Tab, type TabChangeInfo } from '@toocoolname/chrome-proxy';
 
 export default defineBackground(() => {
