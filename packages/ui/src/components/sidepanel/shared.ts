@@ -1,5 +1,5 @@
 import { createChromeStorage, createChromeMessage } from "@toocoolname/chrome-proxy";
-import { TabInternalMessageSchema } from "@veganmage-ai-tab/core";
+import { TabInternalMessageSchema } from "@veganmage-ai-tab/core/index";
 import type { Provider } from "./types";
 
 export function createSidepanelServices(mode: "real" | "mock" = "real") {
