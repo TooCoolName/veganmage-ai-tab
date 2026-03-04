@@ -1,0 +1,19 @@
+{
+	"name": "devc",
+	"image": "toocoolname/devcontainer-debian-ts-codex:latest",
+	"customizations": {
+		"vscode": {
+			"extensions": ["ovaly.bun-vscode", "dbaeumer.vscode-eslint", "svelte.svelte-vscode", "openai.chatgpt"],
+			"settings": {
+				"terminal.integrated.cwd": "/workspaces/${localWorkspaceFolderBasename}",
+				"bun.runtime": "/usr/local/bin/bun"
+			}
+		}
+	},
+	// Focuses the VS Code Explorer and primary workspace on the UI package
+	"mounts": [
+		"source=${env:HOME}/.codex,target=/home/vscode/.codex,type=bind,consistency=cached"
+	],
+	"postCreateCommand": "bun install",
+	"remoteUser": "vscode"
+}
